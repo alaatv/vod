@@ -99,6 +99,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SmsDetailsRepository::class, function ($app) {
             return new SmsDetailsRepository();
         });
+        if ($this->app->isLocal()) {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
 
         Horizon::auth(function ($request) {
             return (Auth::check() && Auth::user()
