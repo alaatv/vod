@@ -11,9 +11,12 @@ use Laravel\Octane\Events\TickTerminated;
 use Laravel\Octane\Events\WorkerErrorOccurred;
 use Laravel\Octane\Events\WorkerStarting;
 use Laravel\Octane\Events\WorkerStopping;
+use Laravel\Octane\Listeners\CollectGarbage;
+use Laravel\Octane\Listeners\DisconnectFromDatabases;
 use Laravel\Octane\Listeners\EnsureUploadedFilesAreValid;
 use Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved;
 use Laravel\Octane\Listeners\FlushTemporaryContainerInstances;
+use Laravel\Octane\Listeners\FlushUploadedFiles;
 use Laravel\Octane\Listeners\ReportException;
 use Laravel\Octane\Listeners\StopWorkerIfNecessary;
 use Laravel\Octane\Octane;
@@ -33,7 +36,7 @@ return [
     |
     */
 
-    'server' => env('OCTANE_SERVER', 'swoole'),
+    'server' => env('OCTANE_SERVER', 'roadrunner'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +54,7 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Octane Listeners
-    |-----------------------------------------------()->-------------------------
+    |--------------------------------------------------------------------------
     |
     | All of the event listeners for Octane's events are defined below. These
     | listeners are responsible for resetting your application's state for
@@ -76,7 +79,7 @@ return [
         ],
 
         RequestTerminated::class => [
-            //
+            // FlushUploadedFiles::class,
         ],
 
         TaskReceived::class => [
@@ -144,8 +147,8 @@ return [
     */
 
     'cache' => [
-        'rows' => env('OCTANE_CACHE_ROWS', 1000),
-        'bytes' => env('OCTANE_CACHE_ROW_BYTE', 102400),
+        'rows' => 1000,
+        'bytes' => 10000,
     ],
 
     /*
@@ -183,7 +186,6 @@ return [
         'config',
         'database',
         'public/**/*.php',
-        'public/*.json',
         'resources/**/*.php',
         'routes',
         'composer.lock',
@@ -214,54 +216,6 @@ return [
     |
     */
 
-    'max_execution_time' => env('OCTANE_MAX_EXECUTION_TIME', 30),
-
-    'defaultServerOptions' => [
-        'enable_coroutine' => true,
-    ],
-    'swoole'               => [
-        'options' => [
-//            'task_enable_coroutine' => true,
-            'log_file'                       => storage_path('logs/swoole.http.log'),
-            'package_max_length'             => 10 * 1024 * 1024,
-            // Enable TCP Keep-Alive check
-            'open_tcp_keepalive'             => true,
-            // Check if there is no data for 4s (the time a connection needs to remain idle before TCP starts sending keep alive probes)
-            'tcp_keepidle'                   => 4,
-            //In seconds, the time between individual keep alive probes/checks
-            'tcp_keepinterval'               => 1,   // Check if there is data every 1s
-            //The maximum number of keep alive probes/checks to send before dropping the connection, classing it as dead or broken
-            'tcp_keepcount'                  => 5,      // Close the connection if there is no data for 5 cycles.
-            //Set this configuration to true to use the Nagle merge algorithm.
-            //This option attempts to improve the efficiency of TCP/IP by reducing the number of packets that need to be sent.
-            'open_tcp_nodelay'               => true,
-
-            // Kernel
-            'backlog'                        => 10000,
-            'kernel_socket_send_buffer_size' => 65535,
-            'kernel_socket_recv_buffer_size' => 65535,
-
-            /**
-             * This configuration is the interval of when to poll every TCP connection to see if it is idle.
-             * Default value is false, set in seconds.
-             * If the connection hasn't sent any data to the server in the last interval of heartbeat_check_interval,
-             * the connection will be closed,
-             * this option works with heartbeat_idle_time which decides if a connection is idle or not.
-             * The Swoole server does not send the heartbeat packet to the client,
-             * it waits for the heartbeat packet from the client.
-             * The heartbeat check thatis done by the Swoole server only checks the last time data has been
-             * received from the client. If the time exceeds heartbeat_idle_time,
-             * the connection between the server and the client will be closed.
-             * When a connection is closed due to breaching a heartbeat check, it will trigger the call to onClose.
-             * This is only for a TCP Swoole server.
-             */
-            'heartbeat_idle_time'            => 40,
-            'heartbeat_check_interval'       => 60,
-            'daemonize'                      => false,
-
-            // Coroutine
-            'enable_coroutine'               => true,
-        ],
-    ]
+    'max_execution_time' => 30,
 
 ];
