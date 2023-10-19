@@ -99,13 +99,13 @@ trait CharacterCommon
         // Make alphanumeric (removes all other characters)
         // this makes the string safe especially when used as a part of a URL
         // this keeps latin characters and Persian characters as well
-        $string = preg_replace("/[^a\-z 0\-9_\s\-ءاآؤئبپتثجچحخدذرزژسشصضطظعغفقكکگلمنوهی]/u", '', $string);
+        $string = preg_replace('/[^a\-z 0\-9_\sءاآؤئبپتثجچحخدذرزژسشصضطظعغفقكکگلمنوهی]/u', '', $string);
 
         // Remove multiple dashes or whitespaces or underscores
-        $string = preg_replace("/[\s\-_]+/", ' ', $string);
+        $string = preg_replace('/[\s\-_]+/', ' ', $string);
 
         // Convert whitespaces and underscore to the given separator
-        $string = preg_replace("/[\s_]/", $separator, $string);
+        $string = preg_replace('/[\s_]/', $separator, $string);
 
         return $string;
     }

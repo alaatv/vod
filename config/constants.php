@@ -6,6 +6,8 @@
  * Time: 4:41 PM
  */
 
+use Illuminate\Http\Response;
+
 return [
     // Default Roles
     'ROLE_ADMIN'                 => 'admin',
@@ -776,8 +778,8 @@ return [
 
     'NUMBER_OF_SMS_RECIPIENTS_FOR_SEND_SMS_WITHOUT_JOB' => 10,
     'REDIRECT_HTTP_RESPONSE_TYPES'                      => [
-        \Illuminate\Http\Response::HTTP_MOVED_PERMANENTLY => ['desc' => 'دائمی'],  // 301
-        \Illuminate\Http\Response::HTTP_FOUND             => ['desc' => 'موقتی'],              // 302
+        Response::HTTP_MOVED_PERMANENTLY => ['desc' => 'دائمی'],  // 301
+        Response::HTTP_FOUND => ['desc' => 'موقتی'],              // 302
     ],
 
     'AlAA_MONTHLY_SPEND' => 208333333,
@@ -874,11 +876,11 @@ return [
 
     'MAXIMUM_BULK_PRODUCTS_GET_BY_IDS' => 100,
 
-    "EWANO_WEBSERVICE"    => env("EWANO_WEBSERVICE"),
-    "EWANO_CLIENTID"      => env("EWANO_CLIENTID"),
-    "EWANO_CLIENT_SECRET" => env("EWANO_CLIENT_SECRET"),
+    'EWANO_WEBSERVICE' => env('EWANO_WEBSERVICE'),
+    'EWANO_CLIENTID' => env('EWANO_CLIENTID'),
+    'EWANO_CLIENT_SECRET' => env('EWANO_CLIENT_SECRET'),
 
-    "EWANO_REDIRECT_URL" => env("EWANO_REDIRECT_URL"),
+    'EWANO_REDIRECT_URL' => env('EWANO_REDIRECT_URL'),
 
-    "MINIMUM_SMS_SENDING_INTERVAL" => 7,
+    'MINIMUM_SMS_SENDING_INTERVAL' => 7,
 ];

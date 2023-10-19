@@ -4,7 +4,7 @@ namespace App\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Str;
+use Illuminate\Support\Str;
 
 trait DateTrait
 {
@@ -14,29 +14,29 @@ trait DateTrait
      */
     public function CreatedAt_Jalali()
     {
-        return $this->convertDate($this->created_at, "toJalali");
+        return $this->convertDate($this->created_at, 'toJalali');
     }
 
     public function convertDate($date, $convertType)
     {
         if (strcmp($convertType, 'toJalali') == 0 && strlen($date) > 0) {
-            $explodedDate = explode(" ", $date);
+            $explodedDate = explode(' ', $date);
             $explodedDate = $explodedDate[0];
-            $explodedDate = explode("-", $explodedDate);
+            $explodedDate = explode('-', $explodedDate);
             $year         = $explodedDate[0];
             $month        = $explodedDate[1];
             $day          = $explodedDate[2];
 
-            return $this->gregorian_to_jalali($year, $month, $day, "/");
+            return $this->gregorian_to_jalali($year, $month, $day, '/');
         }
         if (!(strcmp($convertType, 'toMiladi') == 0 && strlen($date) > 0)){
     return;}
-            $explodedDate = explode("/", $date);
+            $explodedDate = explode('/', $date);
             $year         = $explodedDate[0];
             $month        = $explodedDate[1];
             $day          = $explodedDate[2];
 
-            return $this->jalali_to_gregorian($year, $month, $day, "-");
+            return $this->jalali_to_gregorian($year, $month, $day, '-');
         }
 
     protected function gregorian_to_jalali($g_y, $g_m, $g_d, $mod = '')
@@ -147,9 +147,9 @@ trait DateTrait
     public function CreatedAt_Jalali_WithTime()
     {
         $createdAt        = Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->shiftTimezone('Asia/Tehran');
-        $explodedDateTime = explode(" ", $createdAt->toDateTimeString());
+        $explodedDateTime = explode(' ', $createdAt->toDateTimeString());
 
-        return $this->convertDate($createdAt, "toJalali") . ' - ' . $explodedDateTime[1];
+        return $this->convertDate($createdAt, 'toJalali') . ' - ' . $explodedDateTime[1];
     }
 
     /**
@@ -159,17 +159,17 @@ trait DateTrait
      */
     public function CompletedAt_Jalali()
     {
-        $explodedDateTime = explode(" ", $this->completed_at);
+        $explodedDateTime = explode(' ', $this->completed_at);
 
 //        $explodedTime = $explodedDateTime[1] ;
-        return $this->convertDate($this->completed_at, "toJalali");
+        return $this->convertDate($this->completed_at, 'toJalali');
     }
 
     public function CompletedAt_Jalali_WithTime()
     {
-        $explodedDateTime = explode(" ", $this->completed_at);
+        $explodedDateTime = explode(' ', $this->completed_at);
 
-        return $this->convertDate($this->completed_at, "toJalali") . ' ' . $explodedDateTime[1];
+        return $this->convertDate($this->completed_at, 'toJalali') . ' ' . $explodedDateTime[1];
     }
 
     /**
@@ -226,129 +226,129 @@ trait DateTrait
      */
     public function UpdatedAt_Jalali()
     {
-        return $this->convertDate($this->updated_at, "toJalali");
+        return $this->convertDate($this->updated_at, 'toJalali');
     }
 
     public function convertToJalaliDay($day)
     {
         switch ($day) {
-            case "Saturday":
-                return "شنبه";
+            case 'Saturday':
+                return 'شنبه';
                 break;
-            case "Sunday":
-                return "یکشنبه";
+            case 'Sunday':
+                return 'یکشنبه';
                 break;
-            case "Monday":
-                return "دوشنبه";
+            case 'Monday':
+                return 'دوشنبه';
                 break;
-            case "Tuesday":
-                return "سه شنبه";
+            case 'Tuesday':
+                return 'سه شنبه';
                 break;
-            case "Wednesday":
-                return "چهارشنبه";
+            case 'Wednesday':
+                return 'چهارشنبه';
                 break;
-            case "Thursday":
-                return "پنجشنبه";
+            case 'Thursday':
+                return 'پنجشنبه';
                 break;
-            case "Friday":
-                return "جمعه";
+            case 'Friday':
+                return 'جمعه';
                 break;
             default:
                 break;
         }
     }
 
-    public function convertToJalaliMonth($month, $mode = "NUMBER_TO_STRING")
+    public function convertToJalaliMonth($month, $mode = 'NUMBER_TO_STRING')
     {
-        if ($mode == "NUMBER_TO_STRING") {
-            $result = "";
+        if ($mode == 'NUMBER_TO_STRING') {
+            $result = '';
             switch ($month) {
-                case "1":
-                case "01":
-                    $result = "فروردین";
+                case '1':
+                case '01':
+                    $result = 'فروردین';
                     break;
-                case "2":
-                case "02":
-                    $result = "اردیبهشت";
+                case '2':
+                case '02':
+                    $result = 'اردیبهشت';
                     break;
-                case "3":
-                case "03":
-                    $result = "خرداد";
+                case '3':
+                case '03':
+                    $result = 'خرداد';
                     break;
-                case "4":
-                case "04":
-                    $result = "تیر";
+                case '4':
+                case '04':
+                    $result = 'تیر';
                     break;
-                case "5":
-                case "05":
-                    $result = "مرداد";
+                case '5':
+                case '05':
+                    $result = 'مرداد';
                     break;
-                case "6":
-                case "06":
-                    $result = "شهریور";
+                case '6':
+                case '06':
+                    $result = 'شهریور';
                     break;
-                case "7":
-                case "07":
-                    $result = "مهر";
+                case '7':
+                case '07':
+                    $result = 'مهر';
                     break;
-                case "8":
-                case "08":
-                    $result = "آبان";
+                case '8':
+                case '08':
+                    $result = 'آبان';
                     break;
-                case "9":
-                case "09":
-                    $result = "آذر";
+                case '9':
+                case '09':
+                    $result = 'آذر';
                     break;
-                case "10":
-                    $result = "دی";
+                case '10':
+                    $result = 'دی';
                     break;
-                case "11":
-                    $result = "بهمن";
+                case '11':
+                    $result = 'بهمن';
                     break;
-                case "12":
-                    $result = "اسفند";
+                case '12':
+                    $result = 'اسفند';
                     break;
                 default:
                     break;
             }
         } else {
-            if ($mode == "STRING_TO_NUMBER") {
+            if ($mode == 'STRING_TO_NUMBER') {
                 $result = 0;
                 switch ($month) {
-                    case "فروردین":
+                    case 'فروردین':
                         $result = 1;
                         break;
-                    case "اردیبهشت":
+                    case 'اردیبهشت':
                         $result = 2;
                         break;
-                    case "خرداد":
+                    case 'خرداد':
                         $result = 3;
                         break;
-                    case "تیر":
+                    case 'تیر':
                         $result = 4;
                         break;
-                    case "مرداد":
+                    case 'مرداد':
                         $result = 5;
                         break;
-                    case "شهریور":
+                    case 'شهریور':
                         $result = 6;
                         break;
-                    case "مهر":
+                    case 'مهر':
                         $result = 7;
                         break;
-                    case "آبان":
+                    case 'آبان':
                         $result = 8;
                         break;
-                    case "آذر":
+                    case 'آذر':
                         $result = 9;
                         break;
-                    case "دی":
+                    case 'دی':
                         $result = 10;
                         break;
-                    case "بهمن":
+                    case 'بهمن':
                         $result = 11;
                         break;
-                    case "اسفند":
+                    case 'اسفند':
                         $result = 12;
                         break;
                     default:
@@ -364,22 +364,22 @@ trait DateTrait
     {
         $days = 0;
         switch ($month) {
-            case "اردیبهشت":
-            case "خرداد":
-            case "تیر":
-            case "مرداد":
-            case "شهریور":
-            case "فروردین":
+            case 'اردیبهشت':
+            case 'خرداد':
+            case 'تیر':
+            case 'مرداد':
+            case 'شهریور':
+            case 'فروردین':
                 $days = 31;
                 break;
-            case "آبان":
-            case "آذر":
-            case "دی":
-            case "بهمن":
-            case "مهر":
+            case 'آبان':
+            case 'آذر':
+            case 'دی':
+            case 'بهمن':
+            case 'مهر':
                 $days = 30;
                 break;
-            case "اسفند":
+            case 'اسفند':
                 $days = 29;
                 break;
             default:
@@ -417,7 +417,7 @@ trait DateTrait
      */
     protected function todayJalaliSplittedDate(Carbon $currentGregorianDate): array
     {
-        $delimiter              = "/";
+        $delimiter              = '/';
         $currentJalaliDate      = $this->gregorian_to_jalali($currentGregorianDate->year, $currentGregorianDate->month, $currentGregorianDate->day, $delimiter);
         $currentJalaliDateSplit = explode($delimiter, $currentJalaliDate);
         $currentJalaliYear      = $currentJalaliDateSplit[0];

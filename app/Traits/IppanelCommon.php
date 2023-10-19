@@ -4,16 +4,19 @@ namespace App\Traits;
 
 use App\Jobs\RecheckSentSmsStatus;
 use App\Libraries\Sha1Hasher;
-use App\SMS;
-use App\SmsDetail;
-use App\SmsResult;
-use App\SmsUser;
-use App\User;
+use App\Models\SMS;
+use App\Models\SmsDetail;
+use App\Models\SmsResult;
+use App\Models\SmsUser;
 use Carbon\Carbon;
+use Error;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use IPPanel\Client;
 use IPPanel\Models\Recipient;
+use Throwable;
+
 
 trait IppanelCommon
 {
@@ -78,13 +81,13 @@ trait IppanelCommon
             ];
         }
         // Notice! Please don't remove these catch statements.
-        catch (\Error $error) {
+        catch (Error $error) {
             // Notice! Please don't remove these catch statements.
             $errorResponse = $error;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             // Notice! Please don't remove these catch statements.
             $errorResponse = $exception;
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             // Notice! Please don't remove these catch statements.
             $errorResponse = $throwable;
         }
@@ -154,7 +157,7 @@ trait IppanelCommon
                 'has_response' => true,
                 'response' => $response,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             // Return fail if api fails.
             Log::channel('medianaIppanelApi')->error('Api fail - Recheck sent sms recipients status. Exception message: ' . json_encode($e));
@@ -250,8 +253,8 @@ trait IppanelCommon
     public function sendPatternSmsByApi($to, $from, $patternCode, $patternData)
     {
         // Important: The recipient number must be generated as follows. Note that the Mediana ippanel document was mispronounced.
-        $to = "0" . baseTelNo($to);
-        $from = "+98" . baseTelNo($from);
+        $to = '0'. baseTelNo($to);
+        $from = '+98'. baseTelNo($from);
 
         try {
 
@@ -264,11 +267,11 @@ trait IppanelCommon
                 try {
                     $messageStatus = $this->getMessage($response);
                     $message = $messageStatus->message;
-                } catch (\Error $e) {
+                } catch (Error $e) {
                     //
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     //
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     //
                 }
                 return [
@@ -288,7 +291,7 @@ trait IppanelCommon
                 'message' => null,
             ];
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Return fail if api fails.
             Log::channel('medianaIppanelApi')->error('Api fail - Sending pattern sms. Exception message: ' . json_encode($e));
             return [

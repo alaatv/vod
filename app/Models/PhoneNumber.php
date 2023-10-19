@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PhoneNumber extends BaseModel
 {
-    use HasFactory, DateTrait;
+    use DateTrait;
+    use HasFactory;
 
     protected  $fillable = [
         'provider_id',

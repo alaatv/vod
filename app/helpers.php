@@ -2,14 +2,16 @@
 
 use App\Classes\Nullable;
 use App\Classes\Util\Boolean as UtilBoolean;
-use App\PhoneNumberProvider;
-use App\SmsProvider;
-use App\Websitesetting;
+use App\Models\PhoneNumberProvider;
+use App\Models\SmsProvider;
+use App\Models\Websitesetting;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -61,7 +63,7 @@ if (!function_exists('clearHtml')) {
 if (!function_exists('convertTagStringToArray')) {
     function convertTagStringToArray($tagString): array
     {
-        $tags = explode(",", $tagString);
+        $tags = explode(',', $tagString);
         $tags = array_filter($tags);
 
         return $tags;
@@ -74,7 +76,7 @@ if (!function_exists('convertArrayToTagString')) {
     {
         if(!is_array($array))
             return null;
-        return implode(",", json_decode(json_encode($array), true));
+        return implode(',', json_decode(json_encode($array), true));
     }
 
 }
@@ -155,12 +157,12 @@ if (!function_exists('pureHTML')) {
 if (!function_exists('generateSecurePathHash')) {
     function generateSecurePathHash($expires, $client_IP, $secret, $url)
     {
-        $str = $expires . $url . $client_IP . " " . $secret;
+        $str = $expires . $url . $client_IP .' '. $secret;
         $str = base64_encode(md5($str, true));
 
-        $str = str_replace("+", "-", $str);
-        $str = str_replace("/", "_", $str);
-        $str = str_replace("=", "", $str);
+        $str = str_replace('+', '-', $str);
+        $str = str_replace('/', '_', $str);
+        $str = str_replace('=', '', $str);
 
         return $str;
     }
@@ -191,7 +193,8 @@ if (!function_exists('urlAvailable')) {
             function () use ($gateways, $availableGateways) {
                 foreach ($gateways as $gateway) {
                     $url = $gateway->url;
-                    if (in_array($gateway->id, [\App\Transactiongateway::GATE_WAY_SAMAN_ALAA_ID, \App\Transactiongateway::GATE_WAY_SAMAN_SOALAA_ID])) {
+                    if (in_array($gateway->id,
+                        [Transactiongateway::GATE_WAY_SAMAN_ALAA_ID, Transactiongateway::GATE_WAY_SAMAN_SOALAA_ID])) {
                         $availableGateways[$gateway->name] = $gateway;
                         continue;
                     }
@@ -207,7 +210,7 @@ if (!function_exists('urlAvailable')) {
                         $rt   = curl_exec($ch);
                         $info = curl_getinfo($ch);
 
-                        if ($info["http_code"] >= 200 and $info["http_code"] < 400) {
+                        if ($info['http_code'] >= 200 and $info['http_code'] < 400) {
                             $availableGateways[$gateway->name] = $gateway;
                         }
                     } catch (Exception $e) {
@@ -410,7 +413,7 @@ if (!function_exists('url_exists')) {
     function url_exists($url)
     {
         $headers = get_headers($url);
-        return (bool)stripos($headers[0], "200 OK");
+        return (bool)stripos($headers[0], '200 OK');
     }
 }
 if (!function_exists('url_get_size')) {
@@ -481,7 +484,7 @@ if (!function_exists('countPDFPages')) {
             return null;
         }
         $pdftext = file_get_contents(urldecode($path));
-        $numOfPages = preg_match_all("/\/Page\W/", $pdftext, $dummy);
+        $numOfPages = preg_match_all('/\/Page\W/', $pdftext, $dummy);
         return $numOfPages;
     }
 }
@@ -493,10 +496,10 @@ if (!function_exists('determineSMSOperator')) {
             $operator = determineUserMobileOperator($mobile);
             return $operator?->provider?->number ??
                    SmsProvider::filter(['enable' => true, 'defaults' => true])->first()->number ??
-                   throw new Exception("Provider Not Defined");
+                   throw new Exception('Provider Not Defined');
         }catch (Exception $e)
         {
-            throw new Exception("Provider Not Defined");
+            throw new Exception('Provider Not Defined');
         }
     }
 }
@@ -665,7 +668,7 @@ if (!function_exists('secondsToHumanFormat')) {
         // The number of seconds of 1 day (24 Hours).
         $oneDaySeconds = 86400;
 
-        $result = gmdate("H:i:s", $seconds % $oneDaySeconds);
+        $result = gmdate('H:i:s', $seconds % $oneDaySeconds);
         $days = floor($seconds / $oneDaySeconds);
         if ($days >= 1 || $seconds == $oneDaySeconds) {
             $result = explode(':', $result);
@@ -709,7 +712,7 @@ if (!function_exists('nestedArraySearchValueByAnotherField')) {
     {
         $searchedArray = nestedArraySearchWithKey($array, $searchValue, $searchKey);
         if (!is_null($searchedArray)) {
-            return \Illuminate\Support\Arr::get($searchedArray, $returnFieldKey);
+            return Arr::get($searchedArray, $returnFieldKey);
         }
 
         return null;

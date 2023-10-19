@@ -2,17 +2,20 @@
 
 namespace App\Traits;
 
+use App\Jobs\LogSendBulkSms;
 use App\Libraries\Sha1Hasher;
-use http\Exception\InvalidArgumentException;
+use App\Models\SmsBlackList;
+use App\Models\SmsProvider;
 use App\Repositories\SmsBlackListRepository;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Exception;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use App\Jobs\LogSendBulkSms;
 use Illuminate\Support\Arr;
-use App\SmsBlackList;
-use App\SmsProvider;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use ReflectionClass;
+
 
 trait Helper
 {
@@ -81,7 +84,7 @@ trait Helper
         }
         if ($users) {
             $users->load('sms');
-            $sha1 = new Sha1Hasher;
+            $sha1 = new Sha1Hasher();
             foreach ($users as $user) {
                 $smsSentToUser = $user->sms
                     ->where('created_at', '<', now())
@@ -170,7 +173,7 @@ trait Helper
             return null;
         }
 
-        $className = (new \ReflectionClass($this))->getShortName();
+        $className = (new ReflectionClass($this))->getShortName();
         $className = strtolower($className);
         return route('web.admin.cacheclear' , ["$className" => 1 , 'id' => $this->id]);
     }
@@ -183,7 +186,7 @@ trait Helper
         }
         if ($response === -1){
             return response()->json([
-                'message' => "طی ".config('constants.MINIMUM_SMS_SENDING_INTERVAL')." روز اخیر به کاربران انتخاب شده پیامی با این مظمون فرستاده شده",
+                'message' => 'طی '.config('constants.MINIMUM_SMS_SENDING_INTERVAL').' روز اخیر به کاربران انتخاب شده پیامی با این مظمون فرستاده شده',
             ], Response::HTTP_SERVICE_UNAVAILABLE);
         }
         $smsCredit = $this->medianaGetCredit();
@@ -255,7 +258,7 @@ trait Helper
             $response = $this->sendMessage($from, $recipients, $message);
             return $this->machineReadableResponse($recipients, $message, $from, $response, true, false);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             Log::channel('medianaIppanelApi')->error('Api fail - Sending bulk sms. Exception message: ' . json_encode($e));
             return $this->machineReadableResponse($recipients, $message, $from, $e, false, true);
