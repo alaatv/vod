@@ -3,11 +3,9 @@
 
 namespace App\Repositories\Loging;
 
-
 use App\Models\Activity;
 use App\Models\Coupon;
 use App\Models\Order;
-use App\Models\ReferralRequest;
 use App\Models\ReferralRequest;
 use App\Models\Report;
 use App\Models\User;
