@@ -2,19 +2,18 @@
 
 
 namespace App\Repositories\Loging;
+
+
 use App\Models\Activity;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ReferralRequest;
+use App\Models\ReferralRequest;
 use App\Models\Report;
 use App\Models\User;
 use App\Repositories\AlaaRepo;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Collection;
 
-class ActivityLogRepo extends AlaaRepo implements \Spatie\Activitylog\Contracts\Activity
+class ActivityLogRepo extends AlaaRepo
 {
     use LogBlock;
 
@@ -200,43 +199,4 @@ class ActivityLogRepo extends AlaaRepo implements \Spatie\Activitylog\Contracts\
             ->log(config('activitylog.description.create'));
     }
 
-    public function subject(): MorphTo
-    {
-        // TODO: Implement subject() method.
-    }
-
-    public function causer(): MorphTo
-    {
-        // TODO: Implement causer() method.
-    }
-
-    public function getExtraProperty(string $propertyName, mixed $defaultValue): mixed
-    {
-        // TODO: Implement getExtraProperty() method.
-    }
-
-    public function changes(): Collection
-    {
-        // TODO: Implement changes() method.
-    }
-
-    public function scopeInLog(Builder $query, ...$logNames): Builder
-    {
-        // TODO: Implement scopeInLog() method.
-    }
-
-    public function scopeCausedBy(Builder $query, Model $causer): Builder
-    {
-        // TODO: Implement scopeCausedBy() method.
-    }
-
-    public function scopeForEvent(Builder $query, string $event): Builder
-    {
-        // TODO: Implement scopeForEvent() method.
-    }
-
-    public function scopeForSubject(Builder $query, Model $subject): Builder
-    {
-        // TODO: Implement scopeForSubject() method.
-    }
 }
