@@ -2,9 +2,10 @@
 
 namespace App\PaymentModule\Controllers;
 
+
 use App\Classes\Payment\RefinementRequest\RefinementLauncher;
 use App\Events\UserRedirectedToPayment;
-use App\Http\Controllers\Web\TransactionController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Http\Requests\RedirectToPaymentRequest;
 use App\Jobs\CheckCouponOfUnpaidOrder;
 use App\Jobs\CheckSubscriptionOrderproductOfUnpaidOrder;
@@ -26,9 +27,9 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
-use View;
 
 class RedirectUserToPaymentPage extends Controller
 {
@@ -40,7 +41,7 @@ class RedirectUserToPaymentPage extends Controller
      *
      * @param  RedirectToPaymentRequest  $request
      *
-     * @return Application|Factory|JsonResponse|\Illuminate\View\View
+     * @return Application|Factory|JsonResponse|View
      */
     public function __invoke(string $paymentMethod, string $device, RedirectToPaymentRequest $request)
     {
@@ -137,9 +138,6 @@ class RedirectUserToPaymentPage extends Controller
                     }
                 }
             );
-
-            View::share('paymentDriver', $paymentMethod);
-            View::share('gatewayIcon', $gateway->icon_url);
 
             event(new UserRedirectedToPayment($user));
             return $providing->pay()->render();

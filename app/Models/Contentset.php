@@ -11,7 +11,6 @@ use App\Classes\Uploader\Uploader;
 use App\Collection\ContentCollection;
 use App\Collection\ProductCollection;
 use App\Collection\SetCollection;
-use App\Http\Controllers\Web\SetController;
 use App\Repositories\VastRepo;
 use App\Services\ForrestService;
 use App\Traits\CommentTrait;

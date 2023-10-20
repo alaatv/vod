@@ -2,7 +2,6 @@
 
 namespace App\PaymentModule\Wallet\Models;
 
-use App\Http\Controllers\Web\WalletController;
 use App\Models\Wallet;
 use App\PaymentModule\Wallet\WalletRepo;
 
@@ -197,11 +196,6 @@ trait HasWallet
         return $this->respond(true, 'SUCCESSFUL', $wallet);
     }
 
-    /**
-     * @param $walletType
-     *
-     * @return WalletController|void
-     */
     private function storeWallet($walletType)
     {
         return WalletRepo::insertNewRow([

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Web\TransactionController;
 use App\Http\Requests\InsertZarinpalTransaction;
 use App\Models\Order;
 use App\Models\Transaction;

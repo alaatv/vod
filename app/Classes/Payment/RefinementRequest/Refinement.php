@@ -8,7 +8,8 @@
 
 namespace App\Classes\Payment\RefinementRequest;
 
-use App\Http\Controllers\Web\TransactionController;
+
+use App\Http\Controllers\Api\TransactionController;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Transaction;
@@ -135,7 +136,7 @@ abstract class Refinement
     /**
      * @return Refinement
      */
-    public abstract function loadData(): Refinement;
+    abstract public function loadData(): Refinement;
 
     /**
      * @return array

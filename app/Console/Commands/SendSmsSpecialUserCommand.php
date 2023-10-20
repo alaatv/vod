@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Web\HomeController;
+
 use App\Models\User;
 use App\Traits\APIRequestCommon;
 use App\Traits\CharacterCommon;

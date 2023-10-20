@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 //use App\Classes\Search\Tag\ProductTagManagerViaApi;
 use App\Classes\Search\Tag\ProductTagManagerViaApi;
-use App\Http\Controllers\Web\ProductController;
 use App\Models\Orderproduct;
 use App\Models\Product;
 use App\Traits\APIRequestCommon;

@@ -11,7 +11,6 @@ use App\Collection\OrderproductCollection;
 use App\Events\SendOrderNotificationsEvent;
 use App\Events\UserPurchaseCompleted;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Web\OrderproductController;
 use App\Http\Requests\CreateFreeOrderFor3aRequest;
 use App\Http\Requests\DonateRequest;
 use App\Http\Requests\order\InsertFreeOrderRequest;
