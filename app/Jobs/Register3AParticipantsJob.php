@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\_3aExam;
-use App\Models\_3aExam;
 use App\Traits\APIRequestCommon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

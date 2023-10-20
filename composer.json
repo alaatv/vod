@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2    ",
+        "ext-curl": "*",
+        "ext-simplexml": "*",
         "algolia/algoliasearch-client-php": "*",
         "artesaos/seotools": "*",
         "cloned/luckybox": "*",
@@ -16,6 +18,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "hekmatinasser/notowo": "*",
         "ippanel/php-rest-sdk": "^2.0",
+        "jenssegers/agent": "^2.6",
         "laravel/framework": "^10.10",
         "laravel/horizon": "*",
         "laravel/octane": "*",
@@ -30,9 +33,7 @@
         "stevebauman/purify": "*",
         "symfony/http-client": "*",
         "symfony/postmark-mailer": "*",
-        "watson/sitemap": "*",
-        "ext-curl": "*",
-        "ext-simplexml": "*"
+        "watson/sitemap": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "*",

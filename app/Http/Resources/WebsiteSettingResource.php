@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Websitesetting;
-use App\Models\Websitesetting;
 use Illuminate\Http\Request;
 
 class WebsiteSettingResource extends AlaaJsonResource

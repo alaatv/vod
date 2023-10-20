@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Newsletter;
-use App\Models\Newsletter;
 use Illuminate\Support\Arr;
 
 class NewsletterRepo extends AlaaRepo

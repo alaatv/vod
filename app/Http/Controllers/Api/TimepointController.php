@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContentTimePointWeb;
 use App\Models\Timepoint;
-use App\Models\Timepoint;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\Conductor;
-use App\Models\Conductor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;

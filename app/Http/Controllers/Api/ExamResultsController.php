@@ -12,7 +12,6 @@ use App\Http\Resources\BonyadEhsan\Exam\UserRankResource;
 use App\Http\Resources\UserForBonyadEhsan;
 use App\Jobs\BonyadEhsanExcelExportJob;
 use App\Models\BonyadEhsanExcelExport;
-use App\Models\BonyadEhsanExcelExport;
 use App\Models\User;
 use App\Repositories\ExamRepository;
 use App\Services\BonyadService;

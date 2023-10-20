@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\TicketAction;
-use App\Models\TicketAction;
 use App\Models\TicketMessage;
 use App\Models\User;
 use App\Repositories\TicketActionLogRepo;

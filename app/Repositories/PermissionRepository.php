@@ -2,10 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Permission;
 use App\Models\PermissionRole;
-use App\Models\PermissionRole;
-use App\Models\PermissionUser;
 use App\Models\PermissionUser;
 
 class PermissionRepository extends AlaaRepo

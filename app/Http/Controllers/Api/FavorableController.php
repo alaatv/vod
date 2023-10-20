@@ -9,8 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MarkFavorableFavoriteRequest;
 use App\Models\Content;
 use App\Models\FavorableList;
-use App\Models\FavorableList;
-use App\Models\Timepoint;
 use App\Models\Timepoint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

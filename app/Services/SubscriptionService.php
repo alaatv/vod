@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Subscription;
-use App\Models\Subscription;
 use App\Repositories\SubscriptionRepo;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

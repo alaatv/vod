@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\_3aExam;
-use App\Models\_3aExam;
 use App\Models\User;
 use App\Repositories\OrderproductRepo;
 use App\Repositories\OrderRepo;

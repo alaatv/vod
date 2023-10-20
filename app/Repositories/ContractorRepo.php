@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Contractor;
-use App\Models\Contractor;
 
 class ContractorRepo extends AlaaRepo
 {

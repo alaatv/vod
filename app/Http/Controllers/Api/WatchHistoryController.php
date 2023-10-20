@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreWatchHistoryRequest;
 use App\Http\Resources\WatchHistoryResource;
 use App\Models\WatchHistory;
-use App\Models\WatchHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,7 +16,7 @@ class WatchHistoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreWatchHistoryRequest|WatchHistory  $request
+     * @param  StoreWatchHistoryRequest  $request
      * @return JsonResponse
      */
     public function store(StoreWatchHistoryRequest $request)

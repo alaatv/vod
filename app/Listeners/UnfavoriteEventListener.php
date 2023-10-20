@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\UnfavoriteEvent;
 use App\Models\Content;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
 

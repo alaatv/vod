@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\LiveDescription;
-use App\Models\LiveDescription;
 
 
 class LiveDescriptionResource extends AlaaJsonResource

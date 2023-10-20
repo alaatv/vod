@@ -4,7 +4,6 @@ namespace App\Classes;
 
 use App\Models\Order;
 use App\Models\ReferralCode;
-use App\Models\ReferralCode;
 
 class ReferralCodeSubmitter
 {

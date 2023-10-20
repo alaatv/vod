@@ -4,7 +4,6 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\AlaaJsonResource;
 use App\Models\Device;
-use App\Models\Device;
 use Illuminate\Http\Request;
 
 

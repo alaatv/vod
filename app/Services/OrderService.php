@@ -5,8 +5,6 @@ namespace App\Services;
 use App\Classes\ReferralCodeSubmitter;
 use App\Models\Product;
 use App\Models\ReferralCode;
-use App\Models\ReferralCode;
-use App\Models\ReferralRequest;
 use App\Models\ReferralRequest;
 use App\Repositories\OrderRepo;
 use Illuminate\Support\Facades\DB;

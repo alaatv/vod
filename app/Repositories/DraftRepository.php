@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Draft;
-use App\Models\Draft;
 
 class DraftRepository
 {

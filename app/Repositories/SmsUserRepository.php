@@ -4,7 +4,6 @@
 namespace App\Repositories;
 
 use App\Models\SmsUser;
-use App\Models\SmsUser;
 use Illuminate\Support\Arr;
 
 class SmsUserRepository extends AlaaRepo

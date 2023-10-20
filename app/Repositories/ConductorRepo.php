@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Conductor;
-use App\Models\Conductor;
 use Illuminate\Database\Eloquent\Builder;
 
 class ConductorRepo

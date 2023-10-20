@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\TicketActionLog;
-use App\Models\TicketActionLog;
 
 class TicketActionLogRepo
 {

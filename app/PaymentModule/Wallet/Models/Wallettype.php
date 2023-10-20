@@ -3,8 +3,6 @@
 namespace App\PaymentModule\Wallet\Models;
 
 use App\Models\BaseModel;
-use App\Models\BaseModel;
-use Barryvdh\LaravelIdeHelper\Eloquent;
 use Barryvdh\LaravelIdeHelper\Eloquent;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;

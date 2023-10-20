@@ -5,8 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Dayofweek;
-use App\Models\Dayofweek;
-use App\Models\Live;
 use App\Models\Live;
 use Illuminate\Database\Eloquent\Builder;
 

@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Classes\Uploader\Uploader;
 use App\Exports\BonyadUsersExport;
 use App\Models\BonyadEhsanExcelExport;
-use App\Models\BonyadEhsanExcelExport;
 use App\Models\User;
 use App\Services\BonyadService;
 use Exception;

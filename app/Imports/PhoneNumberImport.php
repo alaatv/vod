@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\PhoneBook;
-use App\Models\PhoneBook;
 use App\Models\PhoneNumber;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;

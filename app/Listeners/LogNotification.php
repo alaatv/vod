@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\ResendUnsuccessfulMessageEvent;
 use App\Events\UnsuccessfulMessageNotifyEvent;
 use App\Models\SmsResult;
-use App\Models\SmsResult;
 use App\Traits\APIRequestCommon;
 use App\Traits\Helper;
 use Illuminate\Notifications\Events\NotificationSent;

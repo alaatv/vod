@@ -5,8 +5,6 @@ namespace App\Jobs;
 use App\Events\ChangeDanaStatus;
 use App\Models\Content;
 use App\Models\DanaContentTransfer;
-use App\Models\DanaContentTransfer;
-use App\Models\DanaSetTransfer;
 use App\Models\DanaSetTransfer;
 use App\Services\DanaProductService;
 use App\Services\DanaService;

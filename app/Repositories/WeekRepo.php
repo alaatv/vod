@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Dayofweek;
-use App\Models\Dayofweek;
 use Illuminate\Database\Eloquent\Builder;
 
 class WeekRepo

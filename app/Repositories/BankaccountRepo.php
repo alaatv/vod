@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Bankaccount;
-use App\Models\Bankaccount;
 use Illuminate\Database\Eloquent\Builder;
 
 class BankaccountRepo

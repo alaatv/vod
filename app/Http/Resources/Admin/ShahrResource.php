@@ -5,7 +5,6 @@ namespace App\Http\Resources\Admin;
 
 use App\Http\Resources\AlaaJsonResource;
 use App\Models\Shahr;
-use App\Models\Shahr;
 use Illuminate\Http\Request;
 
 

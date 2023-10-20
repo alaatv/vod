@@ -7,8 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EntekhabReshteRequest;
 use App\Http\Resources\EntekhabReshteResource;
 use App\Models\Consultant;
-use App\Models\Consultant;
-use App\Models\EntekhabReshte;
 use App\Models\EntekhabReshte;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;

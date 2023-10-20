@@ -3,10 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\SMS;
-use App\Models\SMS;
 use App\Models\SmsDetail;
-use App\Models\SmsDetail;
-use App\Models\SmsResult;
 use App\Models\SmsResult;
 use App\Traits\APIRequestCommon;
 use App\Traits\IppanelCommon;

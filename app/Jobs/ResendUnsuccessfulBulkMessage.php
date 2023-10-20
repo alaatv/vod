@@ -3,8 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\SMS;
-use App\Models\SMS;
-use App\Models\SmsProvider;
 use App\Models\SmsProvider;
 use App\Models\User;
 use App\Traits\APIRequestCommon;

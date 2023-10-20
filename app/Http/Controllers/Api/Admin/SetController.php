@@ -11,7 +11,6 @@ use App\Http\Resources\ContentInSet;
 use App\Http\Resources\ResourceCollection;
 use App\Models\Content;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use App\Services\ContentSetService;
 use App\Traits\SetCommon;
 use Illuminate\Http\JsonResponse;

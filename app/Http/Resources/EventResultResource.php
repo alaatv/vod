@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Http\Resources\Admin\UserLightResource;
 use App\Models\Eventresult;
-use App\Models\Eventresult;
+
 
 class EventResultResource extends AlaaJsonResource
 {

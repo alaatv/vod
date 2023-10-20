@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\EntekhabReshte;
-use App\Models\EntekhabReshte;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use JsonSerializable;

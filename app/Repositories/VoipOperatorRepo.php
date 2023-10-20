@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\VoipOperator;
-use App\Models\VoipOperator;
 
 class VoipOperatorRepo
 {

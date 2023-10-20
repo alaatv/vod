@@ -8,7 +8,6 @@ use App\Http\Requests\SettingFileRequest;
 use App\Http\Requests\SettingRequest;
 use App\Http\Resources\SettingResource;
 use App\Models\Setting;
-use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

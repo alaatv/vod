@@ -3,12 +3,8 @@
 namespace App\Services;
 
 use App\Models\DanaAuthor;
-use App\Models\DanaAuthor;
-use App\Models\DanaProductContentTransfer;
 use App\Models\DanaProductContentTransfer;
 use App\Models\DanaProductSetTransfer;
-use App\Models\DanaProductSetTransfer;
-use App\Models\DanaProductTransfer;
 use App\Models\DanaProductTransfer;
 use App\Models\Product;
 use Exception;

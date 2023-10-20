@@ -11,8 +11,6 @@ use App\Models\Grade;
 use App\Models\Major;
 use App\Models\Product;
 use App\Models\StudyEventMethod;
-use App\Models\StudyEventMethod;
-use App\Models\StudyEventReport;
 use App\Models\StudyEventReport;
 use Illuminate\Http\JsonResponse;
 

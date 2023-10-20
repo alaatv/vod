@@ -8,7 +8,6 @@ use App\Models\User;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Arr;
 use function Sentry\captureException;
 
 class EwanoService

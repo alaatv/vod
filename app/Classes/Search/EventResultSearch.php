@@ -3,7 +3,6 @@
 namespace App\Classes\Search;
 
 use App\Models\Eventresult;
-use App\Models\Eventresult;
 use Illuminate\{Contracts\Pagination\LengthAwarePaginator, Database\Eloquent\Builder, Support\Facades\Cache};
 
 class EventResultSearch extends SearchAbstract

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\SMS;
-use App\Models\SMS;
 use Illuminate\Support\Arr;
 
 class SMSRepository extends AlaaRepo

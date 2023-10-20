@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ContentInComeCalculateRequest;
 use App\Http\Requests\Admin\ContentInComeRequest;
 use App\Models\ContentIncome;
-use App\Models\ContentIncome;
 use Carbon\Carbon;
 
 class ContentInComeController extends Controller

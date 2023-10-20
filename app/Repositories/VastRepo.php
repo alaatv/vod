@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Vast;
-use App\Models\Vast;
 use Illuminate\Database\Eloquent\Builder;
 
 class VastRepo extends AlaaRepo

@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LiveDescriptionRequest;
 use App\Http\Resources\LiveDescriptionResource;
 use App\Models\LiveDescription;
-use App\Models\LiveDescription;
 use App\Models\Product;
 use App\Repositories\LiveDescriptionRepo;
 use Exception;

@@ -6,9 +6,7 @@ namespace App\Classes\Lottery;
 
 use App\Models\Lottery;
 use App\Models\LotteryStatus;
-use App\Models\LotteryStatus;
 use App\Notifications\HoldingLotteryErrorNotification;
-use App\Notifications\ScoringLotteryErrorNotification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\newsletter\CreateNewsletterRequest;
 use App\Models\Newsletter;
-use App\Models\Newsletter;
 use App\Notifications\KonkurishoNotification;
 use App\Repositories\NewsletterRepo;
 use Illuminate\Http\Response;

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\SmsBlackList;
-use App\Models\SmsBlackList;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;

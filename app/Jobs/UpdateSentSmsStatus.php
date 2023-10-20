@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\UpdateSentSmsStatusEvent;
 use App\Models\SMS;
-use App\Models\SMS;
 use App\Traits\IppanelCommon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

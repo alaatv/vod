@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\SMS;
-use App\Models\SMS;
 use App\Traits\APIRequestCommon;
 use App\Traits\IppanelCommon;
 use Illuminate\Bus\Queueable;

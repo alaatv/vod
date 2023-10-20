@@ -3,7 +3,6 @@
 namespace App\Classes\Search;
 
 use App\Models\SmsUser;
-use App\Models\SmsUser;
 use Illuminate\Database\Eloquent\{Builder};
 use Illuminate\Support\Facades\{Cache};
 

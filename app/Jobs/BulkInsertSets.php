@@ -3,14 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\BatchContentInsert;
-use App\Models\BatchContentInsert;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Artisan;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class BulkInsertSets implements ShouldQueue
 {

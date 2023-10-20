@@ -7,7 +7,6 @@ use App\Repositories\UserRepo;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\DB;
 
 class BonyadService
 {

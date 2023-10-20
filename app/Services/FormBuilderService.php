@@ -9,10 +9,7 @@ use App\Http\Resources\RegionResource;
 use App\Http\Resources\StudyEventResource;
 use App\Http\Resources\UniversityTypeResource;
 use App\Models\Region;
-use App\Models\Region;
 use App\Models\Studyevent;
-use App\Models\Studyevent;
-use App\Models\UniversityType;
 use App\Models\UniversityType;
 use Illuminate\Support\Collection;
 

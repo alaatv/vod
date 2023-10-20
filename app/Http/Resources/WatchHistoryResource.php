@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\WatchHistory;
-use App\Models\WatchHistory;
 use App\Traits\MorphTrait;
 use Illuminate\Http\Request;
 

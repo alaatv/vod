@@ -4,8 +4,6 @@
 namespace App\Repositories;
 
 use App\Models\ReferralCode;
-use App\Models\ReferralCode;
-use App\Models\ReferralCodeUser;
 use App\Models\ReferralCodeUser;
 
 class NetworkMarketingRepo

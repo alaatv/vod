@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\ContentIncome;
-use App\Models\ContentIncome;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\Transactiongateway;

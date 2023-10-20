@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReferralCode;
-use App\Models\ReferralCode;
-use App\Models\SalesManProfile;
 use App\Models\SalesManProfile;
 use App\Services\WalletService;
 use Illuminate\Http\JsonResponse;

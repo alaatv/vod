@@ -4,7 +4,6 @@
 namespace App\Classes\Updater;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\DB;
 
 class TextBuilderUpdater
 {

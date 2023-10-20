@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\BonyadEhsanConsultant;
-use App\Models\BonyadEhsanConsultant;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;

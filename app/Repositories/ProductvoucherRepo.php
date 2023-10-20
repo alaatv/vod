@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\Productvoucher;
-use App\Models\Productvoucher;
 use Carbon\Carbon;
 
 class ProductvoucherRepo extends AlaaRepo

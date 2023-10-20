@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Region;
-use App\Models\Region;
 
 
 class RegionResource extends AlaaJsonResource

@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Broadcasting\MedianaPatternChannel;
 use App\Classes\sms\MedianaMessage;
 use App\Models\ReferralRequest;
-use App\Models\ReferralRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;

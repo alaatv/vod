@@ -14,17 +14,15 @@ use App\Http\Resources\SetWithoutPaginationV2;
 use App\Http\Resources\StudyEventResource;
 use App\Http\Resources\StudyPlan;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use App\Models\Plan;
 use App\Models\Product;
-use App\Models\Studyevent;
 use App\Models\Studyevent;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class StudyEventController extends Controller
 {

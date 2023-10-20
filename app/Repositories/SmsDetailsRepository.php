@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\SmsDetail;
-use App\Models\SmsDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 

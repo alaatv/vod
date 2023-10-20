@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InsertStudyEventNewsRequest;
 use App\Models\StudyEventNews;
-use App\Models\StudyEventNews;
 use Illuminate\Http\Response;
 
 class StudyEventNewsController extends Controller

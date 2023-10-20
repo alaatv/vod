@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 
 use App\Models\Setting;
-use App\Models\Setting;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use JsonSerializable;

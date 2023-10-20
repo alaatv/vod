@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use App\Collection\ContentCollection;
 use App\Models\Content;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use App\Models\Section;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

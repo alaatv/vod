@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Eventresultstatus;
-use App\Models\Eventresultstatus;
 
 
 class EventResultStatusResource extends AlaaJsonResource

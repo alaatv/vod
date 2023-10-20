@@ -10,7 +10,6 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\School;
 use App\Models\Shahr;
-use App\Models\Shahr;
 use App\Models\Ticket;
 use App\Models\TicketDepartment;
 use App\Models\TicketStatus;

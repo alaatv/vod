@@ -5,7 +5,6 @@ namespace App\Classes\Search;
 use App\Classes\Search\Filters\Tags;
 use App\Classes\Search\Tag\LiveDescriptionTagManagerViaApi;
 use App\Models\LiveDescription;
-use App\Models\LiveDescription;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 

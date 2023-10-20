@@ -28,7 +28,6 @@ use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Soalaa\SoalaaResource;
 use App\Jobs\UpdateDanaSessionOrder;
 use App\Models\Conductor;
-use App\Models\Conductor;
 use App\Models\Content;
 use App\Models\Major;
 use App\Models\Product;
@@ -49,7 +48,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {

@@ -6,7 +6,6 @@ namespace App\Classes;
 
 use App\Models\Ticket;
 use App\Models\TicketAction;
-use App\Models\TicketAction;
 use App\Models\User;
 use App\Repositories\TicketActionLogRepo;
 use Exception;

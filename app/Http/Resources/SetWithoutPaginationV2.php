@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Content;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;

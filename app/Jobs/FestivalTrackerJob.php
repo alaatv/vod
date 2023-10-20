@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\TempFestivalVisits;
-use App\Models\TempFestivalVisits;
 use App\Repositories\FestivalVisotorRepo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

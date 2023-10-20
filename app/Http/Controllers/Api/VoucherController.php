@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\HekmatVoucher as VerifyVoucherResource;
 use App\Models\Coupon;
 use App\Models\Productvoucher;
-use App\Models\Productvoucher;
 use App\Models\User;
 use App\Repositories\OrderproductRepo;
 use App\Repositories\OrderRepo;

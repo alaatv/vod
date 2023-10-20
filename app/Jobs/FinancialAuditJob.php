@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Classes\NumberToString;
 use App\Models\FinancialCategory;
-use App\Models\FinancialCategory;
 use App\Models\Report;
 use App\Models\Transactiongateway;
 use App\Models\User;

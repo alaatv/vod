@@ -10,7 +10,6 @@ namespace App\Classes\Search;
 
 use App\Classes\Search\{Filters\Tags, Tag\ContentsetTagManagerViaApi};
 use App\Models\Contentset;
-use App\Models\Contentset;
 use Illuminate\Database\Eloquent\{Builder};
 use Illuminate\Support\Facades\{Cache};
 

@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Shahr;
-use App\Models\Shahr;
 use Illuminate\Http\Request;
 
 

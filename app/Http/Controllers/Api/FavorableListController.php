@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FavorableListRequest;
 use App\Http\Resources\FavorableListResource;
 use App\Models\FavorableList;
-use App\Models\FavorableList;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 

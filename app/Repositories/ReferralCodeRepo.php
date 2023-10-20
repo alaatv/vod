@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\ReferralCode;
-use App\Models\ReferralCode;
 use App\Models\User;
 use Illuminate\Support\Str;
 

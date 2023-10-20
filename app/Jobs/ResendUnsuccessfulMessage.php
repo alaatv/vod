@@ -4,10 +4,7 @@ namespace App\Jobs;
 
 use App\Events\UnsuccessfulMessageNotifyEvent;
 use App\Models\SMS;
-use App\Models\SMS;
 use App\Models\SmsProvider;
-use App\Models\SmsProvider;
-use App\Models\SmsResult;
 use App\Models\SmsResult;
 use App\Traits\APIRequestCommon;
 use App\Traits\IppanelCommon;

@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\LogSendBulkSmsEvent;
 use App\Models\SmsResult;
-use App\Models\SmsResult;
 use App\Traits\APIRequestCommon;
 use App\Traits\Helper;
 

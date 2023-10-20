@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\EmployeeScheduleResource;
 use App\Http\Resources\ResourceCollection;
 use App\Models\Dayofweek;
-use App\Models\Dayofweek;
 use App\Models\Employeeschedule;
-use App\Models\Employeeschedule;
-use App\Models\Employeetimesheet;
 use App\Models\Employeetimesheet;
 use App\Models\User;
 use App\Traits\DateTrait;
@@ -19,8 +16,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Validator;
 
 /**
  * Class EmployeeScheduleController.

@@ -4,10 +4,7 @@ namespace App\Jobs;
 
 use App\Events\ChangeDanaStatus;
 use App\Models\DanaProductContentTransfer;
-use App\Models\DanaProductContentTransfer;
 use App\Models\DanaProductSetTransfer;
-use App\Models\DanaProductSetTransfer;
-use App\Models\DanaProductTransfer;
 use App\Models\DanaProductTransfer;
 use App\Services\DanaProductService;
 use Exception;

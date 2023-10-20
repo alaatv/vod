@@ -6,7 +6,6 @@ use App\Events\GetLiveConductor;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LiveConductorResource;
 use App\Models\Conductor;
-use App\Models\Conductor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

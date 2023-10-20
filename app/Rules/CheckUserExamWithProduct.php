@@ -3,7 +3,6 @@
 namespace App\Rules;
 
 use App\Models\Exam;
-use App\Models\Exam;
 use Illuminate\Contracts\Validation\Rule;
 
 class CheckUserExamWithProduct implements Rule

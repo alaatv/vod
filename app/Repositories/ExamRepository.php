@@ -5,8 +5,6 @@ namespace App\Repositories;
 
 
 use App\Models\_3a_exam_result;
-use App\Models\_3a_exam_result;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\DB;
 
 class ExamRepository extends AlaaRepo

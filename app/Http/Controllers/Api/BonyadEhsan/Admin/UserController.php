@@ -16,8 +16,6 @@ use App\Http\Requests\BonyadEhsan\Admin\EditUserRequest;
 use App\Http\Requests\BonyadEhsan\Admin\studentLimitRequest;
 use App\Http\Resources\UserForBonyadEhsan;
 use App\Models\BonyadEhsanConsultant;
-use App\Models\BonyadEhsanConsultant;
-use App\Models\Contact;
 use App\Models\Contact;
 use App\Models\Orderproduct;
 use App\Models\Phone;
@@ -29,7 +27,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 

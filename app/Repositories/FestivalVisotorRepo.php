@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\TempFestivalVisits;
-use App\Models\TempFestivalVisits;
 
 class FestivalVisotorRepo
 {

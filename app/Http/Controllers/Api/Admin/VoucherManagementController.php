@@ -9,11 +9,9 @@ use App\Http\Requests\StoreVoucherRequest;
 use App\Http\Requests\UpdateVoucherRequest;
 use App\Http\Resources\Admin\ProductvoucherResource;
 use App\Models\Productvoucher;
-use App\Models\Productvoucher;
 use App\Repositories\ProductvoucherRepo;
 use App\Traits\DateTrait;
 use Illuminate\Http\Response;
-use Validator;
 
 
 class VoucherManagementController extends Controller

@@ -6,7 +6,7 @@ use App\Traits\CharacterCommon;
 use App\Traits\UserCommon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Auth;
+
 
 class InsertUserRequest extends FormRequest
 {

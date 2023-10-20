@@ -9,7 +9,6 @@ use App\Http\Resources\SetInIndex;
 use App\Http\Resources\SetWithContents;
 use App\Http\Resources\SetWithoutPaginationV2;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use Illuminate\Http\Request;
 
 class SetController extends Controller

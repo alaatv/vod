@@ -3,7 +3,6 @@
 namespace App\Classes\Search;
 
 use App\Models\Shahr;
-use App\Models\Shahr;
 use Illuminate\Database\Eloquent\{Builder};
 use Illuminate\Support\Facades\{Cache};
 

@@ -3,9 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\LiveDescription;
-use App\Models\LiveDescription;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\DB;
 
 class LiveDescriptionRepo

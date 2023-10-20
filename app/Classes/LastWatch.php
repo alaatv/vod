@@ -4,10 +4,8 @@ namespace App\Classes;
 
 use App\Models\Content;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\WatchHistory;
 use App\Models\WatchHistory;
 
 class LastWatch
