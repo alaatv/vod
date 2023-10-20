@@ -21,6 +21,6 @@ class lernitoTotalTree extends GetTree
 
     public function getLastUpdatedByLernito(): array
     {
-
+        return [];
     }
 }

@@ -81,6 +81,7 @@ class Productfile extends BaseModel
             ->get()
             ->first()->cloudFile;
         //TODO: verify "$productFileLink = "http://".env("SFTP_HOST" , "").":8090/". $cloudFile;"
+        //TODO:// check
         $productFileLink = Productfile.phpconfig('constants.DOWNLOAD_SERVER_PROTOCOL',
                 'https://').config('constants.PAID_SERVER_NAME').$cloudFile;
         $unixTime = Carbon::today()

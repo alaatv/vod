@@ -34,7 +34,7 @@ class EditUserRequest extends FormRequest
         $rolesKey = collect(array_keys($roles));
         $authUserRoles = $authUser->roles()->pluck('name');
         $userRole = $rolesKey->intersect($authUserRoles)->first();
-        if (is_null($userRole) or !UserRepo::userAccess($authUser->id, (int) $this->userId, $roles[$userRole])) {
+        if (is_null($userRole) or !UserRepo::userAccess($authUser->id, (int) $this->userId, $roles[''.$userRole])) {
             return false;
         }
 

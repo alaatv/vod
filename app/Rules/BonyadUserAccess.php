@@ -39,7 +39,9 @@ class BonyadUserAccess implements Rule
         if (is_null($userRole)) {
             return false;
         }
-        return UserRepo::userAccess($authUser->id, $value, $roles[$userRole]);
+        //ToDO:// check roles input
+        $strRole = ''.$userRole;
+        return UserRepo::userAccess($authUser->id, $value, $roles[$strRole]);
     }
 
     /**
