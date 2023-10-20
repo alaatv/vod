@@ -28,8 +28,7 @@ use App\Traits\User\{BonTrait,
     TaggableUserTrait,
     TeacherTrait,
     TrackTrait,
-    VouchersTrait
-};
+    VouchersTrait};
 use App\Traits\Yalda1400;
 use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
@@ -40,18 +39,15 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Notifications\DatabaseNotification;
-use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Passport\Client;
 use Laravel\Passport\HasApiTokens;
+
 class User extends BaseModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, Taggable, MustVerifyMobileNumber, MustVerifyEmail
 {
 
@@ -90,16 +86,18 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     use MinioPhotoHandler;
 
     public const PHOTO_FIELD = 'photo';
-
-    public string $disk;
+    const UPDATE_USER_PROVINCE_CITY_INDEX_PAGE_NAME = 'userProfileUpdateProvinceCityPage';
 
     /*
     |--------------------------------------------------------------------------
     | Properties
     |--------------------------------------------------------------------------
     */
-
-    const UPDATE_USER_PROVINCE_CITY_INDEX_PAGE_NAME = 'userProfileUpdateProvinceCityPage';
+    const INDEX_PAGE_NAME = 'userPage';
+    private const BE_PROTECTED = [
+        'roles',
+    ];
+    public string $disk;
     protected $appends = [
         'info',
         'full_name',
@@ -115,8 +113,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'fatherMobile',
         'motherMobile',
     ];
-
-
     protected $cascadeDeletes = [
         'orders',
         'userbons',
@@ -127,6 +123,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         //        'favorables',
     ];
 
+    //columns being used for locking user's profile
     /**      * The attributes that should be mutated to dates.        */
     protected $dates = [
         'created_at',
@@ -135,7 +132,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'birthdate',
         'email_verified_at',
     ];
-
     protected $lockProfileColumns = [
         'shahr_id',
         'address',
@@ -145,8 +141,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'major_id',
         'email',
     ];
-
-    //columns being used for locking user's profile
     protected $completeInfoColumns = [
         'photo',
         'shahr_id',
@@ -162,14 +156,12 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'medicalCondition',
         'diet',
     ];
-
     protected $medicalInfoColumns = [
         'bloodtype_id',
         'allergy',
         'medicalCondition',
         'diet',
     ];
-
     /**
      * The attributes that are mass assignable.
      *
@@ -212,7 +204,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'kartemeli',
         'inserted_by',
     ];
-
     protected $fillableByPublic = [
         'address',
         'postalCode',
@@ -233,7 +224,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'diet',
         'shahr_id',
     ];
-
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -258,11 +248,9 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'wallets',
         'userbons',
     ];
-
-    const INDEX_PAGE_NAME = 'userPage';
-
-    private const BE_PROTECTED = [
-        'roles',
+    protected $hasHalfPriceService_cache;
+    protected $cachedMethods = [
+        'getHasHalfPriceServiceAttribute',
     ];
 
     public static function getNullInstant($visibleArray = [])
@@ -285,10 +273,11 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public static function majorFilter($users, $majorsId)
     {
 
-        if (in_array(0, $majorsId))
+        if (in_array(0, $majorsId)) {
             $users = $users->whereDoesntHave("major");
-        else
+        } else {
             $users = $users->whereIn("major_id", $majorsId);
+        }
 
         return $users;
     }
@@ -298,8 +287,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         $tokenResult = $this->createToken('Alaa App.');
 
         return [
-            'access_token'     => $tokenResult->accessToken,
-            'token_type'       => 'Bearer',
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
             'token_expires_at' => Carbon::parse($tokenResult->token->expires_at)
                 ->toDateTimeString(),
         ];
@@ -310,8 +299,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         $tokenResult = $this->createToken('3A.');
 
         return [
-            'access_token'     => $tokenResult->accessToken,
-            'token_type'       => 'Bearer',
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
             'token_expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(),
         ];
     }
@@ -324,7 +313,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     /**
      * Create a new Eloquent Collection instance.
      *
-     * @param array $models
+     * @param  array  $models
      *
      * @return UserCollection
      */
@@ -359,22 +348,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return in_array($this->id, [27244, 219548, 1961, 925019]);
     }
 
-    public function isDeveloper(): bool
-    {
-        return $this->hasRole(config('constants.ROLE_DEVELOPER'));
-    }
-
-    public function hasPurchasedAnything(): bool
-    {
-        $key = 'user:hasPurchasedAnything:' . $this->cacheKey();
-        return Cache::tags(['userAsset_' . $this->id,])->remember($key, config('constants.CACHE_600'), function () {
-            return $this->orders->whereIn('orderstatus_id', [config('constants.ORDER_STATUS_CLOSED'), config('constants.ORDER_STATUS_POSTED'), config('constants.ORDER_STATUS_REFUNDED'), config('constants.ORDER_STATUS_READY_TO_POST'), config('constants.ORDER_STATUS_PENDING'), config('constants.ORDER_STATUS_BLOCKED'),])
-                ->where('paymentstatus_id', '<>', config('constants.PAYMENT_STATUS_UNPAID'))
-                ->isNotEmpty();
-
-        });
-    }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -382,9 +355,37 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     |--------------------------------------------------------------------------
     */
 
+    public function isDeveloper(): bool
+    {
+        return $this->hasRole(config('constants.ROLE_DEVELOPER'));
+    }
+
+    public function hasPurchasedAnything(): bool
+    {
+        $key = 'user:hasPurchasedAnything:'.$this->cacheKey();
+        return Cache::tags(['userAsset_'.$this->id,])->remember($key, config('constants.CACHE_600'), function () {
+            return $this->orders->whereIn('orderstatus_id', [
+                config('constants.ORDER_STATUS_CLOSED'), config('constants.ORDER_STATUS_POSTED'),
+                config('constants.ORDER_STATUS_REFUNDED'), config('constants.ORDER_STATUS_READY_TO_POST'),
+                config('constants.ORDER_STATUS_PENDING'), config('constants.ORDER_STATUS_BLOCKED'),
+            ])
+                ->where('paymentstatus_id', '<>', config('constants.PAYMENT_STATUS_UNPAID'))
+                ->isNotEmpty();
+
+        });
+    }
+
+    public function cacheKey()
+    {
+        $key = $this->getKey();
+        $time = (optional($this->updated_at)->timestamp ?: optional($this->created_at)->timestamp) ?: 0;
+
+        return sprintf('%s:%s-%s', $this->getTable(), $key, $time);
+    }
+
     /**
-     * @param Builder $query
-     * @param array   $roles
+     * @param  Builder  $query
+     * @param  array  $roles
      *
      * @return mixed
      */
@@ -396,9 +397,9 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     }
 
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      *
-     * @param string  $roleName
+     * @param  string  $roleName
      *
      * @return mixed
      */
@@ -409,11 +410,17 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | relations
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      *
      *
-     * @param string  $permissionName
+     * @param  string  $permissionName
      *
      * @return mixed
      */
@@ -424,9 +431,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         });
     }
 
-
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      *
      * @return mixed
      */
@@ -440,15 +446,11 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $query->whereIn('id', $ids);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | relations
-    |--------------------------------------------------------------------------
-    */
     public function favorableLists()
     {
         return $this->hasMany(FavorableList::class);
     }
+
     public function consultants()
     {
         return $this->belongsToMany(Consultant::class);
@@ -458,10 +460,12 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     {
         return $this->hasOne(EntekhabReshte::class);
     }
+
     public function ewanoUser()
     {
         return $this->hasOne(EwanoUser::class);
     }
+
     public function exams()
     {
         return $this->belongsToMany(Exam::class);
@@ -497,11 +501,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->hasMany(Userupload::class);
     }
 
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class);
-    }
-
     public function mbtianswers()
     {
         return $this->hasMany(Mbtianswer::class);
@@ -527,24 +526,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->hasMany(Firebasetoken::class);
     }
 
-    public function lotteries()
-    {
-        return $this->belongsToMany(Lottery::Class)
-            ->withPivot("rank", "prizes");
-    }
-
-    public function relativeNormalMobiles($relativeType)
-    {
-        return $this->contacts()
-                ?->where('relative_id', $relativeType)
-                ?->first()
-                ?->phones()
-                ?->whereNotInBlackList()
-                ?->where('phonetype_id', 1)
-                ?->get()
-                ?->sortBy('priority') ?? collect();
-    }
-
     //ToDo : to be removed
 //    public function subscriptions()
 //    {
@@ -556,6 +537,12 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 //    {
 //        return $this->hasMany(SMS::Class , 'user_id' , 'id');
 //    }
+
+    public function lotteries()
+    {
+        return $this->belongsToMany(Lottery::Class)
+            ->withPivot("rank", "prizes");
+    }
 
     public function sms()
     {
@@ -582,19 +569,14 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->morphedByMany(Event::class, 'subscription')->withTimestamps();
     }
 
-    public function subscribedProducts()
+    public function getActiveStudyEvents()
     {
-        return $this->morphedByMany(Product::class, 'subscription');
+        return $this->studyEvents()->latest('pivot_created_at');
     }
 
     public function studyEvents()
     {
         return $this->belongsToMany(Studyevent::class)->withTimestamps();
-    }
-
-    public function getActiveStudyEvents()
-    {
-        return $this->studyEvents()->latest('pivot_created_at');
     }
 
     public function validSubscribedAttributes()
@@ -613,6 +595,11 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
                 $q->where('valid_until', '>', $now)
                     ->orWhereNull('valid_until');
             });
+    }
+
+    public function subscribedProducts()
+    {
+        return $this->morphedByMany(Product::class, 'subscription');
     }
 
     /**
@@ -671,7 +658,9 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
             ->where('orderproducttype_id', '<>', config('constants.ORDER_PRODUCT_GIFT'))
             ->whereHas('order', function ($q) use ($since, $till) {
                 $q->whereIn('orderstatus_id', Order::getDoneOrderStatus())
-                    ->whereIn('paymentstatus_id', [config('constants.PAYMENT_STATUS_PAID'), config('constants.PAYMENT_STATUS_VERIFIED_INDEBTED')]);
+                    ->whereIn('paymentstatus_id', [
+                        config('constants.PAYMENT_STATUS_PAID'), config('constants.PAYMENT_STATUS_VERIFIED_INDEBTED')
+                    ]);
 
                 if (isset($since)) {
                     $q->where('completed_at', '>=', $since);
@@ -685,27 +674,20 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function getTicketRolesAttribute()
     {
-        $key = 'user:ticketRoles:' . $this->cacheKey();
-        return Cache::tags(['user', 'user_' . $this->id, 'user_' . $this->id . '_ticketRoles'])->remember($key, config('constants.CACHE_600'), function () {
-            $roles = $this->roles()->where('team_id', Team::SUPPORT_TEAM_ID)->get();
-            if ($roles->isEmpty()) {
-                return null;
-            }
-            return $roles->first()->display_name;
-        });
+        $key = 'user:ticketRoles:'.$this->cacheKey();
+        return Cache::tags(['user', 'user_'.$this->id, 'user_'.$this->id.'_ticketRoles'])->remember($key,
+            config('constants.CACHE_600'), function () {
+                $roles = $this->roles()->where('team_id', Team::SUPPORT_TEAM_ID)->get();
+                if ($roles->isEmpty()) {
+                    return null;
+                }
+                return $roles->first()->display_name;
+            });
     }
 
     public function hasOrder(int $orderId): bool
     {
         return $this->orders()->where('id', $orderId)->get()->isNotEmpty();
-    }
-
-    public function cacheKey()
-    {
-        $key  = $this->getKey();
-        $time = (optional($this->updated_at)->timestamp ?: optional($this->created_at)->timestamp) ?: 0;
-
-        return sprintf('%s:%s-%s', $this->getTable(), $key, $time);
     }
 
     /**
@@ -759,11 +741,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public function refferalCode()
     {
         return $this->hasOne(ReferralCode::class, 'owner_id');
-    }
-
-    public function referralRequests()
-    {
-        return $this->hasMany(ReferralRequest::class, 'owner_id');
     }
 
     public function usedReferralCode()
@@ -821,16 +798,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function scopeWhereNotInBlackList($query)
     {
-        return $query->whereNotIn('mobile', SmsBlackListRepository::getBlockedList()?->get()?->pluck('mobile')?->toArray());
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function watchContents(): BelongsToMany
-    {
-        return $this->belongsToMany(Content::class, 'watch_histories', 'user_id', 'watchable_id')
-            ->where('watchable_type', config('constants.MORPH_MAP_MODELS.content.model'));
+        return $query->whereNotIn('mobile',
+            SmsBlackListRepository::getBlockedList()?->get()?->pluck('mobile')?->toArray());
     }
 
     /**
@@ -852,7 +821,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     }
 
     /**
-     * @param int $contentId
+     * @param  int  $contentId
      *
      * @return bool
      */
@@ -861,9 +830,23 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->watchContents()->where('watchable_id', $contentId)->exists();
     }
 
+    /**
+     * @return BelongsToMany
+     */
+    public function watchContents(): BelongsToMany
+    {
+        return $this->belongsToMany(Content::class, 'watch_histories', 'user_id', 'watchable_id')
+            ->where('watchable_type', config('constants.MORPH_MAP_MODELS.content.model'));
+    }
+
     public function ownsReferralCode(): bool
     {
         return $this->referralRequests()->with('referralCodes')->get()->pluck('referralCodes')->flatten()->count() != 0;
+    }
+
+    public function referralRequests()
+    {
+        return $this->hasMany(ReferralRequest::class, 'owner_id');
     }
 
     public function getImageAttribute()
@@ -875,11 +858,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     {
         return $this->disk = config('disks.PROFILE_IMAGE_MINIO');
     }
-
-    protected $hasHalfPriceService_cache;
-    protected $cachedMethods = [
-        'getHasHalfPriceServiceAttribute',
-    ];
 
     public function getHasHalfPriceServiceAttribute()
     {
@@ -906,33 +884,37 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function filterOrdersByProductsOfContent(Content $content)
     {
-        return Cache::tags(['user_orders_' . $content->id, 'userAsset_' . $this->id])
-            ->remember("'user_orders:user-'.$this->id.':content-'.$content->id", config('constants.CACHE_600'), function () use ($content) {
-                return $this->orders()
-                    ->whereIn('orderstatus_id', [config('constants.ORDER_STATUS_CLOSED')])
-                    ->whereIn('paymentstatus_id', array_merge([config('constants.PAYMENT_STATUS_INDEBTED')], Order::getDoneOrderPaymentStatus()))
-                    ->whereHas('orderproducts', fn($q) => $q->whereIn('product_id', $content->productsIdArray()))
-                    ->get();
-            });
+        return Cache::tags(['user_orders_'.$content->id, 'userAsset_'.$this->id])
+            ->remember("'user_orders:user-'.$this->id.':content-'.$content->id", config('constants.CACHE_600'),
+                function () use ($content) {
+                    return $this->orders()
+                        ->whereIn('orderstatus_id', [config('constants.ORDER_STATUS_CLOSED')])
+                        ->whereIn('paymentstatus_id', array_merge([config('constants.PAYMENT_STATUS_INDEBTED')],
+                            Order::getDoneOrderPaymentStatus()))
+                        ->whereHas('orderproducts', fn($q) => $q->whereIn('product_id', $content->productsIdArray()))
+                        ->get();
+                });
 
     }
 
     /**
-     * @param Orderproduct $orderproduct
+     * @param  Orderproduct  $orderproduct
      *
      * @return void
      */
     public function unUsedSubscription(Orderproduct $orderproduct): void
     {
-        $user                     = $this;
+        $user = $this;
         $userDiscountSubscription =
-            isset($user) ? SubscriptionRepo::validProductSubscriptionOfUser($user->id, [Product::SUBSCRIPTION_12_MONTH]) : null;
+            isset($user) ? SubscriptionRepo::validProductSubscriptionOfUser($user->id,
+                [Product::SUBSCRIPTION_12_MONTH]) : null;
         if (!isset($userDiscountSubscription)) {
             return;
         }
         $subscriptionOrderproductIdArray =
             optional(optional($userDiscountSubscription->values)->discount)->orderproduct_id;
-        if (isset($subscriptionOrderproductIdArray) && !empty($subscriptionOrderproductIdArray) && in_array($orderproduct->id, $subscriptionOrderproductIdArray)) {
+        if (isset($subscriptionOrderproductIdArray) && !empty($subscriptionOrderproductIdArray) && in_array($orderproduct->id,
+                $subscriptionOrderproductIdArray)) {
             $currentUsage = optional(optional(optional($userDiscountSubscription)->values)->discount)->usage_limit;
             $userDiscountSubscription->setUsageLimit(min($currentUsage + 1, 1));
             $userDiscountSubscription->unsetOrderproductId();
@@ -943,8 +925,8 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function getMaximumActiveCoupon(): ?Coupon
     {
-        $key  = 'getMaximumActiveCoupon:' . $this->cacheKey();
-        $tags = ['user', 'user_' . $this->id, 'coupon_user_' . $this->id];
+        $key = 'getMaximumActiveCoupon:'.$this->cacheKey();
+        $tags = ['user', 'user_'.$this->id, 'coupon_user_'.$this->id];
         $user = $this;
         return Cache::tags($tags)->remember($key, config('constants.CACHE_600'), function () use ($user) {
             return Coupon::enable()->valid()->usageLeft()->orderBy('discount', 'desc')
@@ -956,7 +938,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function getPermissionsThroughRoles()
     {
-        $roles       = $this->roles()->get() ?? [];
+        $roles = $this->roles()->get() ?? [];
         $permissions = collect();
         foreach ($roles as $role) {
             $permissions = $permissions->merge($role->permissions()->get());
@@ -980,11 +962,10 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->hasOne(SalesManProfile::class);
     }
 
-
     public function getKartemeliAttribute($value)
     {
         if ($value) {
-            return Uploader::privateUrl(config('disks.KARTE_MELI_IMAGE_MINIO'),720,null, $value);
+            return Uploader::privateUrl(config('disks.KARTE_MELI_IMAGE_MINIO'), 720, null, $value);
         }
         return null;
     }
@@ -999,6 +980,23 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->relativeNormalMobiles(config('constants.FATHER_RELATIVE_ID'))?->first()?->phoneNumber;
     }
 
+    public function relativeNormalMobiles($relativeType)
+    {
+        return $this->contacts()
+            ?->where('relative_id', $relativeType)
+            ?->first()
+            ?->phones()
+            ?->whereNotInBlackList()
+            ?->where('phonetype_id', 1)
+            ?->get()
+            ?->sortBy('priority') ?? collect();
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
+
     public function getMotherMobileAttribute()
     {
         return $this->relativeNormalMobiles(config('constants.MOTHER_RELATIVE_ID'))?->first()?->phoneNumber;
@@ -1006,7 +1004,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 
     public function scopeInsertedByIds(Builder $query, $inserted_by_ids)
     {
-        return $query->whereIn('inserted_by',$inserted_by_ids);
+        return $query->whereIn('inserted_by', $inserted_by_ids);
     }
 
     public function scopeBonyadUser(Builder $query)

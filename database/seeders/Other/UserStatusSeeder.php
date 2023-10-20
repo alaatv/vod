@@ -17,20 +17,20 @@ class UserStatusSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'active',
+                'id' => '1',
+                'name' => 'active',
                 'displayName' => 'فعال',
                 'description' => 'اکانت کاربری فعال است',
             ],
             [
-                'id'          => '2',
-                'name'        => 'inactive',
+                'id' => '2',
+                'name' => 'inactive',
                 'displayName' => 'غیر فعال',
                 'description' => 'اکانت کاربری غیرفعال است',
             ],
         ];
 
         DB::table('userstatuses')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

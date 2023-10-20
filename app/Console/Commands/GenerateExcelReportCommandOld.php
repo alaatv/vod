@@ -19,7 +19,6 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 

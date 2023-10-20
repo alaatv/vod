@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\File;
 abstract class AllSeeder extends Seeder
 {
     protected array $allSeederInThisDirectory = [];
-    abstract protected function getDirectory():string;
-    abstract protected function getDNameSpace():string;
 
     /**
      * Run the database seeds.
@@ -22,16 +20,19 @@ abstract class AllSeeder extends Seeder
         $this->call($this->allSeederInThisDirectory);
     }
 
-
     private function populateSeeders()
     {
         foreach (File::files($this->getDirectory()) as $file) {
             $className = $file->getFilenameWithoutExtension();
             $fullClassName = $this->getDNameSpace().'\\'.$className;
-            if( $fullClassName != get_class($this)){
-                $this->allSeederInThisDirectory[] =  $fullClassName;
+            if ($fullClassName != get_class($this)) {
+                $this->allSeederInThisDirectory[] = $fullClassName;
             }
         }
     }
+
+    abstract protected function getDirectory(): string;
+
+    abstract protected function getDNameSpace(): string;
 
 }

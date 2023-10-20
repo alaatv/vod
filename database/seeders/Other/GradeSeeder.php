@@ -17,26 +17,26 @@ class GradeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'dahom',
+                'id' => '1',
+                'name' => 'dahom',
                 'displayName' => 'دهم',
                 'description' => 'مقطع دهم نظام آموزشی جدید',
             ],
             [
-                'id'          => '2',
-                'name'        => 'yazdahom',
+                'id' => '2',
+                'name' => 'yazdahom',
                 'displayName' => 'یازدهم',
                 'description' => 'مقطع یازدهم نظام آموزشی جدید',
             ],
             [
-                'id'          => '3',
-                'name'        => 'konkoor',
+                'id' => '3',
+                'name' => 'konkoor',
                 'displayName' => 'کنکوری',
                 'description' => 'مقطع کنکور(دوازدهم نظام آموزشی جدید)',
             ],
         ];
 
         DB::table('grades')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

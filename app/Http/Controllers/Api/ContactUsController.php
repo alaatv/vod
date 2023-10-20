@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactUs as ContactUsResource;
 use App\Models\Websitesetting;
-
 use Illuminate\Http\Request;
 
 class ContactUsController extends Controller

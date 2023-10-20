@@ -17,25 +17,25 @@ class OrderproductTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'default',
+                'id' => '1',
+                'name' => 'default',
                 'displayName' => 'پیش فرض',
                 'description' => 'نوع پیش فرض (معمولی)',
-                'created_at'  => '2018-01-29 12:26:31',
-                'updated_at'  => '2018-01-29 12:26:31',
-                'deleted_at'  => null,
+                'created_at' => '2018-01-29 12:26:31',
+                'updated_at' => '2018-01-29 12:26:31',
+                'deleted_at' => null,
             ],
             [
-                'id'          => '2',
-                'name'        => 'gift',
+                'id' => '2',
+                'name' => 'gift',
                 'displayName' => 'هدیه',
                 'description' => 'نوع هدیه',
-                'created_at'  => '2018-01-29 12:26:31',
-                'updated_at'  => '2018-01-29 12:26:31',
-                'deleted_at'  => null,
+                'created_at' => '2018-01-29 12:26:31',
+                'updated_at' => '2018-01-29 12:26:31',
+                'deleted_at' => null,
             ],
         ];
         DB::table('orderproducttypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

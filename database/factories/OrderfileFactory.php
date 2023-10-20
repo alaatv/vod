@@ -2,14 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Orderfile;
 use App\Models\Order;
+use App\Models\Orderfile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderfileFactory extends Factory
 {
     protected $model = Orderfile::class;
+
     /**
      * Define the model's default state.
      *

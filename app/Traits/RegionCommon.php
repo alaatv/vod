@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 
-
 use App\Models\Shahr;
 
 trait RegionCommon

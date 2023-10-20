@@ -17,32 +17,32 @@ class VerificationMessageStatusSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'sent',
+                'id' => '1',
+                'name' => 'sent',
                 'displayName' => 'ارسال شده',
                 'description' => 'پیام حاوی کد به کاربر ارسال شده ا ست',
             ],
             [
-                'id'          => '2',
-                'name'        => 'successful',
+                'id' => '2',
+                'name' => 'successful',
                 'displayName' => 'موفق',
                 'description' => 'اکانت کاربر با موفقیت توسط این کد تایید شد',
             ],
             [
-                'id'          => '3',
-                'name'        => 'notDelivered',
+                'id' => '3',
+                'name' => 'notDelivered',
                 'displayName' => 'نرسیده',
                 'description' => 'پیام به دست کاربر نرسیده است',
             ],
             [
-                'id'          => '4',
-                'name'        => 'expired',
+                'id' => '4',
+                'name' => 'expired',
                 'displayName' => 'منقضی شده',
                 'description' => 'از تاریخ استفاده کد این پیام گذشته است',
             ],
         ];
 
         DB::table('verificationmessagestatuses')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

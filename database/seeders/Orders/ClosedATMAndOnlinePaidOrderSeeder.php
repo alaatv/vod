@@ -46,7 +46,7 @@ class ClosedATMAndOnlinePaidOrderSeeder extends Seeder
                                 'cost' => 50000,
                                 'device_id' => null,
                                 'transactiongateway_id' => null,
-                                'referenceNumber' =>random_int(100000000,999999999),
+                                'referenceNumber' => random_int(100000000, 999999999),
                                 'completed_at' => now()->addHours(5),
                             ])
                     )

@@ -2,14 +2,11 @@
 
 namespace Database\Seeders\Tickets;
 
+use App\Models\Ticket;
 use App\Models\TicketAction;
 use App\Models\TicketActionLog;
-use App\Models\Ticket;
-use App\Models\TicketDepartment;
 use App\Models\TicketMessage;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Schema;
 
 class TicketSeeder extends Seeder
 {
@@ -20,44 +17,44 @@ class TicketSeeder extends Seeder
      */
     public function run()
     {
-        Ticket::factory()->state(['user_id'=>2])
+        Ticket::factory()->state(['user_id' => 2])
             ->has(
                 TicketActionLog::factory()->state([
-                    'user_id'=>2,
-                    'action_id'=>TicketAction::CREATE_TICKET
+                    'user_id' => 2,
+                    'action_id' => TicketAction::CREATE_TICKET
                 ]),
                 'logs'
             )
             ->has(
-                TicketMessage::factory()->state(['user_id'=>2]),
+                TicketMessage::factory()->state(['user_id' => 2]),
                 'messages'
             )
             ->has(
                 TicketActionLog::factory()->state([
-                    'user_id'=>2,
-                    'action_id'=>TicketAction::CREATE_TICKET_MESSAGE,
-                    'ticket_message_id'=>1,
+                    'user_id' => 2,
+                    'action_id' => TicketAction::CREATE_TICKET_MESSAGE,
+                    'ticket_message_id' => 1,
                 ]),
                 'logs'
             )
             ->has(
-                TicketMessage::factory()->state(['user_id'=>1]),
+                TicketMessage::factory()->state(['user_id' => 1]),
                 'messages'
             )
             ->has(
                 TicketActionLog::factory()->state([
-                    'user_id'=>1,
-                    'action_id'=>TicketAction::CREATE_TICKET_MESSAGE,
-                    'ticket_message_id'=>2,
+                    'user_id' => 1,
+                    'action_id' => TicketAction::CREATE_TICKET_MESSAGE,
+                    'ticket_message_id' => 2,
                 ]),
                 'logs'
             )
             ->has(
                 TicketActionLog::factory()->state([
-                    'user_id'=>1,
-                    'action_id'=>TicketAction::CHANGE_STATUS_OF_TICKET,
-                    'before'=>'پاسخ داده نشده',
-                    'after'=>'پاسخ داده شده'
+                    'user_id' => 1,
+                    'action_id' => TicketAction::CHANGE_STATUS_OF_TICKET,
+                    'before' => 'پاسخ داده نشده',
+                    'after' => 'پاسخ داده شده'
                 ]),
                 'logs'
             )

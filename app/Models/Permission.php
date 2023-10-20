@@ -19,8 +19,8 @@ class Permission extends LaratrustPermission
     ];
 
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function roles()

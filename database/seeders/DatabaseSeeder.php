@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Coupons\AllCouponsSeeder;
 use Database\Seeders\Orders\AllOrdersSeeder;
 use Database\Seeders\Other\AllOtherSeeder;
 use Database\Seeders\Permission\AllPermissionsSeeder;
@@ -36,6 +35,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Schema::enableForeignKeyConstraints();
     }
+
     protected static function truncateTableAll(array $skip = [])
     {
         foreach (Schema::getConnection()

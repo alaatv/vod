@@ -17,15 +17,15 @@ class ReasonsOfLockedOrderproductsSeeder extends Seeder
         DB::table('reasonsOfLockedOrderproducts')->delete();
         $data = [
             [
-                'id'   => '1',
+                'id' => '1',
                 'text' => 'این محصولات با تغییرات ساختار آموزشی قابل استفاده نیست',
             ],
             [
-                'id'   => '2',
+                'id' => '2',
                 'text' => 'هر کاربر فقط یکبار می تواند از بورسیه آلاء استفاده کند',
             ],
             [
-                'id'   => '3',
+                'id' => '3',
                 'text' => 'هدایای آلاء پس از زمان استفاده منقضی می شود',
             ],
         ];

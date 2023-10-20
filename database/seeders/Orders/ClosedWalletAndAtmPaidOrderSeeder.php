@@ -7,8 +7,6 @@ use App\Models\Orderproduct;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
-use Database\Seeders\Users\UserSeeder;
-use Database\Seeders\Users\UserWithGiftWalletTypeSeeder;
 use Illuminate\Database\Seeder;
 
 class ClosedWalletAndAtmPaidOrderSeeder extends Seeder

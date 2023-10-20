@@ -2,14 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Ordermanagercomment;
 use App\Models\Order;
+use App\Models\Ordermanagercomment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrdermanagercommentFactory extends Factory
 {
     protected $model = Ordermanagercomment::class;
+
     /**
      * Define the model's default state.
      *

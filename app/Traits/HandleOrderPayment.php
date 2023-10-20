@@ -9,7 +9,6 @@
 namespace App\Traits;
 
 
-
 use App\Models\Bon;
 use App\Models\Order;
 use Illuminate\Support\Facades\Cache;

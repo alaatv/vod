@@ -11,7 +11,7 @@ class PhoneNumber extends BaseModel
     use DateTrait;
     use HasFactory;
 
-    protected  $fillable = [
+    protected $fillable = [
         'provider_id',
         'number',
     ];
@@ -28,19 +28,19 @@ class PhoneNumber extends BaseModel
 
     public function scopeFilter($query, $filters)
     {
-        if( isset($filters['number']) ){
+        if (isset($filters['number'])) {
             $query->where('number', '=', $filters['number']);
         }
 
-        if( isset($filters['phoneBookId']) ){
-            $query->whereHas('phoneBooks',  function (Builder $query) use ($filters){
-                $query->where('id',  $filters['phoneBookId']);
+        if (isset($filters['phoneBookId'])) {
+            $query->whereHas('phoneBooks', function (Builder $query) use ($filters) {
+                $query->where('id', $filters['phoneBookId']);
             });
         }
 
-        if( isset($filters['phoneNumberProvider']) ){
-            $query->whereHas('phoneNumberProvider',  function (Builder $query) use ($filters){
-                $query->where('id',  $filters['phoneNumberProvider']);
+        if (isset($filters['phoneNumberProvider'])) {
+            $query->whereHas('phoneNumberProvider', function (Builder $query) use ($filters) {
+                $query->where('id', $filters['phoneNumberProvider']);
             });
         }
     }

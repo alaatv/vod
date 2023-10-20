@@ -3,7 +3,6 @@
 namespace App\Models;
 
 
-
 class Assignment extends BaseModel
 {
     /**
@@ -12,9 +11,9 @@ class Assignment extends BaseModel
      * @var array
      */
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
-        'deleted_at'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**

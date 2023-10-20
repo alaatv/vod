@@ -14,11 +14,11 @@ class TicketActionLogFactory extends Factory
     public function definition()
     {
         return [
-            'ticket_message_id' => 1 ,
-            'user_id'           => 1,
-            'action_id'         => 1 ,
-            'before'            => null ,
-            'after'             => null
+            'ticket_message_id' => 1,
+            'user_id' => 1,
+            'action_id' => 1,
+            'before' => null,
+            'after' => null
         ];
     }
 }

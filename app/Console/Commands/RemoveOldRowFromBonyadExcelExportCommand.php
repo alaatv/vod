@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\BonyadEhsanExcelExport;
-
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

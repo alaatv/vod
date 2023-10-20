@@ -3,7 +3,6 @@
 namespace App\Models;
 
 
-
 class MapDetailType extends BaseModel
 {
     protected $table = 'mapDetailTypes';

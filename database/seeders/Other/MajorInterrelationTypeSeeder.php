@@ -17,20 +17,20 @@ class MajorInterrelationTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'parent-child',
+                'id' => '1',
+                'name' => 'parent-child',
                 'displayName' => 'فرزند-والد',
                 'description' => 'به طوری قرارداری اولی والد دومی می باشد',
             ],
             [
-                'id'          => '2',
-                'name'        => 'accessible',
+                'id' => '2',
+                'name' => 'accessible',
                 'displayName' => 'مجاز بودن',
                 'description' => 'رشته دوم برای رشته اول مجاز است',
             ],
         ];
 
         DB::table('majorinterrelationtypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

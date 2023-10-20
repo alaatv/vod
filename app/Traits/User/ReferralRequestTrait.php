@@ -3,9 +3,6 @@
 namespace App\Traits\User;
 
 
-
-
-
 use App\Models\ReferralCode;
 use App\Models\ReferralRequest;
 

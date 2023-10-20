@@ -17,20 +17,20 @@ class ConsultationStatusSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'active',
+                'id' => '1',
+                'name' => 'active',
                 'displayName' => 'فعال',
                 'description' => 'قابل مشاهده برای کاربران',
             ],
             [
-                'id'          => '2',
-                'name'        => 'inactive',
+                'id' => '2',
+                'name' => 'inactive',
                 'displayName' => 'غیر فعال',
                 'description' => 'غیر قابل مشاهده برای کاربران',
             ],
         ];
 
         DB::table('consultationstatuses')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

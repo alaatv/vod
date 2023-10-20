@@ -4,7 +4,6 @@
 namespace App\Traits\Content;
 
 
-
 use App\Http\Resources\Author;
 use App\Http\Resources\ContentTimePointAPI;
 use App\Http\Resources\PamphletFile;

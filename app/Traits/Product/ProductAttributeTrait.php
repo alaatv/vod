@@ -9,8 +9,6 @@
 namespace App\Traits\Product;
 
 
-
-
 use App\Classes\Uploader\Uploader;
 use App\Models\Attribute;
 use App\Models\Attributetype;

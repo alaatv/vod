@@ -10,7 +10,6 @@ namespace App\Collection;
 
 use App\Models\Content;
 use App\Traits\CollectionTrait;
-
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
 use LogicException;

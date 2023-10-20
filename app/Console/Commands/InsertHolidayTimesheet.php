@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Employeeschedule;
-
 use App\Models\Employeetimesheet;
-
 use App\Repositories\UserRepo;
 use Carbon\Carbon;
 use Exception;

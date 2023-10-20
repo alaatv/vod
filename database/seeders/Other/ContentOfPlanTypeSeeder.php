@@ -48,10 +48,10 @@ class ContentOfPlanTypeSeeder extends Seeder
             ]
         ];
 
-        $types = array_map(function ($item){
-            return array_merge($item , [
-                'created_at'        => Carbon::now(),
-                'updated_at'        => Carbon::now(),
+        $types = array_map(function ($item) {
+            return array_merge($item, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }, $types);
 

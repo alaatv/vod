@@ -18,8 +18,8 @@ class Role extends LaratrustRole
     ];
 
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /*

@@ -3,8 +3,6 @@
 namespace App\Traits;
 
 
-
-
 use App\Models\Contentset;
 use App\Models\Section;
 

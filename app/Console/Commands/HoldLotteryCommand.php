@@ -6,7 +6,6 @@ use App\Models\Bon;
 use App\Models\Lottery;
 use App\Models\User;
 use App\Models\Userbon;
-
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use LuckyBox\Card\IdCard;

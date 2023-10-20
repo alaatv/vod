@@ -9,11 +9,11 @@ class Contract extends Model
 {
     /**      * The attributes that should be mutated to dates.        */
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
-        'deleted_at'=> 'datetime',
-        'since'=> 'datetime',
-        'till'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'since' => 'datetime',
+        'till' => 'datetime',
     ];
 
     protected $fillable = [

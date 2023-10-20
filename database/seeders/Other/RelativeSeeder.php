@@ -17,19 +17,19 @@ class RelativeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'father',
+                'id' => '1',
+                'name' => 'father',
                 'displayName' => 'پدر',
                 'description' => 'پدر کاربر',
             ],
             [
-                'id'          => '2',
-                'name'        => 'mother',
+                'id' => '2',
+                'name' => 'mother',
                 'displayName' => 'مادر',
                 'description' => 'مادر کاربر',
             ],
         ];
         DB::table('relatives')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

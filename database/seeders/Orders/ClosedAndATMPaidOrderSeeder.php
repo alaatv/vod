@@ -40,14 +40,14 @@ class ClosedAndATMPaidOrderSeeder extends Seeder
                     )
                     ->has(
                         Transaction::factory()
-                        ->state([
-                            'transactionID' => null,
-                            'paymentmethod_id' => 2,
-                            'device_id' => null,
-                            'transactiongateway_id' => null,
-                            'referenceNumber' =>random_int(100000000,999999999),
-                            'completed_at' => now()->addHours(5),
-                        ])
+                            ->state([
+                                'transactionID' => null,
+                                'paymentmethod_id' => 2,
+                                'device_id' => null,
+                                'transactiongateway_id' => null,
+                                'referenceNumber' => random_int(100000000, 999999999),
+                                'completed_at' => now()->addHours(5),
+                            ])
                     )
             )
             ->count(10)

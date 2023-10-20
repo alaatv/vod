@@ -9,7 +9,6 @@
 namespace App\Traits\User;
 
 
-
 use Carbon\Carbon;
 
 trait LotteryTrait

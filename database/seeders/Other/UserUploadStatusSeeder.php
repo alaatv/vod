@@ -17,26 +17,26 @@ class UserUploadStatusSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'pending',
+                'id' => '1',
+                'name' => 'pending',
                 'displayName' => 'در انتظار',
                 'description' => 'فایل دانش آموز هنوز مشاهده نشده است',
             ],
             [
-                'id'          => '2',
+                'id' => '2',
                 'displayName' => 'در حال بررسی',
-                'name'        => 'processing',
+                'name' => 'processing',
                 'description' => 'در حال بررسی فایل دانش آموز',
             ],
             [
-                'id'          => '3',
-                'name'        => 'done',
+                'id' => '3',
+                'name' => 'done',
                 'displayName' => 'پاسخ داده شده',
                 'description' => 'به فایل دانش آموز پاسخ داده شده است',
             ],
         ];
 
         DB::table('useruploadstatuses')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

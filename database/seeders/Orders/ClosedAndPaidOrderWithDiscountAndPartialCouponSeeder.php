@@ -49,12 +49,12 @@ class ClosedAndPaidOrderWithDiscountAndPartialCouponSeeder extends Seeder
                             )
                     )
                     ->has(
-                    Orderproduct::factory()
-                        ->count(2)
-                        ->state([
-                            'cost' => 25000,
-                            'tmp_final_cost' => 25000,
-                        ])
+                        Orderproduct::factory()
+                            ->count(2)
+                            ->state([
+                                'cost' => 25000,
+                                'tmp_final_cost' => 25000,
+                            ])
                     )
                     ->has(Transaction::factory()
                         ->state([

@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Employeeschedule;
-
 use App\Models\Employeetimesheet;
-
 use App\Models\User;
 use App\Notifications\EmployeeTimeSheetNotification;
 use App\Traits\DateTrait;

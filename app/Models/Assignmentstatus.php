@@ -3,7 +3,6 @@
 namespace App\Models;
 
 
-
 class Assignmentstatus extends BaseModel
 {
     /**

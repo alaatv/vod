@@ -12,9 +12,12 @@ trait DateTrait
      * @return string
      * Converting Created_at field to jalali
      */
-    public function CreatedAt_Jalali()
+    public function CreatedAt_Jalali_WithTime()
     {
-        return $this->convertDate($this->created_at, 'toJalali');
+        $createdAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->shiftTimezone('Asia/Tehran');
+        $explodedDateTime = explode(' ', $createdAt->toDateTimeString());
+
+        return $this->convertDate($createdAt, 'toJalali').' - '.$explodedDateTime[1];
     }
 
     public function convertDate($date, $convertType)
@@ -23,26 +26,27 @@ trait DateTrait
             $explodedDate = explode(' ', $date);
             $explodedDate = $explodedDate[0];
             $explodedDate = explode('-', $explodedDate);
-            $year         = $explodedDate[0];
-            $month        = $explodedDate[1];
-            $day          = $explodedDate[2];
+            $year = $explodedDate[0];
+            $month = $explodedDate[1];
+            $day = $explodedDate[2];
 
             return $this->gregorian_to_jalali($year, $month, $day, '/');
         }
-        if (!(strcmp($convertType, 'toMiladi') == 0 && strlen($date) > 0)){
-    return;}
-            $explodedDate = explode('/', $date);
-            $year         = $explodedDate[0];
-            $month        = $explodedDate[1];
-            $day          = $explodedDate[2];
-
-            return $this->jalali_to_gregorian($year, $month, $day, '-');
+        if (!(strcmp($convertType, 'toMiladi') == 0 && strlen($date) > 0)) {
+            return;
         }
+        $explodedDate = explode('/', $date);
+        $year = $explodedDate[0];
+        $month = $explodedDate[1];
+        $day = $explodedDate[2];
+
+        return $this->jalali_to_gregorian($year, $month, $day, '-');
+    }
 
     protected function gregorian_to_jalali($g_y, $g_m, $g_d, $mod = '')
     {
-        $d_4   = $g_y % 4;
-        $g_a   = [
+        $d_4 = $g_y % 4;
+        $g_a = [
             0,
             0,
             31,
@@ -57,30 +61,30 @@ trait DateTrait
             304,
             334,
         ];
-        $doy_g = $g_a[(int)$g_m] + $g_d;
+        $doy_g = $g_a[(int) $g_m] + $g_d;
         if ($d_4 == 0 and $g_m > 2) {
             $doy_g++;
         }
-        $d_33 = (int)((($g_y - 16) % 132) * .0305);
-        $a    = ($d_33 == 3 or $d_33 < ($d_4 - 1) or $d_4 == 0) ? 286 : 287;
-        $b    =
+        $d_33 = (int) ((($g_y - 16) % 132) * .0305);
+        $a = ($d_33 == 3 or $d_33 < ($d_4 - 1) or $d_4 == 0) ? 286 : 287;
+        $b =
             (($d_33 == 1 or $d_33 == 2) and ($d_33 == $d_4 or $d_4 == 1)) ? 78 : (($d_33 == 3 and $d_4 == 0) ? 80 : 79);
-        if ((int)(($g_y - 10) / 63) == 30) {
+        if ((int) (($g_y - 10) / 63) == 30) {
             $a--;
             $b++;
         }
         if ($doy_g > $b) {
-            $jy    = $g_y - 621;
+            $jy = $g_y - 621;
             $doy_j = $doy_g - $b;
         } else {
-            $jy    = $g_y - 622;
+            $jy = $g_y - 622;
             $doy_j = $doy_g + $a;
         }
         if ($doy_j < 187) {
-            $jm = (int)(($doy_j - 1) / 31);
+            $jm = (int) (($doy_j - 1) / 31);
             $jd = $doy_j - (31 * $jm++);
         } else {
-            $jm = (int)(($doy_j - 187) / 30);
+            $jm = (int) (($doy_j - 187) / 30);
             $jd = $doy_j - 186 - ($jm * 30);
             $jm += 7;
         }
@@ -89,19 +93,19 @@ trait DateTrait
             $jy,
             $jm,
             $jd,
-        ] : $jy . $mod . $jm . $mod . $jd;
+        ] : $jy.$mod.$jm.$mod.$jd;
     }
 
     protected function jalali_to_gregorian($j_y, $j_m, $j_d, $mod = '')
     {
-        $j_y = (int)Str::between($j_y, '-', '.');
-        $d_4   = ($j_y + 1) % 4;
+        $j_y = (int) Str::between($j_y, '-', '.');
+        $d_4 = ($j_y + 1) % 4;
         $doy_j = ($j_m < 7) ? (($j_m - 1) * 31) + $j_d : (($j_m - 7) * 30) + $j_d + 186;
-        $d_33  = (int)((($j_y - 55) % 132) * .0305);
-        $a     = ($d_33 != 3 and $d_4 <= $d_33) ? 287 : 286;
-        $b     =
+        $d_33 = (int) ((($j_y - 55) % 132) * .0305);
+        $a = ($d_33 != 3 and $d_4 <= $d_33) ? 287 : 286;
+        $b =
             (($d_33 == 1 or $d_33 == 2) and ($d_33 == $d_4 or $d_4 == 1)) ? 78 : (($d_33 == 3 and $d_4 == 0) ? 80 : 79);
-        if ((int)(($j_y - 19) / 63) == 20) {
+        if ((int) (($j_y - 19) / 63) == 20) {
             $a--;
             $b++;
         }
@@ -137,19 +141,7 @@ trait DateTrait
             $gy,
             $gm,
             $gd,
-        ] : $gy . $mod . $gm . $mod . $gd;
-    }
-
-    /**
-     * @return string
-     * Converting Created_at field to jalali
-     */
-    public function CreatedAt_Jalali_WithTime()
-    {
-        $createdAt        = Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)->shiftTimezone('Asia/Tehran');
-        $explodedDateTime = explode(' ', $createdAt->toDateTimeString());
-
-        return $this->convertDate($createdAt, 'toJalali') . ' - ' . $explodedDateTime[1];
+        ] : $gy.$mod.$gm.$mod.$gd;
     }
 
     /**
@@ -169,54 +161,54 @@ trait DateTrait
     {
         $explodedDateTime = explode(' ', $this->completed_at);
 
-        return $this->convertDate($this->completed_at, 'toJalali') . ' ' . $explodedDateTime[1];
+        return $this->convertDate($this->completed_at, 'toJalali').' '.$explodedDateTime[1];
     }
 
     /**
      * Converting validSince field to Jalali
      *
-     * @param bool $withTime
+     * @param  bool  $withTime
      *
      * @return string
      */
     public function ValidSince_Jalali($withTime = true): string
     {
-        $validSince       = $this->validSince;
+        $validSince = $this->validSince;
         if (empty($validSince)) {
             return '';
         }
         $explodedDateTime = explode(' ', $validSince);
-        $explodedTime     = Arr::get($explodedDateTime , 1);
-        $explodedDate     = $this->convertDate($validSince, 'toJalali');
+        $explodedTime = Arr::get($explodedDateTime, 1);
+        $explodedDate = $this->convertDate($validSince, 'toJalali');
 
         if (!$withTime) {
             return $explodedDate;
         }
-        return ($explodedDate . ' ' . $explodedTime);
+        return ($explodedDate.' '.$explodedTime);
 
     }
 
     /**
      * Converting validUntil field to Jalali
      *
-     * @param bool $withTime
+     * @param  bool  $withTime
      *
      * @return string
      */
-    public function ValidUntil_Jalali($withTime=true)
+    public function ValidUntil_Jalali($withTime = true)
     {
-        $validUntil       = $this->validUntil;
+        $validUntil = $this->validUntil;
         if (empty($validUntil)) {
             return '';
         }
         $explodedDateTime = explode(' ', $validUntil);
-        $explodedTime     = $explodedDateTime[1];
-        $explodedDate     = $this->convertDate($validUntil, 'toJalali');
+        $explodedTime = $explodedDateTime[1];
+        $explodedDate = $this->convertDate($validUntil, 'toJalali');
 
         if (!$withTime) {
             return $explodedDate;
         }
-        return ($explodedDate . ' ' . $explodedTime);
+        return ($explodedDate.' '.$explodedTime);
 
     }
 
@@ -410,22 +402,6 @@ trait DateTrait
         return $pointedYear;
     }
 
-    /**
-     * @param Carbon $currentGregorianDate
-     *
-     * @return array
-     */
-    protected function todayJalaliSplittedDate(Carbon $currentGregorianDate): array
-    {
-        $delimiter              = '/';
-        $currentJalaliDate      = $this->gregorian_to_jalali($currentGregorianDate->year, $currentGregorianDate->month, $currentGregorianDate->day, $delimiter);
-        $currentJalaliDateSplit = explode($delimiter, $currentJalaliDate);
-        $currentJalaliYear      = $currentJalaliDateSplit[0];
-        $currentJalaliMonth     = $currentJalaliDateSplit[1];
-        $currentJalaliDay       = $currentJalaliDateSplit[2];
-        return [$currentJalaliYear, $currentJalaliMonth, $currentJalaliDay];
-    }
-
     public function getDateTimeAttribute($value)
     {
         $date = $this->CreatedAt_Jalali();
@@ -433,12 +409,21 @@ trait DateTrait
             ->setTimezone('Asia/Tehran')
             ->format('H:i');
 
-        return $date . ' ساعت ' . $time;
+        return $date.' ساعت '.$time;
+    }
+
+    /**
+     * @return string
+     * Converting Created_at field to jalali
+     */
+    public function CreatedAt_Jalali()
+    {
+        return $this->convertDate($this->created_at, 'toJalali');
     }
 
     public function nowTimestamp(): string
     {
-        return now()->format('YmdHis') . substr(hrtime(true), 0, 6);
+        return now()->format('YmdHis').substr(hrtime(true), 0, 6);
     }
 
     public function convertTimeToTehran(string $time): string
@@ -448,5 +433,22 @@ trait DateTrait
             ->format('H:i');
 
         return $time;
+    }
+
+    /**
+     * @param  Carbon  $currentGregorianDate
+     *
+     * @return array
+     */
+    protected function todayJalaliSplittedDate(Carbon $currentGregorianDate): array
+    {
+        $delimiter = '/';
+        $currentJalaliDate = $this->gregorian_to_jalali($currentGregorianDate->year, $currentGregorianDate->month,
+            $currentGregorianDate->day, $delimiter);
+        $currentJalaliDateSplit = explode($delimiter, $currentJalaliDate);
+        $currentJalaliYear = $currentJalaliDateSplit[0];
+        $currentJalaliMonth = $currentJalaliDateSplit[1];
+        $currentJalaliDay = $currentJalaliDateSplit[2];
+        return [$currentJalaliYear, $currentJalaliMonth, $currentJalaliDay];
     }
 }

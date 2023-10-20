@@ -9,35 +9,24 @@ use App\Exports\Rubika\RubikaExport;
 use App\Models\_3aExam;
 use App\Models\Billing;
 use App\Models\BonyadEhsanConsultant;
-
 use App\Models\Content;
 use App\Models\Contentset;
 use App\Models\Coupon;
 use App\Models\DanaContentTransfer;
-
 use App\Models\DanaProductContentTransfer;
-
 use App\Models\DanaProductSetTransfer;
-
 use App\Models\DanaSetTransfer;
-
 use App\Models\Employeetimesheet;
-
 use App\Models\Major;
 use App\Models\Newsletter;
-
 use App\Models\Order;
 use App\Models\Orderproduct;
 use App\Models\Permission;
 use App\Models\Product;
 use App\Models\Productvoucher;
-
 use App\Models\ReferralCode;
-
 use App\Models\TempBucketLog;
-
 use App\Models\Timepoint;
-
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;

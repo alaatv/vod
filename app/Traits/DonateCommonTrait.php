@@ -3,9 +3,6 @@
 namespace App\Traits;
 
 
-
-
-
 use App\Models\Order;
 use App\Models\Orderproduct;
 use App\Models\Product;

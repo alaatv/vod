@@ -17,23 +17,23 @@ class AttributeTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'main',
+                'id' => '1',
+                'name' => 'main',
                 'description' => 'صفت اصلی',
             ],
             [
-                'id'          => '2',
-                'name'        => 'extra',
+                'id' => '2',
+                'name' => 'extra',
                 'description' => 'صفت غیر اصلی',
             ],
             [
-                'id'          => '3',
-                'name'        => 'information',
+                'id' => '3',
+                'name' => 'information',
                 'description' => 'صفت توضیحی',
             ],
         ];
 
         DB::table('attributetypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

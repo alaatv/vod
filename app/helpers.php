@@ -74,8 +74,9 @@ if (!function_exists('convertTagStringToArray')) {
 if (!function_exists('convertArrayToTagString')) {
     function convertArrayToTagString($array): string|null
     {
-        if(!is_array($array))
+        if (!is_array($array)) {
             return null;
+        }
         return implode(',', json_decode(json_encode($array), true));
     }
 
@@ -103,18 +104,30 @@ if (!function_exists('getCurrentWeekDateViaDayName')) {
         $startOfWeekDate = Carbon::now('Asia/Tehran')->startOfWeek(Carbon::SATURDAY);
         if ($dayEnglishName == 'saturday') {
             $date = $startOfWeekDate->toDateString();
-        } else if ($dayEnglishName == 'sunday') {
-            $date = $startOfWeekDate->addDay()->toDateString();
-        } else if ($dayEnglishName == 'monday') {
-            $date = $startOfWeekDate->addDays(2)->toDateString();
-        } else if ($dayEnglishName == 'tuesday') {
-            $date = $startOfWeekDate->addDays(3)->toDateString();
-        } else if ($dayEnglishName == 'wednesday') {
-            $date = $startOfWeekDate->addDays(4)->toDateString();
-        } else if ($dayEnglishName == 'thursday') {
-            $date = $startOfWeekDate->addDays(5)->toDateString();
-        } else if ($dayEnglishName == 'friday') {
-            $date = $startOfWeekDate->addDays(6)->toDateString();
+        } else {
+            if ($dayEnglishName == 'sunday') {
+                $date = $startOfWeekDate->addDay()->toDateString();
+            } else {
+                if ($dayEnglishName == 'monday') {
+                    $date = $startOfWeekDate->addDays(2)->toDateString();
+                } else {
+                    if ($dayEnglishName == 'tuesday') {
+                        $date = $startOfWeekDate->addDays(3)->toDateString();
+                    } else {
+                        if ($dayEnglishName == 'wednesday') {
+                            $date = $startOfWeekDate->addDays(4)->toDateString();
+                        } else {
+                            if ($dayEnglishName == 'thursday') {
+                                $date = $startOfWeekDate->addDays(5)->toDateString();
+                            } else {
+                                if ($dayEnglishName == 'friday') {
+                                    $date = $startOfWeekDate->addDays(6)->toDateString();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         return (isset($date)) ? $date : null;
     }
@@ -126,7 +139,7 @@ if (!function_exists('alaaSetting')) {
      *
      * If an array is passed, we'll assume you want to put to the cache.
      *
-     * @param dynamic  key|key,default|data,expiration|null
+     * @param  dynamic  key|key,default|data,expiration|null
      *
      * @return mixed|CacheManager
      *
@@ -143,7 +156,7 @@ if (!function_exists('convertRedirectUrlToApiVersion')) {
     {
         $url = parse_url($url);
 
-        return url('/api/v' . $apiVersion . Arr::get($url , 'path'));
+        return url('/api/v'.$apiVersion.Arr::get($url, 'path'));
     }
 }
 
@@ -157,7 +170,7 @@ if (!function_exists('pureHTML')) {
 if (!function_exists('generateSecurePathHash')) {
     function generateSecurePathHash($expires, $client_IP, $secret, $url)
     {
-        $str = $expires . $url . $client_IP .' '. $secret;
+        $str = $expires.$url.$client_IP.' '.$secret;
         $str = base64_encode(md5($str, true));
 
         $str = str_replace('+', '-', $str);
@@ -172,13 +185,13 @@ if (!function_exists('getSecureUrl')) {
     /**
      * @param             $url
      *
-     * @param string|null $download
+     * @param  string|null  $download
      *
      * @return string
      */
     function getSecureUrl($url, ?int $download): string
     {
-        return (isset($download) && $download)? $url . '?download=1' : $url ;
+        return (isset($download) && $download) ? $url.'?download=1' : $url;
     }
 }
 
@@ -207,14 +220,14 @@ if (!function_exists('urlAvailable')) {
                         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
                         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
                         curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-                        $rt   = curl_exec($ch);
+                        $rt = curl_exec($ch);
                         $info = curl_getinfo($ch);
 
                         if ($info['http_code'] >= 200 and $info['http_code'] < 400) {
                             $availableGateways[$gateway->name] = $gateway;
                         }
                     } catch (Exception $e) {
-                        Log::error('Error in helper method urlAvailable on pinging gateway : ' . $gateway->name . ' - ' . $e->getFile() . ' - ' . $e->getLine());
+                        Log::error('Error in helper method urlAvailable on pinging gateway : '.$gateway->name.' - '.$e->getFile().' - '.$e->getLine());
                     }
                 }
 //                if (count($availableGateways) > 1) {
@@ -232,14 +245,14 @@ if (!function_exists('urlAvailable')) {
 
 if (!function_exists('myAbort')) {
     /**
-     * @param int $statusCode
-     * @param string $message
+     * @param  int  $statusCode
+     * @param  string  $message
      *
-     * @param array $errors
+     * @param  array  $errors
      *
      * @return JsonResponse
      */
-    function myAbort(int $statusCode , string $message, array $errors = null): JsonResponse
+    function myAbort(int $statusCode, string $message, array $errors = null): JsonResponse
     {
         return response()->json([
             'message' => $message,
@@ -250,7 +263,7 @@ if (!function_exists('myAbort')) {
 
 if (!function_exists('isFileExists')) {
     /**
-     * @param string $url
+     * @param  string  $url
      *
      * @return bool
      */
@@ -383,18 +396,18 @@ if (!function_exists('appendRequestParameters')) {
             if (is_array($requestItem)) {
                 foreach ($requestItem as $item) {
                     if (is_string($item)) {
-                        $parametersString = $parametersString . '&' . $key . '[]=' . $item;
+                        $parametersString = $parametersString.'&'.$key.'[]='.$item;
                     }
                 }
             }
 
             if (is_string($requestItem)) {
-                $parametersString = $parametersString . '&' . $key . '=' . $requestItem;
+                $parametersString = $parametersString.'&'.$key.'='.$requestItem;
             }
         }
 
         if (strlen($parametersString) > 0) {
-            $url = $url . '?' . $parametersString;
+            $url = $url.'?'.$parametersString;
         }
 
         return $url;
@@ -413,7 +426,7 @@ if (!function_exists('url_exists')) {
     function url_exists($url)
     {
         $headers = get_headers($url);
-        return (bool)stripos($headers[0], '200 OK');
+        return (bool) stripos($headers[0], '200 OK');
     }
 }
 if (!function_exists('url_get_size')) {
@@ -424,7 +437,7 @@ if (!function_exists('url_get_size')) {
         }
 //        Log::channel('debug')->debug("url_get_size : url :". $url);
         $data = get_headers($url, true);
-        return isset($data['Content-Length']) ? (int)$data['Content-Length'] : 0;
+        return isset($data['Content-Length']) ? (int) $data['Content-Length'] : 0;
     }
 }
 if (!function_exists('file_size_formatter')) {
@@ -435,15 +448,15 @@ if (!function_exists('file_size_formatter')) {
         }
         switch ($size) {
             case $size < 1024:
-                return $size . ' B';
+                return $size.' B';
             case $size < 1048576:
-                return round($size / 1024, 2) . ' KB';
+                return round($size / 1024, 2).' KB';
             case $size < 1073741824:
-                return round($size / 1048576, 2) . ' MB';
+                return round($size / 1048576, 2).' MB';
             case $size < 1099511627776:
-                return round($size / 1073741824, 2) . ' GB';
+                return round($size / 1073741824, 2).' GB';
             default:
-                return round($size / 1099511627776, 2) . ' TB';
+                return round($size / 1099511627776, 2).' TB';
         }
     }
 }
@@ -454,13 +467,13 @@ if (!function_exists('getVideoLength')) {
             return null;
         }
         $command =
-            "ffprobe -v error -hide_banner -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i \"" . urldecode($url) . "\"";
+            "ffprobe -v error -hide_banner -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i \"".urldecode($url)."\"";
 //        Log::channel('debug')->debug($command);
         try {
-            $videoLength = (int)exec($command);
+            $videoLength = (int) exec($command);
 //            Log::channel('debug')->debug("l:" .$videoLength);
         } catch (Exception $exception) {
-            Log::error('getVideoLength: ' . $url . ' - ' . $exception->getMessage());
+            Log::error('getVideoLength: '.$url.' - '.$exception->getMessage());
         }
         return $videoLength;
     }
@@ -473,7 +486,7 @@ if (!function_exists('getFileSize')) {
             return null;
         }
         $fileSizeKB = filesize(urldecode($path)) / 1024;
-        return (int)$fileSizeKB;
+        return (int) $fileSizeKB;
     }
 }
 
@@ -495,10 +508,9 @@ if (!function_exists('determineSMSOperator')) {
         try {
             $operator = determineUserMobileOperator($mobile);
             return $operator?->provider?->number ??
-                   SmsProvider::filter(['enable' => true, 'defaults' => true])->first()->number ??
-                   throw new Exception('Provider Not Defined');
-        }catch (Exception $e)
-        {
+                SmsProvider::filter(['enable' => true, 'defaults' => true])->first()->number ??
+                throw new Exception('Provider Not Defined');
+        } catch (Exception $e) {
             throw new Exception('Provider Not Defined');
         }
     }
@@ -586,7 +598,7 @@ if (!function_exists('reformatToUseInSync')) {
 if (!function_exists('ticketDepartmentTagRedisUrl')) {
     function ticketDepartmentTagRedisUrl(int $ticketDepartmentId): string
     {
-        return config('constants.TAG_API_URL') . 'id/ticketDepartment/' . $ticketDepartmentId;
+        return config('constants.TAG_API_URL').'id/ticketDepartment/'.$ticketDepartmentId;
     }
 }
 
@@ -595,7 +607,7 @@ if (!function_exists('diffInPeriod')) {
     {
         $startDate = Carbon::parse($startDate)->format('Y-m-d H:i:s');
         $startDate = Carbon::createFromDate($startDate);
-        $endDate   = Carbon::parse($endDate)->format('Y-m-d H:i:s');
+        $endDate = Carbon::parse($endDate)->format('Y-m-d H:i:s');
 
         return $startDate->{$carbonDiffMethodName}($endDate);
     }
@@ -629,7 +641,7 @@ if (!function_exists('isDevelopmentMode')) {
     }
 }
 
-if (! function_exists('appUrlRoute')) {
+if (!function_exists('appUrlRoute')) {
     /**
      * Generate the URL to a named route.
      *
@@ -643,20 +655,19 @@ if (! function_exists('appUrlRoute')) {
         $url = route($name, $parameters, $absolute);
 
         $parseUrl = parse_url($url);
-        $url =  config('constants.APP_URL') . Arr::get($parseUrl, 'path') ;
-        $query = Arr::get($parseUrl, 'query') ;
-        if(isset($query))
-        {
-            $url = $url .  '?' . $query ;
+        $url = config('constants.APP_URL').Arr::get($parseUrl, 'path');
+        $query = Arr::get($parseUrl, 'query');
+        if (isset($query)) {
+            $url = $url.'?'.$query;
         }
 
-        return $url ;
+        return $url;
     }
 }
 
 if (!function_exists('secondsToHumanFormat')) {
     /**
-     * @param int|null $seconds
+     * @param  int|null  $seconds
      * @return string|null
      */
     function secondsToHumanFormat(?int $seconds): ?string
@@ -680,9 +691,9 @@ if (!function_exists('secondsToHumanFormat')) {
 
 if (!function_exists('nestedArraySearchWithKey')) {
     /**
-     * @param array $array
-     * @param string $key
-     * @param string $value
+     * @param  array  $array
+     * @param  string  $key
+     * @param  string  $value
      * @return array|null
      */
     function nestedArraySearchWithKey(array $array, string $value, string $key): ?array
@@ -702,14 +713,18 @@ if (!function_exists('nestedArraySearchWithKey')) {
 
 if (!function_exists('nestedArraySearchValueByAnotherField')) {
     /**
-     * @param array $array
-     * @param string $searchValue
-     * @param string $searchKey
-     * @param string $returnFieldKey
+     * @param  array  $array
+     * @param  string  $searchValue
+     * @param  string  $searchKey
+     * @param  string  $returnFieldKey
      * @return mixed
      */
-    function nestedArraySearchValueByAnotherField(array $array, string $searchValue, string $searchKey, string $returnFieldKey): mixed
-    {
+    function nestedArraySearchValueByAnotherField(
+        array $array,
+        string $searchValue,
+        string $searchKey,
+        string $returnFieldKey
+    ): mixed {
         $searchedArray = nestedArraySearchWithKey($array, $searchValue, $searchKey);
         if (!is_null($searchedArray)) {
             return Arr::get($searchedArray, $returnFieldKey);
@@ -721,8 +736,8 @@ if (!function_exists('nestedArraySearchValueByAnotherField')) {
 
 if (!function_exists('searchArrayToAnotherArray')) {
     /**
-     * @param array $array1
-     * @param array $array2
+     * @param  array  $array1
+     * @param  array  $array2
      * @return bool
      */
     function searchArrayToAnotherArray(array $array1, array $array2): bool
@@ -734,7 +749,7 @@ if (!function_exists('searchArrayToAnotherArray')) {
 if (!function_exists('standardTelNo')) {
     function standardTelNo(string $telNo): string
     {
-        return '0' . baseTelNo($telNo);
+        return '0'.baseTelNo($telNo);
     }
 }
 
@@ -749,7 +764,7 @@ if (!function_exists('removeQueryFromUrl')) {
     function removeQueryFromUrl(string $url): string
     {
         $parseUrl = parse_url($url);
-        return $parseUrl['scheme'] . '://' . $parseUrl['host'] . $parseUrl['path'];
+        return $parseUrl['scheme'].'://'.$parseUrl['host'].$parseUrl['path'];
     }
 }
 
@@ -757,14 +772,14 @@ if (!function_exists('convertBaseUrlToAppUrl')) {
     function convertBaseUrlToAppUrl(string $url): string
     {
         $parseUrl = parse_url($url);
-        return config('app.url') . $parseUrl['path'] . '?' . $parseUrl['query'];
+        return config('app.url').$parseUrl['path'].'?'.$parseUrl['query'];
     }
 }
 
 if (!function_exists('generateRandomString')) {
     function generateRandomString($n)
     {
-        $characters   = '0123456789abcdefghijklmnopqrstuvwxyz';
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
         $randomString = '';
 
         for ($i = 0; $i < $n; $i++) {
@@ -807,9 +822,9 @@ if (!function_exists('array_filter_collapse')) {
 
 if (!function_exists('arrayInsert')) {
     /**
-     * @param array $array
-     * @param int|string $position
-     * @param mixed $insert
+     * @param  array  $array
+     * @param  int|string  $position
+     * @param  mixed  $insert
      */
     function arrayInsert(&$array, $position, $insert)
     {
@@ -861,10 +876,12 @@ if (!function_exists('nationalCodeValidation')) {
         function makeRandomOnlyAlphabeticalString($length)
         {
             $seed = str_split('abcdefghijklmnopqrstuvwxyz'
-                . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+                .'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
             shuffle($seed);
             $rand = '';
-            foreach (array_rand($seed, $length) as $k) $rand .= $seed[$k];
+            foreach (array_rand($seed, $length) as $k) {
+                $rand .= $seed[$k];
+            }
             return $rand;
         }
     }

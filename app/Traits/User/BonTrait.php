@@ -9,8 +9,6 @@
 namespace App\Traits\User;
 
 
-
-
 use App\Models\Userbon;
 use Carbon\Carbon;
 use Doctrine\DBAL\Query\QueryBuilder;

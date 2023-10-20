@@ -17,14 +17,14 @@ class BonSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'alaa',
+                'id' => '1',
+                'name' => 'alaa',
                 'displayName' => 'فرات بن',
                 'description' => 'بن تخفیف فرات',
             ],
         ];
 
         DB::table('bons')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Models\Content;
 use App\Models\Contentset;
-
 use App\Models\Product;
 use App\Models\User;
 use Exception;

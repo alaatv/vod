@@ -15,36 +15,36 @@ class ProductTypeSeeder extends Seeder
     public function run()
     {
 
-        $data =[
+        $data = [
             [
-                'id'          => '1',
+                'id' => '1',
                 'displayName' => 'ساده',
-                'name'        => 'simple',
+                'name' => 'simple',
                 'description' => 'کالای بدون انواع صفت مانند رنگهای مختلف',
-                'created_at'  => null,
-                'updated_at'  => '2018-10-13 15:30:48',
-                'deleted_at'  => null,
+                'created_at' => null,
+                'updated_at' => '2018-10-13 15:30:48',
+                'deleted_at' => null,
             ],
             [
-                'id'          => '2',
+                'id' => '2',
                 'displayName' => 'قابل پیکربندی',
-                'name'        => 'configurable',
+                'name' => 'configurable',
                 'description' => 'کالای دارای انواع مختلف صفت مانند رنگ های مختلف',
-                'created_at'  => null,
-                'updated_at'  => '2018-10-13 15:30:48',
-                'deleted_at'  => null,
+                'created_at' => null,
+                'updated_at' => '2018-10-13 15:30:48',
+                'deleted_at' => null,
             ],
             [
-                'id'          => '3',
+                'id' => '3',
                 'displayName' => 'قابل انتخاب',
-                'name'        => 'selectable',
+                'name' => 'selectable',
                 'description' => 'کالا قابل انتخاب از بین کالاهای زیر مجموعه خود است',
-                'created_at'  => '2017-08-13 16:40:08',
-                'updated_at'  => '2018-10-15 18:10:59',
-                'deleted_at'  => null,
+                'created_at' => '2017-08-13 16:40:08',
+                'updated_at' => '2018-10-15 18:10:59',
+                'deleted_at' => null,
             ],
         ];
         DB::table('producttypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

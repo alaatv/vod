@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\_3aExam;
-
 use App\Models\Product;
 use Exception;
 use Illuminate\Console\Command;

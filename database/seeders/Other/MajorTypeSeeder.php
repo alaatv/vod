@@ -17,20 +17,20 @@ class MajorTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'highschool',
+                'id' => '1',
+                'name' => 'highschool',
                 'displayName' => 'دبیرستانی',
                 'description' => 'رشته های دبیرستانی',
             ],
             [
-                'id'          => '2',
-                'name'        => 'university',
+                'id' => '2',
+                'name' => 'university',
                 'displayName' => 'دانشگاهی',
                 'description' => 'رشته های دانشگاهی',
             ],
         ];
 
         DB::table('majortypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

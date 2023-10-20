@@ -18,7 +18,7 @@ class ReferralCodeFactory extends Factory
         return [
             'owner_id' => 1,
             'referralRequest_id' => $this->faker->randomElement($referralRequestIds),
-            'code' => randomNumber(2) . '-' . randomNumber(5),
+            'code' => randomNumber(2).'-'.randomNumber(5),
             'enable' => 1,
         ];
     }

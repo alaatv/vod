@@ -55,7 +55,7 @@ return [
     */
 
     'chunk' => [
-        'searchable'   => 500,
+        'searchable' => 500,
         'unsearchable' => 500,
     ],
 
@@ -71,17 +71,17 @@ return [
     */
 
     'algolia' => [
-        'id'     => env('ALGOLIA_APP_ID', ''),
+        'id' => env('ALGOLIA_APP_ID', ''),
         'secret' => env('ALGOLIA_SECRET', ''),
     ],
 
     'mysql' => [
-        'mode'                         => 'NATURAL_LANGUAGE',
-        'model_directories'            => [app_path()],
-        'min_search_length'            => 0,
-        'min_fulltext_search_length'   => 4,
+        'mode' => 'NATURAL_LANGUAGE',
+        'model_directories' => [app_path()],
+        'min_search_length' => 0,
+        'min_fulltext_search_length' => 4,
         'min_fulltext_search_fallback' => 'LIKE',
-        'query_expansion'              => false,
+        'query_expansion' => false,
     ],
 
 ];

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders\Orders;
 
-use App\Models\ReferralCode;
-use App\Models\ReferralRequest;
 use App\Models\Order;
 use App\Models\Orderproduct;
+use App\Models\ReferralCode;
+use App\Models\ReferralRequest;
 use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 

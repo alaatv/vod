@@ -4,7 +4,6 @@
 namespace App\Traits;
 
 
-
 use App\Classes\OrderProduct\RefinementProduct\RefinementFactory;
 use App\Classes\ResourcePolicy;
 use App\Collection\OrderproductCollection;

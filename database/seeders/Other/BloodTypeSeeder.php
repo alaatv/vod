@@ -17,49 +17,49 @@ class BloodTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'O+',
+                'id' => '1',
+                'name' => 'O+',
                 'displayName' => 'O مثبت',
             ],
             [
-                'id'          => '2',
-                'name'        => 'O−',
+                'id' => '2',
+                'name' => 'O−',
                 'displayName' => 'O منفی',
             ],
             [
-                'id'          => '3',
-                'name'        => 'A+',
+                'id' => '3',
+                'name' => 'A+',
                 'displayName' => 'A مثبت',
             ],
             [
-                'id'          => '4',
-                'name'        => 'A−',
+                'id' => '4',
+                'name' => 'A−',
                 'displayName' => 'A منفی',
             ],
             [
-                'id'          => '5',
-                'name'        => 'B+',
+                'id' => '5',
+                'name' => 'B+',
                 'displayName' => 'B مثبت',
             ],
             [
-                'id'          => '6',
-                'name'        => 'B−',
+                'id' => '6',
+                'name' => 'B−',
                 'displayName' => 'B منفی',
             ],
             [
-                'id'          => '7',
-                'name'        => 'AB+',
+                'id' => '7',
+                'name' => 'AB+',
                 'displayName' => 'AB مثبت',
             ],
             [
-                'id'          => '8',
-                'name'        => 'AB−',
+                'id' => '8',
+                'name' => 'AB−',
                 'displayName' => 'AB منفی',
             ],
 
         ];
 
         DB::table('bloodtypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

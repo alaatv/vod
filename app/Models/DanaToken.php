@@ -15,8 +15,8 @@ class DanaToken extends Model
      * @var array
      */
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected $fillable = ['access_token', 'refresh_token', 'expires_at'];

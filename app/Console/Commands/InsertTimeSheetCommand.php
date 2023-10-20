@@ -3,11 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Dayofweek;
-
 use App\Models\Employeeschedule;
-
 use App\Models\Employeetimesheet;
-
 use App\Traits\DateTrait;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

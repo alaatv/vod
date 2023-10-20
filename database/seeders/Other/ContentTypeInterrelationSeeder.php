@@ -17,14 +17,14 @@ class ContentTypeInterrelationSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'parent-child',
+                'id' => '1',
+                'name' => 'parent-child',
                 'displayName' => 'فرزند-والد',
                 'description' => 'به طوری قرارداری اولی والد دومی می باشد',
             ],
         ];
 
         DB::table('contenttypeinterrelations')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

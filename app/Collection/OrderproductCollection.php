@@ -13,7 +13,6 @@ use App\Classes\Checkout\Alaa\GroupOrderproductCheckout;
 use App\Models\Coupon;
 use App\Models\Orderproduct;
 use App\Models\Product;
-
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -22,7 +21,6 @@ class OrderproductCollection extends Collection
     public const MODE = OrderproductPriceCalculator::ORDERPRODUCT_CALCULATOR_MODE_CALCULATE_FROM_BASE;
 
     private $newPrices = [];
-
 
 
     /**

@@ -17,20 +17,20 @@ class TicketPrioritySeeder extends Seeder
 
         $data = [
             [
-                'id'             => '1',
-                'title'          => 'کم',
+                'id' => '1',
+                'title' => 'کم',
             ],
             [
-                'id'             => '2',
-                'title'          => 'متوسط',
+                'id' => '2',
+                'title' => 'متوسط',
             ],
             [
-                'id'             => '3',
-                'title'          => 'فوری',
+                'id' => '3',
+                'title' => 'فوری',
             ],
             [
-                'id'             => '4',
-                'title'          => 'بحرانی',
+                'id' => '4',
+                'title' => 'بحرانی',
             ],
         ];
 

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Contentset;
-
 use App\Traits\CharacterCommon;
 use App\Traits\Content\ContentControllerResponseTrait;
 use Illuminate\Console\Command;

@@ -23,23 +23,23 @@ class BannersBlockSeeder extends Seeder
 
         $data = [
             [
-                'title'      => 'بالای لیست-نمای موبایل و تبلت',
-                'type'       => 7,
+                'title' => 'بالای لیست-نمای موبایل و تبلت',
+                'type' => 7,
                 'created_at' => Carbon::now(),
             ],
             [
-                'title'      => 'بالای لیست-نمای دسکتاپ',
-                'type'       => 7,
+                'title' => 'بالای لیست-نمای دسکتاپ',
+                'type' => 7,
                 'created_at' => Carbon::now(),
             ],
             [
-                'title'      => 'سمت چپ صفحه پایین لیست کانتنت های مشابه',
-                'type'       => 7,
+                'title' => 'سمت چپ صفحه پایین لیست کانتنت های مشابه',
+                'type' => 7,
                 'created_at' => Carbon::now(),
             ],
             [
-                'title'      => 'سمت راست صفحه بالای توضیحات کانتنت',
-                'type'       => 7,
+                'title' => 'سمت راست صفحه بالای توضیحات کانتنت',
+                'type' => 7,
                 'created_at' => Carbon::now(),
             ],
         ];

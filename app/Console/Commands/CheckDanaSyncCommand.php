@@ -3,13 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\DanaContentTransfer;
-
 use App\Models\DanaProductContentTransfer;
-
 use App\Models\DanaProductSetTransfer;
-
 use App\Models\DanaProductTransfer;
-
 use App\Models\User;
 use App\Notifications\BonyadConsultantCheckerNotification;
 use App\Services\DanaProductService;

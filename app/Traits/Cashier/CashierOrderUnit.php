@@ -9,7 +9,6 @@
 namespace App\Traits\Cashier;
 
 
-
 use App\Models\Order;
 
 trait CashierOrderUnit

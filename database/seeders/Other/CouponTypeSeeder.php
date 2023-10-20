@@ -17,19 +17,19 @@ class CouponTypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
+                'id' => '1',
                 'displayName' => 'کلی',
-                'name'        => 'overall',
+                'name' => 'overall',
                 'description' => 'کپن برای همه محصولات سبد',
             ],
             [
-                'id'          => '2',
+                'id' => '2',
                 'displayName' => 'جزئی',
-                'name'        => 'partial',
+                'name' => 'partial',
                 'description' => 'کپن برای بعضی از محصولات سبد',
             ],
         ];
         DB::table('coupontypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

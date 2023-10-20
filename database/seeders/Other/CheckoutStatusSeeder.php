@@ -17,14 +17,14 @@ class CheckoutStatusSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'unpaid',
+                'id' => '1',
+                'name' => 'unpaid',
                 'displayName' => 'تسویه نشده',
                 'description' => 'تسویه نشده است',
             ],
             [
-                'id'          => '2',
-                'name'        => 'paid',
+                'id' => '2',
+                'name' => 'paid',
                 'displayName' => 'تسویه شده',
                 'description' => 'تسویه شده است',
             ],
@@ -32,6 +32,6 @@ class CheckoutStatusSeeder extends Seeder
         ];
 
         DB::table('checkoutstatuses')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

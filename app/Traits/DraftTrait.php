@@ -4,8 +4,6 @@
 namespace App\Traits;
 
 
-
-
 use App\Models\Content;
 use App\Models\Product;
 use Symfony\Component\HttpFoundation\Response;

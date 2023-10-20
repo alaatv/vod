@@ -3,7 +3,6 @@
 namespace App\Models;
 
 
-
 class Attributecontrol extends BaseModel
 {
     /**

@@ -17,20 +17,20 @@ class PhonetypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'mobile',
+                'id' => '1',
+                'name' => 'mobile',
                 'displayName' => 'موبایل',
                 'description' => 'شماره تلفن از نوع موبایل است',
             ],
             [
-                'id'          => '2',
-                'name'        => 'home',
+                'id' => '2',
+                'name' => 'home',
                 'displayName' => 'منزل',
                 'description' => 'شماره تلفن از نوع ثابت است',
             ],
         ];
 
         DB::table('phonetypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

@@ -30,11 +30,11 @@ class WebsitePageSeeder extends Seeder
 
         $data = [
             [
-                'url'         => '/shop',
+                'url' => '/shop',
                 'displayName' => 'صفحه اصلی فروشگاه',
             ],
         ];
         DB::table('websitepages')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

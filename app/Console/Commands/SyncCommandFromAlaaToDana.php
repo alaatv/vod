@@ -5,13 +5,9 @@ namespace App\Console\Commands;
 use App\Events\ChangeDanaStatus;
 use App\Models\Content;
 use App\Models\DanaContentTransfer;
-
 use App\Models\DanaProductContentTransfer;
-
 use App\Models\DanaProductSetTransfer;
-
 use App\Models\DanaProductTransfer;
-
 use App\Services\DanaProductService;
 use App\Services\DanaService;
 use Carbon\Carbon;

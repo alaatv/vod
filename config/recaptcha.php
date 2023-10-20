@@ -13,7 +13,7 @@ return [
     | and private_key is the Secret key.
     |
     */
-    'public_key'  => env('RECAPTCHA_PUBLIC_KEY', ''),
+    'public_key' => env('RECAPTCHA_PUBLIC_KEY', ''),
     'private_key' => env('RECAPTCHA_PRIVATE_KEY', ''),
 
     /*
@@ -24,7 +24,7 @@ return [
     | Set a template to use if you don't want to use the standard one.
     |
     */
-    'template'    => '',
+    'template' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ return [
     | Only applies to v2.
     |
     */
-    'driver'      => 'curl',
+    'driver' => 'curl',
 
     /*
     |--------------------------------------------------------------------------
@@ -45,10 +45,10 @@ return [
     | Various options for the driver
     |
     */
-    'options'     => [
+    'options' => [
 
         'curl_timeout' => 1,
-        'lang'         => 'fa',
+        'lang' => 'fa',
 
     ],
 

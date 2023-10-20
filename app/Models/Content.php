@@ -80,10 +80,10 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     public const INDEX_PAGE_NAME = 'contentPage';
     /**      * The attributes that should be mutated to dates.        */
     protected $casts = [
-        'created_at'=> 'datetime',
-        'updated_at'=> 'datetime',
-        'deleted_at'=> 'datetime',
-        'validSince'=> 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+        'validSince' => 'datetime',
         'forrest_tree_grid' => 'array',
         'forrest_tree_tags' => 'array',
     ];

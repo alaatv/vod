@@ -3,8 +3,6 @@
 namespace App\Models;
 
 
-
-
 class Article extends BaseModel
 {
     //    use Searchable;

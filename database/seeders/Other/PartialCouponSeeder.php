@@ -18,10 +18,10 @@ class PartialCouponSeeder extends Seeder
         Product::factory()
             ->has(
                 Coupon::factory()
-                ->state([
-                    'coupontype_id' => 2,
+                    ->state([
+                        'coupontype_id' => 2,
 
-                ])
+                    ])
             )
             ->count(5)
             ->create();

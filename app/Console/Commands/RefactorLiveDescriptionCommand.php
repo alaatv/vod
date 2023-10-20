@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\LiveDescription;
-
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Log;
 
 class RefactorLiveDescriptionCommand extends Command

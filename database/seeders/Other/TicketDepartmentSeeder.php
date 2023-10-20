@@ -17,8 +17,8 @@ class TicketDepartmentSeeder extends Seeder
 
         $data = [
             [
-                'id'             => '1',
-                'title'          => 'آموزش',
+                'id' => '1',
+                'title' => 'آموزش',
             ],
         ];
 

@@ -1,7 +1,6 @@
 <?php namespace App\Traits;
 
 
-
 use App\Collection\AttributevalueCollection;
 use App\Jobs\GiveSubscriptoinWalletCredit;
 use App\Models\Attribute;

@@ -7,19 +7,12 @@ use App\Jobs\DanaEditCourseJob;
 use App\Jobs\DeleteOrTransferContentToDanaProductJob;
 use App\Models\Content;
 use App\Models\Contentset;
-
 use App\Models\DanaAuthor;
-
 use App\Models\DanaContentTransfer;
-
 use App\Models\DanaProductContentTransfer;
-
 use App\Models\DanaProductSetTransfer;
-
 use App\Models\DanaProductTransfer;
-
 use App\Models\DanaSetTransfer;
-
 use App\Models\Product;
 use App\Models\User;
 use App\Services\DanaProductService;

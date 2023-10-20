@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Contractor;
-use App\Models\Productvoucher;
 use App\Models\Product;
+use App\Models\Productvoucher;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductvoucherFactory extends Factory

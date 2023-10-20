@@ -9,7 +9,6 @@
 namespace App\Traits\Product;
 
 
-
 use App\Models\Bon;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

@@ -17,21 +17,21 @@ class ContacttypeSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'simple',
+                'id' => '1',
+                'name' => 'simple',
                 'displayName' => 'ساده',
                 'description' => 'دفترچه تلفن از ساده است',
             ],
 
             [
-                'id'          => '2',
-                'name'        => 'emergency',
+                'id' => '2',
+                'name' => 'emergency',
                 'displayName' => 'اضطراری',
                 'description' => 'دفترچه تلفن از اضطراری است',
             ],
         ];
 
         DB::table('contacttypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

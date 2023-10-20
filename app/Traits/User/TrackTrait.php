@@ -9,7 +9,6 @@
 namespace App\Traits\User;
 
 
-
 use App\Models\Websitepage;
 
 trait TrackTrait

@@ -4,9 +4,6 @@
 namespace App\Traits\GiveGift;
 
 
-
-
-
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;

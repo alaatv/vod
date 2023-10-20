@@ -9,13 +9,13 @@ return [
      |
      | Debugbar is enabled by default, when debug is set to true in app.php.
      | You can override the value by setting enable to true or false instead of null.
-     | 
+     |
      | You can provide an array of URI's that must be ignored (eg. 'api/*')
      |
      */
 
     'enabled' => env('DEBUGBAR_ENABLED', null),
-    'except'  => [
+    'except' => [
         //
     ],
 
@@ -32,14 +32,14 @@ return [
      |
      */
     'storage' => [
-        'enabled'    => true,
-        'driver'     => 'file',
+        'enabled' => true,
+        'driver' => 'file',
         // redis, file, pdo, custom
-        'path'       => storage_path('debugbar'),
+        'path' => storage_path('debugbar'),
         // For file driver
         'connection' => null,
         // Leave null for default connection (Redis/PDO)
-        'provider'   => ''
+        'provider' => ''
         // Instance of StorageInterface for custom driver
     ],
 
@@ -70,7 +70,7 @@ return [
      | Optionally, you can also send ServerTiming headers on ajax requests for the Chrome DevTools.
      */
 
-    'capture_ajax'    => true,
+    'capture_ajax' => true,
     'add_ajax_timing' => false,
 
     /*
@@ -82,7 +82,7 @@ return [
      | in the Messages tab.
      |
      */
-    'error_handler'   => false,
+    'error_handler' => false,
 
     /*
      |--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return [
      | Extension, without the server-side code. It uses Debugbar collectors instead.
      |
      */
-    'clockwork'       => false,
+    'clockwork' => false,
 
     /*
      |--------------------------------------------------------------------------
@@ -105,47 +105,47 @@ return [
      */
 
     'collectors' => [
-        'phpinfo'         => true,
+        'phpinfo' => true,
         // Php version
-        'messages'        => true,
+        'messages' => true,
         // Messages
-        'time'            => true,
+        'time' => true,
         // Time Datalogger
-        'memory'          => true,
+        'memory' => true,
         // Memory usage
-        'exceptions'      => true,
+        'exceptions' => true,
         // Exception displayer
-        'log'             => true,
+        'log' => true,
         // Logs from Monolog (merged in messages if enabled)
-        'db'              => true,
+        'db' => true,
         // Show database (PDO) queries and bindings
-        'views'           => true,
+        'views' => true,
         // Views with their data
-        'route'           => true,
+        'route' => true,
         // Current route information
-        'auth'            => true,
+        'auth' => true,
         // Display Laravel authentication status
-        'gate'            => true,
+        'gate' => true,
         // Display Laravel Gate checks
-        'session'         => true,
+        'session' => true,
         // Display session data
         'symfony_request' => true,
         // Only one can be enabled..
-        'mail'            => true,
+        'mail' => true,
         // Catch mail messages
-        'laravel'         => true,
+        'laravel' => true,
         // Laravel version and environment
-        'events'          => true,
+        'events' => true,
         // All events fired
         'default_request' => false,
         // Regular or special Symfony request logger
-        'logs'            => false,
+        'logs' => false,
         // Add the latest log messages
-        'files'           => false,
+        'files' => false,
         // Show the included files
-        'config'          => false,
+        'config' => false,
         // Display config settings
-        'cache'           => true,
+        'cache' => true,
         // Display cache events
     ],
 
@@ -159,26 +159,26 @@ return [
      */
 
     'options' => [
-        'auth'  => [
+        'auth' => [
             'show_name' => true,
             // Also show the users name/email in the debugbar
         ],
-        'db'    => [
+        'db' => [
             'with_params' => true,
             // Render SQL with the parameters substituted
-            'backtrace'   => true,
+            'backtrace' => true,
             // Use a backtrace to find the origin of the query in your files.
-            'timeline'    => true,
+            'timeline' => true,
             // Add the queries to the timeline
-            'explain'     => [                 // Show EXPLAIN output on queries
-                                               'enabled' => true,
-                                               'types'   => ['SELECT'],
-                                               // ['SELECT', 'INSERT', 'UPDATE', 'DELETE']; for MySQL 5.6.3+
+            'explain' => [                 // Show EXPLAIN output on queries
+                'enabled' => true,
+                'types' => ['SELECT'],
+                // ['SELECT', 'INSERT', 'UPDATE', 'DELETE']; for MySQL 5.6.3+
             ],
-            'hints'       => true,
+            'hints' => true,
             // Show hints for common mistakes
         ],
-        'mail'  => [
+        'mail' => [
             'full_log' => false,
         ],
         'views' => [
@@ -189,7 +189,7 @@ return [
             'label' => true
             // show complete route on bar
         ],
-        'logs'  => [
+        'logs' => [
             'file' => null,
         ],
         'cache' => [
@@ -209,7 +209,7 @@ return [
      |
      */
 
-    'inject'       => true,
+    'inject' => true,
 
     /*
      |--------------------------------------------------------------------------

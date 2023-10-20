@@ -17,7 +17,7 @@ trait CharacterCommon
 
     /** Converts Persian numbers in a string to English numbers
      *
-     * @param string $string
+     * @param  string  $string
      *
      * @return string
      */
@@ -86,8 +86,8 @@ trait CharacterCommon
 
     /** Converts a string to slug form
      *
-     * @param string $string
-     * @param string $separator
+     * @param  string  $string
+     * @param  string  $separator
      *
      * @return string
      */

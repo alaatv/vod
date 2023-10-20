@@ -5,10 +5,8 @@ namespace App\Console\Commands;
 use App\Models\Bon;
 use App\Models\Lottery;
 use App\Models\LotteryStatus;
-
 use App\Models\User;
 use App\Models\Userbon;
-
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;

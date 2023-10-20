@@ -18,8 +18,7 @@ class webBlockCollectionFormatter implements BlockCollectionFormatter
 
     public function __construct(
         protected SetCollectionFormatter $formatter
-    )
-    {
+    ) {
     }
 
     public function format(BlockCollection $blocks): Collection

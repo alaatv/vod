@@ -32,31 +32,26 @@ trait Scopes
         return $builder->where('number', 'like', "%$number%");
     }
 
-    public function scopeFilter(Builder $builder, array $filters):Builder
+    public function scopeFilter(Builder $builder, array $filters): Builder
     {
 
-        if($operator = Arr::get($filters, 'operator_id'))
-        {
+        if ($operator = Arr::get($filters, 'operator_id')) {
             $builder->where('operator_id', $operator);
         }
 
-        if($number = Arr::get($filters, 'number'))
-        {
+        if ($number = Arr::get($filters, 'number')) {
             $builder->withNumber($number);
         }
 
-        if(Arr::has($filters, 'enable'))
-        {
+        if (Arr::has($filters, 'enable')) {
             $builder->enable(Arr::get($filters, 'enable'));
         }
 
-        if(Arr::get($filters, 'disable'))
-        {
+        if (Arr::get($filters, 'disable')) {
             $builder->disable();
         }
 
-        if(Arr::has($filters, 'defaults'))
-        {
+        if (Arr::has($filters, 'defaults')) {
             $builder->defaults(Arr::get($filters, 'defaults'));
         }
 

@@ -20,21 +20,15 @@ use Throwable;
 
 trait IppanelCommon
 {
-    public function ippanelClientObj()
-    {
-        return new Client(config('services.medianaSMS.api_key'));
-    }
-
     public function sendMessage($transmitter, $recipients, $message)
     {
         $client = $this->ippanelClientObj();
         return $client->send($transmitter, $recipients, $message);
     }
 
-    public function getMessage($bulkId)
+    public function ippanelClientObj()
     {
-        $client = $this->ippanelClientObj();
-        return $client->getMessage($bulkId);
+        return new Client(config('services.medianaSMS.api_key'));
     }
 
     /**
@@ -73,14 +67,13 @@ trait IppanelCommon
             }
 
             // Return response message if api response has error.
-            Log::channel('medianaIppanelApi')->error('Api response error - Recheck sent sms status. Error message: ' . json_encode($response));
+            Log::channel('medianaIppanelApi')->error('Api response error - Recheck sent sms status. Error message: '.json_encode($response));
             return [
                 'error' => true,
                 'has_response' => true,
                 'response' => $response,
             ];
-        }
-        // Notice! Please don't remove these catch statements.
+        } // Notice! Please don't remove these catch statements.
         catch (Error $error) {
             // Notice! Please don't remove these catch statements.
             $errorResponse = $error;
@@ -93,12 +86,18 @@ trait IppanelCommon
         }
 
         // Return fail if api fails.
-        Log::channel('medianaIppanelApi')->error('Api fail - Recheck sent sms status. Exception message: ' . json_encode($errorResponse));
+        Log::channel('medianaIppanelApi')->error('Api fail - Recheck sent sms status. Exception message: '.json_encode($errorResponse));
         return [
             'error' => true,
             'has_response' => false,
             'response' => $errorResponse,
         ];
+    }
+
+    public function getMessage($bulkId)
+    {
+        $client = $this->ippanelClientObj();
+        return $client->getMessage($bulkId);
     }
 
     /**
@@ -151,7 +150,7 @@ trait IppanelCommon
             }
 
             // Return response message if api response has error.
-            Log::channel('medianaIppanelApi')->error('Api response error - Recheck sent sms recipients status. Error message: ' . json_encode($response));
+            Log::channel('medianaIppanelApi')->error('Api response error - Recheck sent sms recipients status. Error message: '.json_encode($response));
             return [
                 'error' => true,
                 'has_response' => true,
@@ -160,7 +159,7 @@ trait IppanelCommon
         } catch (Exception $e) {
 
             // Return fail if api fails.
-            Log::channel('medianaIppanelApi')->error('Api fail - Recheck sent sms recipients status. Exception message: ' . json_encode($e));
+            Log::channel('medianaIppanelApi')->error('Api fail - Recheck sent sms recipients status. Exception message: '.json_encode($e));
             return [
                 'error' => true,
                 'has_response' => false,
@@ -185,27 +184,27 @@ trait IppanelCommon
     }
 
     /**
-     * @param array $recipients
-     * @param int|null $smsProviderId
-     * @param string|null $message
-     * @param string|null $patternCode
-     * @param array|null $patternData
-     * @param int|null $bulkId
-     * @param string|null $smsResult
-     * @param User|null $user
-     * @param string|null $foreign_id
-     * @param string|null $foreign_type
+     * @param  array  $recipients
+     * @param  int|null  $smsProviderId
+     * @param  string|null  $message
+     * @param  string|null  $patternCode
+     * @param  array|null  $patternData
+     * @param  int|null  $bulkId
+     * @param  string|null  $smsResult
+     * @param  User|null  $user
+     * @param  string|null  $foreign_id
+     * @param  string|null  $foreign_type
      * @return mixed
      */
     public function logSentSms(
-        array  $recipients,
-        int    $smsProviderId = null,
+        array $recipients,
+        int $smsProviderId = null,
         string $message = null,
         string $patternCode = null,
-        array  $patternData = null,
-        int    $bulkId = null,
+        array $patternData = null,
+        int $bulkId = null,
         string $smsResult = null,
-        User   $user = null,
+        User $user = null,
         string $foreign_id = null,
         string $foreign_type = null,
     ) {
@@ -253,8 +252,8 @@ trait IppanelCommon
     public function sendPatternSmsByApi($to, $from, $patternCode, $patternData)
     {
         // Important: The recipient number must be generated as follows. Note that the Mediana ippanel document was mispronounced.
-        $to = '0'. baseTelNo($to);
-        $from = '+98'. baseTelNo($from);
+        $to = '0'.baseTelNo($to);
+        $from = '+98'.baseTelNo($from);
 
         try {
 
@@ -283,7 +282,7 @@ trait IppanelCommon
             }
 
             // Return response message if api response has error.
-            Log::channel('medianaIppanelApi')->error('Api response error - Sending pattern sms. Error message: ' . json_encode($response));
+            Log::channel('medianaIppanelApi')->error('Api response error - Sending pattern sms. Error message: '.json_encode($response));
             return [
                 'error' => true,
                 'has_response' => true,
@@ -293,7 +292,7 @@ trait IppanelCommon
 
         } catch (Exception $e) {
             // Return fail if api fails.
-            Log::channel('medianaIppanelApi')->error('Api fail - Sending pattern sms. Exception message: ' . json_encode($e));
+            Log::channel('medianaIppanelApi')->error('Api fail - Sending pattern sms. Exception message: '.json_encode($e));
             return [
                 'error' => true,
                 'has_response' => false,
@@ -304,13 +303,14 @@ trait IppanelCommon
     }
 
     /**
-     * @param array $response
-     * @param SMS $sms
+     * @param  array  $response
+     * @param  SMS  $sms
      * @return bool
      */
     private function isAllowedRecheckSmsStatus(array $response, SMS $sms): bool
     {
-        $validDiffTime = diffInMinutes($sms->created_at, now('Asia/Tehran')->format('Y-m-d H:i:s')) <= config('services.medianaSMS.RECHECK_SENT_MESSAGE_STATUS_PERIOD');
+        $validDiffTime = diffInMinutes($sms->created_at,
+                now('Asia/Tehran')->format('Y-m-d H:i:s')) <= config('services.medianaSMS.RECHECK_SENT_MESSAGE_STATUS_PERIOD');
         return $response['error'] && !$response['has_response'] && $validDiffTime;
     }
 }

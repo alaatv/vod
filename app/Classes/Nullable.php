@@ -19,7 +19,7 @@ class Nullable
     public function __construct($result, $data)
     {
         $this->result = $result;
-        $this->data   = $data;
+        $this->data = $data;
     }
 
     public function otherwise($response)
@@ -36,7 +36,7 @@ class Nullable
     {
         return $this->getValue(function () use ($response) {
             if (is_callable($response)) {
-                $response = call_user_func($response, ...(array)$this->data);
+                $response = call_user_func($response, ...(array) $this->data);
             }
 
             throw new HttpResponseException($response);
@@ -56,8 +56,10 @@ class Nullable
 
         if (is_null($default)) {
             return optional();
-        } else if (is_callable($default)) {
-            return call_user_func($default);
+        } else {
+            if (is_callable($default)) {
+                return call_user_func($default);
+            }
         }
 
         return $default;

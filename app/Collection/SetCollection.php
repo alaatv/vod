@@ -9,11 +9,9 @@
 namespace App\Collection;
 
 use App\Traits\CollectionTrait;
-
 use Illuminate\Database\Eloquent\Collection;
 
 class SetCollection extends Collection
 {
     use CollectionTrait;
-
 }

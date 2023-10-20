@@ -17,15 +17,15 @@ class OnlineTransactionGatewaysSeeder extends Seeder
 
         $data = [
             [
-                'id'             => '1',
-                'name'           => 'zarinpal',
-                'displayName'    => 'زرین پال',
-                'description'    => 'درگاه پرداخت الکترونیک زرین پال',
+                'id' => '1',
+                'name' => 'zarinpal',
+                'displayName' => 'زرین پال',
+                'description' => 'درگاه پرداخت الکترونیک زرین پال',
                 'merchantNumber' => 'c46a34de-c82c-11e5-8943-000c295eb8fc',
             ],
         ];
 
         DB::table('onlinetransactiongateways')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

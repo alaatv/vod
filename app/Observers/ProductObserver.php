@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Classes\Search\Tag\TaggingInterface;
 use App\Jobs\DanaEditCourseJob;
 use App\Models\Contentset;
-
 use App\Models\Product;
 use App\Traits\APIRequestCommon;
 use App\Traits\TaggableTrait;

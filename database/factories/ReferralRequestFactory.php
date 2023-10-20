@@ -19,7 +19,7 @@ class ReferralRequestFactory extends Factory
             'discount' => 100000,
             'numberOfCodes' => 10,
             'usageLimit' => 1,
-            'default_commission' => random_int(5,20),
+            'default_commission' => random_int(5, 20),
         ];
     }
 }

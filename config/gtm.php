@@ -1,5 +1,5 @@
 <?php
 
 return [
-'GTM'                   => env('GOOGLE_TAG_MANAGER' , false),
+    'GTM' => env('GOOGLE_TAG_MANAGER', false),
 ];

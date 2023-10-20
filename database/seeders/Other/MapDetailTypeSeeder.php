@@ -4,6 +4,7 @@ namespace Database\Seeders\Other;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+
 class MapDetailTypeSeeder extends Seeder
 {
     /**
@@ -15,12 +16,12 @@ class MapDetailTypeSeeder extends Seeder
     {
         $data = [
             [
-                'id'          => '1',
-                'title'       => 'marker',
+                'id' => '1',
+                'title' => 'marker',
             ],
             [
-                'id'          => '2',
-                'title'       => 'polyline',
+                'id' => '2',
+                'title' => 'polyline',
             ],
         ];
 

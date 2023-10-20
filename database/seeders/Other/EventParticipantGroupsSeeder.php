@@ -17,11 +17,11 @@ class EventParticipantGroupsSeeder extends Seeder
         DB::table('eventParticipantGroups')->delete();
         $data = [
             [
-                'id'    => '1',
+                'id' => '1',
                 'title' => 'دانش آموز',
             ],
             [
-                'id'    => '2',
+                'id' => '2',
                 'title' => 'فارغ التحصیل',
             ],
         ];

@@ -3,10 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Ordermanagercomment;
-
 use App\Models\Product;
 use App\Models\Subscription;
-
 use App\Models\User;
 use App\Notifications\GiftGiven2;
 use App\Repositories\OrderproductRepo;

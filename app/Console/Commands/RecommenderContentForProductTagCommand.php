@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Contentset;
-
 use App\Models\Product;
 use App\Traits\APIRequestCommon;
 use Illuminate\Console\Command;

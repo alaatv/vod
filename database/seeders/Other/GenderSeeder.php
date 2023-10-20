@@ -17,18 +17,18 @@ class GenderSeeder extends Seeder
 
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'آقا',
+                'id' => '1',
+                'name' => 'آقا',
                 'description' => 'جنست مذکر',
             ],
             [
-                'id'          => '2',
-                'name'        => 'خانم',
+                'id' => '2',
+                'name' => 'خانم',
                 'description' => 'جنسست مونث',
             ],
         ];
 
         DB::table('genders')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

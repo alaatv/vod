@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\Product;
 
-use App\Models\Productfiletype;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,20 +16,20 @@ class ProductFileTypeSeeder extends Seeder
     {
         $data = [
             [
-                'id'          => '1',
-                'name'        => 'pamphlet',
+                'id' => '1',
+                'name' => 'pamphlet',
                 'displayName' => 'جزوه',
                 'description' => 'فایل از نوع جزوه است',
             ],
             [
-                'id'          => '2',
-                'name'        => 'video',
+                'id' => '2',
+                'name' => 'video',
                 'displayName' => 'فیلم',
                 'description' => 'فایل از نوع فیلم است',
             ],
         ];
 
         DB::table('productfiletypes')
-          ->insert($data); // Query Builder
+            ->insert($data); // Query Builder
     }
 }

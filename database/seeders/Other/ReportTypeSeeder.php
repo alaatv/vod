@@ -19,37 +19,37 @@ class ReportTypeSeeder extends Seeder
             [
                 'id' => 2,
                 'title' => 'customers',
-                'title_display_name' =>  'مشتریان',
+                'title_display_name' => 'مشتریان',
                 'created_at' => now()
             ],
             [
                 'id' => 3,
                 'title' => 'orderproducts',
-                'title_display_name' =>  'محصولات سفارش',
+                'title_display_name' => 'محصولات سفارش',
                 'created_at' => now()
             ],
             [
                 'id' => 4,
                 'title' => 'customersInfo',
-                'title_display_name' =>  'اطلاعات مشتریان',
+                'title_display_name' => 'اطلاعات مشتریان',
                 'created_at' => now()
             ],
             [
                 'id' => 5,
                 'title' => 'transactions',
-                'title_display_name' =>  'انتقالات',
+                'title_display_name' => 'انتقالات',
                 'created_at' => now()
             ],
             [
                 'id' => 6,
                 'title' => 'users',
-                'title_display_name' =>  'کاربران',
+                'title_display_name' => 'کاربران',
                 'created_at' => now()
             ],
             [
                 'id' => 7,
                 'title' => 'raheAbrishamCustomers',
-                'title_display_name' =>  'مشتریان راه ابریشم',
+                'title_display_name' => 'مشتریان راه ابریشم',
                 'created_at' => now()
             ],
         ];

@@ -4,7 +4,6 @@ namespace Database\Seeders\ReferralCode;
 
 use App\Models\ReferralCode;
 use App\Models\ReferralRequest;
-
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

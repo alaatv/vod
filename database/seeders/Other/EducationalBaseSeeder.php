@@ -16,12 +16,12 @@ class EducationalBaseSeeder extends Seeder
     {
         $data = [
             [
-                'id'             => '1',
-                'title'          => 'متوسطه اول',
+                'id' => '1',
+                'title' => 'متوسطه اول',
             ],
             [
-                'id'             => '2',
-                'title'          => 'متوسطه دوم',
+                'id' => '2',
+                'title' => 'متوسطه دوم',
             ],
         ];
 
