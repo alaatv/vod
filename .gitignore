@@ -41,3 +41,4 @@ resources/theme/default/src/js/demo/demo11/custom/crud/datatables/data-sources/
 resources/theme/default/src/js/demo/demo11/custom/crud/datatables/extensions/
 mix-manifest.json
 
+/dev.sql
