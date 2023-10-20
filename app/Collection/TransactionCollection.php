@@ -8,10 +8,10 @@
 
 namespace App\Collection;
 
-use App\Traits\JsonResponseFormat;
+
 use Illuminate\Database\Eloquent\Collection;
 
 class TransactionCollection extends Collection
 {
-    use JsonResponseFormat;
+
 }

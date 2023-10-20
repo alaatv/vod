@@ -13,7 +13,7 @@ use App\Classes\Checkout\Alaa\GroupOrderproductCheckout;
 use App\Models\Coupon;
 use App\Models\Orderproduct;
 use App\Models\Product;
-use App\Traits\JsonResponseFormat;
+
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -23,7 +23,7 @@ class OrderproductCollection extends Collection
 
     private $newPrices = [];
 
-    use JsonResponseFormat;
+
 
     /**
      * Sets new price value in Newprices array for an item in the orderproduct collection

@@ -10,14 +10,14 @@ namespace App\Collection;
 
 use App\Models\Content;
 use App\Traits\CollectionTrait;
-use App\Traits\JsonResponseFormat;
+
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
 use LogicException;
 
 class ContentCollection extends Collection
 {
-    use JsonResponseFormat;
+
     use CollectionTrait;
 
 
