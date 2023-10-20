@@ -6,6 +6,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | PDO Fetch Style
+    |--------------------------------------------------------------------------
+    |
+    | By default, database results will be returned as instances of the PHP
+    | stdClass object; however, you may desire to retrieve records in an
+    | array format for simplicity. Here you can tweak the fetch style.
+    |
+    */
+
+    'fetch' => PDO::FETCH_OBJ,
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Database Connection Name
     |--------------------------------------------------------------------------
     |
@@ -59,10 +72,38 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Enable persistent connection
+                PDO::ATTR_PERSISTENT => true,
             ]) : [],
         ],
+        'test' => [
+            'driver' => 'mysql',
+            'host' => env('TEST_DB_HOST', env('DB_HOST')),
+            'port' => env('TEST_DB_PORT', env('DB_PORT')),
+            'database' => env('TEST_DB_DATABASE', 'test_alaatv'),
+            'username' => env('TEST_DB_USERNAME', env('DB_USERNAME')),
+            'password' => env('TEST_DB_PASSWORD', env('DB_PASSWORD')),
+        ],
 
+        'mysql_sanatisharif' => [
+            'driver' => 'mysql',
+            'host' => '',
+            'port' => '',
+            'database' => '',
+            'username' => '',
+            'password' => '',
+            'unix_socket' => '',
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+            'prefix_indexes' => true,
+            'options' => [
+                // Enable persistent connection
+                PDO::ATTR_PERSISTENT => true,
+            ],
+        ],
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
@@ -134,16 +175,44 @@ return [
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
+            'database' => 0,
+            'read_timeout' => 60,
+            'persistent' => true,
         ],
 
-        'cache' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
+        'redisDB' => [
+            'host' => env('REDIS_HOST', 'localhost'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 1,
+            'read_timeout' => 60,
+            'persistent' => true,
+        ],
+
+        'horizon' => [
+            'host' => env('REDIS_HOST_CACHE', 'localhost'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 2,
+            'read_timeout' => 60,
+            'persistent' => true,
+        ],
+
+        'queue' => [
+            'host' => env('REDIS_HOST_CACHE', 'localhost'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 3,
+            'read_timeout' => 60,
+            'persistent' => true,
+        ],
+        'session' => [
+            'host' => env('REDIS_HOST_CACHE', 'localhost'),
+            'password' => env('REDIS_PASSWORD', null),
+            'port' => env('REDIS_PORT', 6379),
+            'database' => 4,
+            'read_timeout' => 60,
+            'persistent' => true,
         ],
 
     ],

@@ -64,6 +64,21 @@ return [
             ],
             'options' => [
                 // Memcached::OPT_CONNECT_TIMEOUT => 2000,
+                // - nicer TCP options
+                Memcached::OPT_TCP_NODELAY => true,
+                Memcached::OPT_NO_BLOCK => false,
+                // - timeouts (ms)
+                Memcached::OPT_CONNECT_TIMEOUT => 2000,
+                Memcached::OPT_POLL_TIMEOUT => 2000,
+                Memcached::OPT_RECV_TIMEOUT => 750 * 1000,
+                Memcached::OPT_SEND_TIMEOUT => 750 * 1000,
+                // - better failover
+                Memcached::OPT_DISTRIBUTION => Memcached::DISTRIBUTION_CONSISTENT,
+                Memcached::OPT_LIBKETAMA_COMPATIBLE => true,
+                Memcached::OPT_RETRY_TIMEOUT => 3,
+                Memcached::OPT_SERVER_FAILURE_LIMIT => 1,
+                Memcached::OPT_AUTO_EJECT_HOSTS => true,
+                //
             ],
             'servers' => [
                 [
@@ -76,8 +91,9 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'cache',
+            'connection' => 'default',
             'lock_connection' => 'default',
+            'client' => env('REDIS_CLIENT', 'phpredis'),
         ],
 
         'dynamodb' => [
