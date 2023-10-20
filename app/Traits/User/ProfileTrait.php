@@ -8,15 +8,8 @@
 
 namespace App\Traits\User;
 
-
-
-
-
-
-
 use App\Models\Afterloginformcontrol;
 use App\Models\Bloodtype;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;

@@ -8,18 +8,15 @@
 
 namespace App\Traits\User;
 
-
-
-
-
-
 use App\Models\Bankaccount;
+use App\Models\Order;
 use App\Models\Ordermanagercomment;
+use App\Models\Orderproduct;
+use App\Models\Transaction;
+use App\Models\Wallet;
 use App\Repositories\OrderRepo;
-use Cache;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-
 
 trait PaymentTrait
 {
