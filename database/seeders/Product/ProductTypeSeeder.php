@@ -14,8 +14,7 @@ class ProductTypeSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('producttypes')
-          ->delete();
+
         $data =[
             [
                 'id'          => '1',

@@ -15,7 +15,6 @@ class ProductFileTypeSeeder extends Seeder
      */
     public function run()
     {
-        Productfiletype::truncate();
         $data = [
             [
                 'id'          => '1',

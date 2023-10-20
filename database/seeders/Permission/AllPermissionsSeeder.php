@@ -1,12 +1,12 @@
 <?php
 
-namespace Database\Seeders\Users;
+namespace Database\Seeders\Permission;
 
 use Database\Seeders\AllSeeder;
 
-class AllUsersSeeder extends AllSeeder
+class AllPermissionsSeeder extends AllSeeder
 {
-     protected function getDirectory():string
+    protected function getDirectory():string
     {
         return __DIR__;
     }

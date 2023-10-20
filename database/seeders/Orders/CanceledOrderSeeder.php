@@ -4,6 +4,7 @@ namespace Database\Seeders\Orders;
 
 use App\Models\Order;
 use App\Models\Orderproduct;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -28,6 +29,7 @@ class CanceledOrderSeeder extends Seeder
                         'costwithoutcoupon' => 100000,
                         'isInInstalment' => 0,
                         'customerDescription' => null,
+                        'product_id' => Product::first()?->id,
                     ])
                     ->has(
                         Orderproduct::factory()

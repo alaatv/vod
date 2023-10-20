@@ -6,7 +6,6 @@ use App\Classes\CacheFlush;
 use App\Classes\CouponSubmitter;
 use App\Models\Product;
 use App\Models\Subscription;
-use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

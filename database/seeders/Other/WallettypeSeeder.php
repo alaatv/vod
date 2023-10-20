@@ -1,12 +1,11 @@
 <?php
 
-namespace Database\Seeders\Product;
+namespace Database\Seeders\Other;
 
-use App\Models\Productinterrelation;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class ProductInterrelationSeeder extends Seeder
+class WallettypeSeeder extends Seeder
 {
     /**
      * Run the database seeders.
@@ -15,15 +14,23 @@ class ProductInterrelationSeeder extends Seeder
      */
     public function run()
     {
+
         $data = [
             [
                 'id'          => '1',
+                'name'        => 'main',
+                'displayName' => 'اصلی',
+                'description' => 'کیف پول اصلی کاربر',
+            ],
+            [
+                'id'          => '2',
                 'name'        => 'gift',
                 'displayName' => 'هدیه',
-                'description' => 'به طوری قرارداری دومی هدیه اولی می باشد',
+                'description' => 'کیف پول هدیه کاربر',
             ],
         ];
-        DB::table('productinterrelations')
+
+        DB::table('wallettypes')
           ->insert($data); // Query Builder
     }
 }

@@ -20,8 +20,6 @@ class TicketSeeder extends Seeder
      */
     public function run()
     {
-
-        Schema::disableForeignKeyConstraints();
         Ticket::factory()->state(['user_id'=>2])
             ->has(
                 TicketActionLog::factory()->state([
@@ -64,6 +62,5 @@ class TicketSeeder extends Seeder
                 'logs'
             )
             ->count(10)->create();
-        Schema::enableForeignKeyConstraints();
     }
 }

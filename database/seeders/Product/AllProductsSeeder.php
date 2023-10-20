@@ -2,37 +2,16 @@
 
 namespace Database\Seeders\Product;
 
-use Database\Seeders\Orders\CanceledOrderSeeder;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
+use Database\Seeders\AllSeeder;
 
-class AllProductsSeeder extends Seeder
+class AllProductsSeeder extends AllSeeder
 {
-    private array $allSeederInThisDirectory = [];
-
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    protected function getDirectory():string
     {
-        Schema::disableForeignKeyConstraints();
-        $this->populateSeeders();
-        $this->call($this->allSeederInThisDirectory);
-        Schema::enableForeignKeyConstraints();
+        return __DIR__;
     }
-
-    private function populateSeeders()
+    protected function getDNameSpace():string
     {
-        foreach (File::files(__DIR__) as $file) {
-            $className = $file->getFilenameWithoutExtension();
-            $fullClassName = __NAMESPACE__.'\\'.$className;
-            if( $fullClassName != get_class($this)){
-                $this->allSeederInThisDirectory[] =  $fullClassName;
-            }
-        }
+        return __NAMESPACE__;
     }
-
 }
