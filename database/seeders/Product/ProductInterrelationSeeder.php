@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Product;
 
+use App\Models\Productinterrelation;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,8 +15,7 @@ class ProductInterrelationSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('productinterrelations')
-          ->delete();
+        Productinterrelation::truncate();
         $data = [
             [
                 'id'          => '1',

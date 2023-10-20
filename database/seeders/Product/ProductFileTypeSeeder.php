@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Product;
 
+use App\Models\Productfiletype;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,8 +15,7 @@ class ProductFileTypeSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('productfiletypes')
-          ->delete();
+        Productfiletype::truncate();
         $data = [
             [
                 'id'          => '1',
