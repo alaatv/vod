@@ -4,12 +4,10 @@ namespace Database\Seeders\Orders;
 
 use App\Models\Orderfile;
 use App\Models\Ordermanagercomment;
-use App\Order;
-use App\Orderfile;
-use App\Ordermanagercomment;
-use App\Orderproduct;
-use App\Transaction;
-use App\User;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ClosedAndPaidOrderWithManagerWithManagerComments extends Seeder

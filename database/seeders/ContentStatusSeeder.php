@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\ContentsStatus;
 use App\Models\ContentsStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class ContentStatusSeeder extends Seeder
 {

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\ContentOfPlanType;
 use App\Models\ContentOfPlanType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;

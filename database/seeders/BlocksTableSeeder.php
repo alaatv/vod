@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Block;
-use App\Content;
-use App\Contentset;
+use App\Models\Block;
+use App\Models\Content;
 use App\Models\Contentset;
-use App\Product;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use src\Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 
 class BlocksTableSeeder extends Seeder

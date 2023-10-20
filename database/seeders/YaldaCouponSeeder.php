@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Coupon;
+use App\Models\Coupon;
 use App\Repositories\CouponRepo;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

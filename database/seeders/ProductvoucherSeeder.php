@@ -3,9 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Productvoucher;
-use App\Productvoucher;
 use Illuminate\Database\Seeder;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class ProductvoucherSeeder extends Seeder
 {

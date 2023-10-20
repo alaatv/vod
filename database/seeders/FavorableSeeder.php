@@ -2,13 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Content;
-use App\Contentset;
+use App\Models\Content;
 use App\Models\Contentset;
-use App\Product;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class FavorableSeeder extends Seeder
 {

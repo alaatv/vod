@@ -4,9 +4,8 @@ namespace Database\Seeders\ReferralCode;
 
 use App\Models\ReferralCode;
 use App\Models\ReferralRequest;
-use App\ReferralCode;
-use App\ReferralRequest;
-use App\User;
+
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class MakeReferralCodeForAdmin extends Seeder

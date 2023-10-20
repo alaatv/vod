@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\Permission;
 
-use App\Permission;
 use Illuminate\Database\Seeder;
 
 class AssignPermissionToRole extends Seeder

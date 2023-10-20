@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Repositories\Loging\ActivityLogRepo;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BonyadSeeder extends Seeder

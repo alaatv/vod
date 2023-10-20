@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Hardship;
 use App\Models\Hardship;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

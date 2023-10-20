@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Bankaccount;
 use App\Models\Bankaccount;
 use Illuminate\Database\Seeder;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class MainBankAccountSeeder extends Seeder
 {

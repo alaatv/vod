@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\Orders;
 
-use App\Order;
-use App\Orderproduct;
-use App\User;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class CanceledOrderSeeder extends Seeder

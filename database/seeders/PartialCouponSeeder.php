@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Coupon;
-use App\Product;
+use App\Models\Coupon;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class PartialCouponSeeder extends Seeder

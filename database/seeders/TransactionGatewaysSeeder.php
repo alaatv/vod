@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Transactiongateway;
+use App\Models\Transactiongateway;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 

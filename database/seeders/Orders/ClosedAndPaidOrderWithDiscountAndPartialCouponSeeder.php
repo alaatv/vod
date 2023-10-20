@@ -2,12 +2,12 @@
 
 namespace Database\Seeders\Orders;
 
-use App\Coupon;
-use App\Order;
-use App\Orderproduct;
-use App\Product;
-use App\Transaction;
-use App\User;
+use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ClosedAndPaidOrderWithDiscountAndPartialCouponSeeder extends Seeder

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders\Users;
 
-use App\Transaction;
-use App\User;
-use App\Wallet;
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Database\Seeder;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class AllUsersSeeder extends Seeder
 {

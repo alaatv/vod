@@ -4,14 +4,12 @@ namespace Database\Seeders\Tickets;
 
 use App\Models\TicketAction;
 use App\Models\TicketActionLog;
-use App\Ticket;
-use App\TicketAction;
-use App\TicketActionLog;
-use App\TicketDepartment;
-use App\TicketMessage;
-use App\User;
+use App\Models\Ticket;
+use App\Models\TicketDepartment;
+use App\Models\TicketMessage;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class TicketSeeder extends Seeder
 {

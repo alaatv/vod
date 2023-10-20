@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response('this is backend app communicate only via <a href="/api/v2/home"> API v2. </a>',200);
 });

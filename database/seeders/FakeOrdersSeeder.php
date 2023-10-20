@@ -2,18 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Coupon;
+use App\Models\Coupon;
 use App\Models\Ordermanagercomment;
 use App\Models\Userbon;
-use App\Order;
-    use App\Ordermanagercomment;
-    use App\Orderproduct;
-    use App\Product;
-    use App\Transaction;
-    use App\Transactiongateway;
-use App\User;
-    use App\Userbon;
-use App\Wallet;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\Transactiongateway;
+use App\Models\User;
+use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

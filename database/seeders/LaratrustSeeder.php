@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Permission;
-use App\Role;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders\Orders;
 
-use App\Order;
-use App\Orderproduct;
-use App\Transaction;
-use App\User;
-use App\Wallet;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Wallet;
 use Database\Seeders\Users\UserSeeder;
 use Database\Seeders\Users\UserWithGiftWalletTypeSeeder;
 use Illuminate\Database\Seeder;

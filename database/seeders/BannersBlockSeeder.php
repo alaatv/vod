@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\BlockType;
+use App\Models\BlockType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+
 
 class BannersBlockSeeder extends Seeder
 {

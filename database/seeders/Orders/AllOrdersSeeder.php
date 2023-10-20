@@ -2,12 +2,12 @@
 
 namespace Database\Seeders\Orders;
 
-use App\Coupon;
-use App\Order;
-use App\Orderproduct;
-use App\Transaction;
+use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class AllOrdersSeeder extends Seeder
 {
