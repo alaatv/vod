@@ -109,6 +109,7 @@ use App\Http\Controllers\Api\ZarinpalTransactionController;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RolePermissionController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------

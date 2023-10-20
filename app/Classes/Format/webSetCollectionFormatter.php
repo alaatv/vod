@@ -10,18 +10,12 @@ namespace App\Classes\Format;
 
 use App\Collection\SetCollection;
 use App\Models\Contentset;
-use App\Models\Contentset;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class webSetCollectionFormatter implements SetCollectionFormatter
 {
-    /**
-     * @param  SetCollection  $sets
-     *
-     * @return Collection
-     */
-    public function format(SetCollection $sets)
+    public function format(SetCollection $sets): Collection
     {
         $lessons = collect();
         foreach ($sets as $set) {

@@ -13,10 +13,5 @@ use Illuminate\Support\Collection;
 
 interface BlockCollectionFormatter
 {
-    /**
-     * @param  BlockCollection  $blocks
-     *
-     * @return Collection
-     */
-    public function format(BlockCollection $blocks);
+    public function format(BlockCollection $blocks): Collection;
 }

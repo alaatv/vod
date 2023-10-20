@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\InterfaceBindingProvider;
 use Illuminate\Support\ServiceProvider;
 
 return [
@@ -172,7 +173,7 @@ return [
         App\Providers\MedianaServiceProvider::class,
         App\Providers\TagManagerProvider::class,
         App\Providers\Sha1HashServiceProvider::class,
-
+        InterfaceBindingProvider::class,
         Artesaos\SEOTools\Providers\SEOToolsServiceProvider::class,
         Watson\Sitemap\SitemapServiceProvider::class,
         Hekmatinasser\Notowo\NotowoServiceProvider::class,

@@ -13,10 +13,5 @@ use Illuminate\Support\Collection;
 
 interface SetCollectionFormatter
 {
-    /**
-     * @param  SetCollection  $sets
-     *
-     * @return Collection
-     */
-    public function format(SetCollection $sets);
+    public function format(SetCollection $sets): Collection;
 }

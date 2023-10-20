@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class Block
  *
- * @mixin \App\Block
+ * @mixin \App\Models\Block
  * */
 class BlockV2 extends AlaaJsonResource
 {
@@ -35,7 +35,7 @@ class BlockV2 extends AlaaJsonResource
 //            $banners = $banners->filter(function ($value, $key) {
 //                return !in_array($value->id, array_keys(\App\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
 //            });
-        $banners = $banners->whereNotIn('id', array_keys(\App\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
+        $banners = $banners->whereNotIn('id', array_keys(\App\Models\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
 //        }
 
         return [

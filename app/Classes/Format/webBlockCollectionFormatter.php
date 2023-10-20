@@ -15,22 +15,14 @@ use Illuminate\Support\Facades\Cache;
 
 class webBlockCollectionFormatter implements BlockCollectionFormatter
 {
-    /**
-     * @var SetCollectionFormatter
-     */
-    private $setFormatter;
 
-    public function __construct(SetCollectionFormatter $formatter)
+    public function __construct(
+        protected SetCollectionFormatter $formatter
+    )
     {
-        $this->setFormatter = $formatter;
     }
 
-    /**
-     * @param  BlockCollection  $blocks
-     *
-     * @return Collection
-     */
-    public function format(BlockCollection $blocks)
+    public function format(BlockCollection $blocks): Collection
     {
         $sections = collect();
 
@@ -48,11 +40,6 @@ class webBlockCollectionFormatter implements BlockCollectionFormatter
         return $sections;
     }
 
-    /**
-     * @param  Block  $block
-     *
-     * @return array
-     */
     private function blockFormatter(Block $block): array
     {
         return Cache::tags(['block', 'block_', $block->id])
@@ -61,7 +48,7 @@ class webBlockCollectionFormatter implements BlockCollectionFormatter
                     'name' => $block->class,
                     'displayName' => $block->title,
                     'descriptiveName' => $block->title,
-                    'lessons' => $this->setFormatter->format($block->sets),
+                    'lessons' => $this->formatter->format($block->sets),
                     'tags' => $block->tags,
                     'ads' => [
 
