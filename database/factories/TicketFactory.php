@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\TicketDepartment;
-use App\TicketPriority;
-use App\User;
+use App\Models\TicketDepartment;
+use App\Models\TicketPriority;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TicketFactory extends Factory

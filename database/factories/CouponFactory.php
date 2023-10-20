@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Coupon;
-use App\Product;
+use App\Models\Coupon;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

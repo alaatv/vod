@@ -2,11 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Contractor;
 use App\Models\Contractor;
 use App\Models\Productvoucher;
-use App\Product;
-use App\Productvoucher;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductvoucherFactory extends Factory

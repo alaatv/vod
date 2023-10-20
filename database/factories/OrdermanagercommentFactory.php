@@ -3,9 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Ordermanagercomment;
-use App\Order;
-use App\Ordermanagercomment;
-use App\User;
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrdermanagercommentFactory extends Factory

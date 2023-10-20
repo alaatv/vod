@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\BlockType;
+use App\Models\BlockType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BlockFactory extends Factory

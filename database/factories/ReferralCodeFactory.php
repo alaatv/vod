@@ -3,8 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\ReferralRequest;
-use App\ReferralRequest;
-use App\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReferralCodeFactory extends Factory

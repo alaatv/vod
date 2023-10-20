@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Bank;
 use App\Models\Bank;
-use App\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BankaccountFactory extends Factory
