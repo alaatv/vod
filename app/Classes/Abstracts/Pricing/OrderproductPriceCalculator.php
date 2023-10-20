@@ -12,7 +12,6 @@ use App\Models\Order;
 use App\Models\Orderproduct;
 use App\Models\Product;
 use App\Models\Subscription;
-use App\Models\Subscription;
 use App\Repositories\SubscriptionRepo;
 
 abstract class OrderproductPriceCalculator
