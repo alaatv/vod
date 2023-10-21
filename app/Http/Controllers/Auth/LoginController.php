@@ -47,20 +47,6 @@ class LoginController extends Controller
     }
 
     /**
-     * Show the application login form.
-     *
-     * @return Response
-     */
-    public function showLoginForm()
-    {
-        $login = true;
-        $voucher = false;
-        $verifyMobile = false;
-        $redirectUrl = route('web.index');
-
-    }
-
-    /**
      * Handle a login request to the application.
      *
      * @param  Request  $request
