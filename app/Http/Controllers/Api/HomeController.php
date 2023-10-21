@@ -36,13 +36,6 @@ class HomeController extends Controller
         ]);
     }
 
-    public function authTest(Request $request)
-    {
-        return response()->json([
-            'User' => $request->user(),
-        ]);
-    }
-
     public function authTestV2(Request $request)
     {
         return (new UserResource($request->user()))->response();
