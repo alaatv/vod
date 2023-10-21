@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\{CharacterCommon, Helper, RedirectTrait, RequestCommon, UserCommon};
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -27,7 +26,6 @@ class RegisterController extends Controller
     use CharacterCommon;
     use Helper;
     use UserCommon;
-    use RegistersUsers;
     use RequestCommon;
     use RedirectTrait;
 
