@@ -86,14 +86,14 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     use MinioPhotoHandler;
 
     public const PHOTO_FIELD = 'photo';
-    const UPDATE_USER_PROVINCE_CITY_INDEX_PAGE_NAME = 'userProfileUpdateProvinceCityPage';
+    public const UPDATE_USER_PROVINCE_CITY_INDEX_PAGE_NAME = 'userProfileUpdateProvinceCityPage';
 
     /*
     |--------------------------------------------------------------------------
     | Properties
     |--------------------------------------------------------------------------
     */
-    const INDEX_PAGE_NAME = 'userPage';
+    public const INDEX_PAGE_NAME = 'userPage';
     private const BE_PROTECTED = [
         'roles',
     ];
@@ -265,7 +265,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public static function roleFilter($users, $rolesId)
     {
         $users = $users->whereHas('roles', function ($q) use ($rolesId) {
-            $q->whereIn("id", $rolesId);
+            $q->whereIn('id', $rolesId);
         });
         return $users;
     }
@@ -274,9 +274,9 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     {
 
         if (in_array(0, $majorsId)) {
-            $users = $users->whereDoesntHave("major");
+            $users = $users->whereDoesntHave('major');
         } else {
-            $users = $users->whereIn("major_id", $majorsId);
+            $users = $users->whereIn('major_id', $majorsId);
         }
 
         return $users;
@@ -541,7 +541,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public function lotteries()
     {
         return $this->belongsToMany(Lottery::Class)
-            ->withPivot("rank", "prizes");
+            ->withPivot('rank', 'prizes');
     }
 
     public function sms()

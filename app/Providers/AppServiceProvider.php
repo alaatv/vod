@@ -63,6 +63,7 @@ use App\{Adapter\AlaaSftpAdapter,
     Repositories\SmsDetailsRepository,
     Traits\RegionCommon,
     Traits\UserCommon};
+use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -100,7 +101,7 @@ class AppServiceProvider extends ServiceProvider
             return new SmsDetailsRepository();
         });
         if ($this->app->isLocal()) {
-            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+            $this->app->register(IdeHelperServiceProvider::class);
         }
 
         Horizon::auth(function ($request) {

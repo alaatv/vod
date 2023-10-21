@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Traits\CharacterCommon;
 use App\Traits\RedirectTrait;
 use App\Traits\UserCommon;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -33,7 +32,6 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
 
     /**
      * Create a new controller instance.
@@ -60,7 +58,6 @@ class LoginController extends Controller
         $verifyMobile = false;
         $redirectUrl = route('web.index');
 
-        return view('auth.voucherLogin', compact('redirectUrl', 'verifyMobile', 'voucher', 'login'));
     }
 
     /**
