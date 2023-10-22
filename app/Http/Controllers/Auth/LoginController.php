@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Traits\CharacterCommon;
 use App\Traits\RedirectTrait;
 use App\Traits\UserCommon;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -20,28 +21,10 @@ class LoginController extends Controller
     use CharacterCommon;
     use RedirectTrait;
     use UserCommon;
+    use AuthenticatesUsers;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
-
-    /**
-     * Create a new controller instance.
-     *
-     */
     public function __construct()
     {
-
-        $this->middleware('guest', ['except' => 'logout']);
-        $this->middleware('auth:web', ['only' => 'logout']);
 
         $this->middleware('convert:mobile|password|nationalCode');
     }
@@ -67,14 +50,13 @@ class LoginController extends Controller
         /**
          * Login or register this new user
          */
-
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
         if (method_exists($this, 'hasTooManyLoginAttempts') && $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
-
             return $this->sendLockoutResponse($request);
+
         }
 
         if (!$this->attemptLogin($request)) {
@@ -157,19 +139,6 @@ class LoginController extends Controller
         ], Response::HTTP_OK);
     }
 
-    protected function authenticatedV1(Request $request, User $user)
-    {
-        $token = $user->getAppToken();
-        $data = array_merge([
-            'user' => $user,
-        ], $token);
-        return response()->json([
-            'status' => 1,
-            'msg' => 'user sign in.',
-            'redirectTo' => $this->redirectTo($request),
-            'data' => $data,
-        ], Response::HTTP_OK);
-    }
 
     /**
      * Log the user out of the application.
@@ -224,4 +193,6 @@ class LoginController extends Controller
     {
         return 'mobile';
     }
+
+
 }
