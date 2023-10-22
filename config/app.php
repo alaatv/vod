@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ModifyRequestInputMiddleware;
 use App\Providers\InterfaceBindingProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -203,6 +204,7 @@ return [
         'Cache' => Illuminate\Support\Facades\Cache::class,
         'Config' => Illuminate\Support\Facades\Config::class,
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'convert' => ModifyRequestInputMiddleware::class,
         'DB' => Illuminate\Support\Facades\DB::class,
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
