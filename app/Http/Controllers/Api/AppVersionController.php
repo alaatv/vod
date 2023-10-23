@@ -8,35 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 class AppVersionController extends Controller
 {
-    public function show(Request $request)
-    {
-        return response()->json([
-            'android' => [
-                'last_version' => 80,
-                'type' => [
-                    'code' => 1,
-                    'hint' => 'force',
-                ],
-                'url' => [
-                    'play_store' => 'https://play.google.com/store/apps/details?id=ir.sanatisharif.android.konkur96',
-                    'bazaar' => 'https://play.google.com/store/apps/details?id=ir.sanatisharif.android.konkur96',
-                    'direct' => '',
-                ],
-            ],
-            'ios' => [
-                'last_version' => 2,
-                'type' => [
-                    'code' => 2,
-                    'hint' => 'optional',
-                ],
-                'url' => [
-                    'app_store' => '',
-                    'direct' => '',
-                ],
-            ],
-        ]);
-    }
-
     /**
      * API Version 2
      *

@@ -470,10 +470,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         $this->attributes['tags'] = $tags;
     }
 
-    public function getUrlAttribute($value): string
-    {
-        return appUrlRoute('set.show', $this->id);
-    }
 
     public function getLastActiveContent(): Content
     {
@@ -518,10 +514,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
             });
     }
 
-    public function getSetUrlAttribute($value): string
-    {
-        return route('set.show', $this->id);
-    }
 
     public function getLastContent(): Content
     {
@@ -551,17 +543,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
             });
     }
 
-    public function getApiUrlAttribute($value): array
-    {
-        return [
-            'v1' => action('Api\SetController@show', $this),
-        ];
-    }
-
-    public function getApiUrlV1Attribute()
-    {
-        return route('api.v1.set.show', $this);
-    }
 
     public function getApiUrlV2Attribute($value)
     {

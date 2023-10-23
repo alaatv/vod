@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ModifyRequestInputMiddleware;
 use App\Providers\InterfaceBindingProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -198,13 +199,12 @@ return [
         'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
-        'Blade' => Illuminate\Support\Facades\Blade::class,
         'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
         'Bus' => Illuminate\Support\Facades\Bus::class,
         'Cache' => Illuminate\Support\Facades\Cache::class,
         'Config' => Illuminate\Support\Facades\Config::class,
-        'Cookie' => Illuminate\Support\Facades\Cookie::class,
         'Crypt' => Illuminate\Support\Facades\Crypt::class,
+        'convert' => ModifyRequestInputMiddleware::class,
         'DB' => Illuminate\Support\Facades\DB::class,
         'Eloquent' => Illuminate\Database\Eloquent\Model::class,
         'Event' => Illuminate\Support\Facades\Event::class,
@@ -228,7 +228,6 @@ return [
         'Str' => Illuminate\Support\Str::class,
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
-        'View' => Illuminate\Support\Facades\View::class,
         'Sitemap' => Watson\Sitemap\Facades\Sitemap::class,
         'SEO' => Artesaos\SEOTools\Facades\SEOTools::class,
         'Payment' => Shetabit\Payment\Facade\Payment::class,
