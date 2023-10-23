@@ -13,17 +13,6 @@ use Illuminate\Http\Request;
 
 class SetController extends Controller
 {
-    public function show(Request $request, Contentset $set)
-    {
-        if (isset($set->redirectUrl)) {
-            $redirectUrl = $set->redirectUrl;
-            return redirect(convertRedirectUrlToApiVersion($redirectUrl['url']),
-                $redirectUrl['code'], $request->headers->all());
-        }
-
-        return response()->json($set);
-    }
-
     public function showV2(Request $request, Contentset $set)
     {
         if (!isset($set->redirectUrl)) {

@@ -46,7 +46,6 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\ContentStatusController;
-use App\Http\Controllers\Api\DashboardPageController;
 use App\Http\Controllers\Api\DashboardPageV2Controller;
 use App\Http\Controllers\Api\DonateController;
 use App\Http\Controllers\Api\EmployeetimesheetController;
@@ -105,75 +104,23 @@ use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WatchHistoryController;
 use App\Http\Controllers\Api\WebsiteSettingController;
-use App\Http\Controllers\Api\ZarinpalTransactionController;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| V1
-|--------------------------------------------------------------------------
-*/
-
-Route::group(['prefix' => 'v1'], function () {
-    Route::get('lastVersion', [AppVersionController::class, 'show'])->name('api.v1.lastVersion');
-
-    Route::get('debug', [HomeController::class, 'debug'])->name('api.v1.debug');
-    Route::get('authTest', [HomeController::class, 'authTest'])->name('api.v1.authTest');
-
-    Route::get('c/{c}', [ContentController::class, 'show'])->name('api.v1.content.show');
-    Route::get('product/{product}', [ProductController::class, 'show'])->name('api.v1.product.show');
-    Route::get('set/{set}', [SetController::class, 'show'])->name('api.v1.set.show');
-    Route::get('set', [SetController::class, 'index'])->name('api.v1.set.index');
-    Route::post('getPrice/{product}', [ProductController::class, 'refreshPrice'])->name('api.v1.refreshPrice');
-
-    Route::any('fetchContents', [ContentController::class, 'fetchContents'])->name('api.v1.fetch.content');
-    Route::get('shop', '\\'.ShopPageController::class)->name('api.v1.shop');
-    Route::get('/home', '\\'.IndexPageController::class)->name('api.v1.home');
-
-    Route::get('satra', [HomeController::class, 'satra']);
-
-    Route::group(['middleware' => 'auth:api'], function () {
-        Route::post('donate', [OrderController::class, 'donateOrder'])->name('api.v1.donate');
-        Route::any('user/auth2/profile', [UserController::class, 'getAuth2Profile']);
-        Route::resource('user', '\\'.UserController::class, ['as' => 'api'])->only(['update', 'show']);
-        Route::post('orderproduct', [OrderproductController::class, 'store'])->name('api.v1.orderproduct.store');
-        Route::delete('orderproduct/{orderproduct}',
-            [OrderproductController::class, 'destroy'])->name('api.v1.orderproduct.destroy');
-        Route::post('transaction',
-            '\\'.ZarinpalTransactionController::class)->name('api.v1.zarinpal.transaction.store');
-        Route::post('orderCoupon', [OrderController::class, 'submitCoupon'])->name('api.v1.coupon.submit');
-        Route::delete('orderCoupon', [OrderController::class, 'removeCoupon'])->name('api.v1.coupon.remove');
-
-        Route::group(['prefix' => 'user'], function () {
-            Route::get('{user}/orders', [UserController::class, 'userOrders'])->name('api.v1.user.orders');
-            Route::get('{user}/dashboard', '\\'.DashboardPageController::class)->name('api.v1.user.dashboard');
-            Route::post('{user}/firebasetoken',
-                [FirebasetokenController::class, 'store'])->name('api.v1.firebasetoken.store');
-        });
-
-        Route::group(['prefix' => 'checkout'], function () {
-            Route::get('review', [OrderController::class, 'checkoutReview'])->name('api.v1.checkout.review');
-            Route::get('payment', [OrderController::class, 'checkoutPayment'])->name('api.v1.checkout.payment');
-        });
-
-        Route::any('getPaymentRedirectEncryptedLink',
-            '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v1.payment.getEncryptedLink');
-    });
-});
 
 /*
 |--------------------------------------------------------------------------
 | V2
 |--------------------------------------------------------------------------
 */
-
 Route::group(['prefix' => 'v2'], function () {
 
     Route::resource('faqs', '\\'.FaqController::class)->only(['index', 'show']);
     Route::resource('block', '\\'.BlockController::class, ['as' => 'api'])->only(['show', 'index']);
+    Route::get('debug', [HomeController::class, 'debug'])->name('api.v2.debug');
+    Route::get('satra', [HomeController::class, 'satra']);
     Route::group(['prefix' => 'landing'], function () {
         Route::get('1', [ProductLandingController::class, 'landing1'])->name('api.v2.landing.1');
         Route::get('2', [ProductLandingController::class, 'landing2'])->name('api.v2.landing.2');
@@ -517,8 +464,10 @@ Route::group(['prefix' => 'v2'], function () {
         Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
 
         Route::group(['prefix' => 'checkout'], function () {
+            Route::get('payment', [OrderController::class, 'checkoutPayment'])->name('api.v2.checkout.payment');
             Route::post('addDonate', [OrderController::class, 'addDonate']);
             Route::delete('removeDonate', [OrderController::class, 'removeDonate']);
+
         });
 
         Route::any('getPaymentRedirectEncryptedLink',

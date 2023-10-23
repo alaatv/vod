@@ -10,7 +10,7 @@ namespace App\Console\Commands\CategoryTree;
 
 abstract class GetTree
 {
-    public abstract function getLastUpdatedByLernito(): array;
+    abstract public function getLastUpdatedByLernito(): array;
 
     public function getTotalTree()
     {
@@ -22,7 +22,7 @@ abstract class GetTree
         return $totalTree;
     }
 
-    public abstract function getTree(): array;
+    abstract public function getTree(): array;
 
     protected function treeToLernitoJson(array $tree)
     {

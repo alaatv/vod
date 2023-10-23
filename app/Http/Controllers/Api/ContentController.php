@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -45,31 +44,6 @@ class ContentController extends Controller
         ]);
     }
 
-    public function show(Request $request, Content $content)
-    {
-        if (isset($content->redirectUrl)) {
-            $redirectUrl = $content->redirectUrl;
-            return redirect(convertRedirectUrlToApiVersion($redirectUrl['url']),
-                $redirectUrl['code'], $request->headers->all());
-        }
-
-        if (!$content->isActive()) {
-            $message = '';
-            $code = Response::HTTP_LOCKED;
-            return response()->json([
-                'message' => $message,
-            ], $code);
-        }
-
-        if ($content->getCanSeeContent($request->user('api'))) {
-            return response()->json($content);
-        }
-
-        $productsThatHaveThisContent = $content->activeProducts();
-
-        return $this->getUserCanNotSeeContentJsonResponse($content, $productsThatHaveThisContent, function ($msg) {
-        });
-    }
 
     /**
      * API Version 2
