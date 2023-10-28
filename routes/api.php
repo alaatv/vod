@@ -121,7 +121,29 @@ Route::prefix('v2')->group(function () {
     Route::get('faq', '\\'.FaqPageController::class)->name('api.v2.faq');
 
     // Block routes
-    Route::resource('block', BlockController::class)->only(['show', 'index'])->names('api');
+    Route::prefix('block')->name('api.')->group(function () {
+        Route::resource('block', BlockController::class)->only(['show', 'index']);
+        Route::get('{block}/products', [BlockRelationsController::class, 'products'])->name('block.products');
+        Route::post('{block}/products/attach',
+            [BlockRelationsController::class, 'attachProducts'])->name('block.attachProducts');
+        Route::post('{block}/products/detach',
+            [BlockRelationsController::class, 'detachProducts'])->name('block.detachProducts');
+        Route::get('{block}/sets', [BlockRelationsController::class, 'sets'])->name('block.sets');
+        Route::post('{block}/sets/attach', [BlockRelationsController::class, 'attachSets'])->name('block.attachSets');
+        Route::post('{block}/sets/detach', [BlockRelationsController::class, 'detachSets'])->name('block.detachSets');
+        Route::get('{block}/contents', [BlockRelationsController::class, 'contents'])->name('block.contents');
+        Route::post('{block}/contents/attach',
+            [BlockRelationsController::class, 'attachContents'])->name('block.attachContents');
+        Route::post('{block}/contents/detach',
+            [BlockRelationsController::class, 'detachContents'])->name('block.detachContents');
+        Route::get('{block}/banners', [BlockRelationsController::class, 'banners'])->name('block.banners');
+        Route::post('{block}/banners/attach',
+            [BlockRelationsController::class, 'attachBanners'])->name('block.attachBanners');
+        Route::post('{block}/banners/detach',
+            [BlockRelationsController::class, 'detachBanners'])->name('block.detachBanners');
+    });
+    Route::get('get-blocks', [BlockController::class, 'block'])
+        ->name('blocks.get');
 
     // Debug routes
     Route::get('debug', [HomeController::class, 'debug'])->name('api.v2.debug');
@@ -269,11 +291,6 @@ Route::prefix('v2')->group(function () {
             ->name('sms.index');
     });
 
-// Block Routes
-    Route::get('get-blocks', [BlockController::class, 'block'])
-        ->name('blocks.get');
-
-
 // Admin Routes
     Route::group(['middleware' => 'auth:api'], function () {
 
@@ -305,24 +322,7 @@ Route::prefix('v2')->group(function () {
 
 // Block routes
     Route::resource('block', '\\'.AdminBlockController::class)->except(['create', 'edit']);
-    Route::get('block/{block}/products', [BlockRelationsController::class, 'products'])->name('block.products');
-    Route::post('block/{block}/products/attach',
-        [BlockRelationsController::class, 'attachProducts'])->name('block.attachProducts');
-    Route::post('block/{block}/products/detach',
-        [BlockRelationsController::class, 'detachProducts'])->name('block.detachProducts');
-    Route::get('block/{block}/sets', [BlockRelationsController::class, 'sets'])->name('block.sets');
-    Route::post('block/{block}/sets/attach', [BlockRelationsController::class, 'attachSets'])->name('block.attachSets');
-    Route::post('block/{block}/sets/detach', [BlockRelationsController::class, 'detachSets'])->name('block.detachSets');
-    Route::get('block/{block}/contents', [BlockRelationsController::class, 'contents'])->name('block.contents');
-    Route::post('block/{block}/contents/attach',
-        [BlockRelationsController::class, 'attachContents'])->name('block.attachContents');
-    Route::post('block/{block}/contents/detach',
-        [BlockRelationsController::class, 'detachContents'])->name('block.detachContents');
-    Route::get('block/{block}/banners', [BlockRelationsController::class, 'banners'])->name('block.banners');
-    Route::post('block/{block}/banners/attach',
-        [BlockRelationsController::class, 'attachBanners'])->name('block.attachBanners');
-    Route::post('block/{block}/banners/detach',
-        [BlockRelationsController::class, 'detachBanners'])->name('block.detachBanners');
+
 
 // Additional block routes
     Route::patch('/block/{block}/syncProducts', [AdminBlockController::class, 'syncProducts'])->name('syncProducts');
