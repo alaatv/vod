@@ -476,7 +476,14 @@ Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'a
 ]);
 
 // Study Plan routes
-Route::resource('studyPlan', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
+Route::prefix('studyPlan')->group(function () {
+    Route::resource('/', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
+    Route::get('planDate/{plan_date}/event/{event}/showByDate',
+        [StudyPlanController::class, 'showByDateAndEvent'])->name('api.v2.studyPlan.show.by.date');
+    Route::put('planDate/{plan_date}/event/{event}/updateByDate',
+        [StudyPlanController::class, 'updateByDateAndEvent'])->name('api.v2.studyPlan.update.by.date');
+    Route::get('{studyPlan}/plans', [StudyPlanController::class, 'plans'])->name('plans');
+});
 
 // Subscriptions routes
 Route::get('subscriptions/user',
@@ -507,12 +514,6 @@ Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']
 
 // Content Income routes
 Route::get('contentIncomeGroupIndex', [ContentInComeController::class, 'groupIndex']);
-
-// Study Plan routes
-Route::get('studyPlan/planDate/{plan_date}/event/{event}/showByDate',
-    [StudyPlanController::class, 'showByDateAndEvent'])->name('api.v2.studyPlan.show.by.date');
-Route::put('studyPlan/planDate/{plan_date}/event/{event}/updateByDate',
-    [StudyPlanController::class, 'updateByDateAndEvent'])->name('api.v2.studyPlan.update.by.date');
 
 // Order routes
 Route::post('donate', [OrderController::class, 'donateOrderV2'])->name('api.v2.make.donate');
@@ -615,15 +616,12 @@ Route::group(['prefix' => 'timepoint'], function () {
         ->name('api.v2.mark.unfavorite.content.timepoint');
 });
 
-
 // Ticket routes
 Route::group(['prefix' => 'ticket'], function () {
     Route::post('{ticket}/sendTicketStatusNotice', [TicketController::class, 'sendTicketStatusChangeNotice']);
     Route::post('{ticket}/assign', [TicketController::class, 'assign']);
     Route::post('{ticket}/rate', [TicketController::class, 'rate']);
 });
-
-// Ticket message routes
 Route::group(['prefix' => 'ticketMessage'], function () {
     Route::post('{ticketMessage}/report', [TicketMessageController::class, 'report']);
 });
@@ -649,13 +647,11 @@ Route::get('getUserRoleAndPermission', [_3AController::class, 'getUserFor3a']);
 // Tag group routes
 Route::resource('tagGroup', '\\'.TagGroupController::class)->only(['index']);
 
-// Grouping the routes with the prefix 'api.v2.'
+// Routes map-details
 Route::group(['as' => 'api.v2.'], function () {
-
-    // Routes related to 'map-details' resource
     Route::resource('map-details', '\\'.MapDetailController::class)->except(['create', 'edit']);
 
-    // Routes related to 'abrisham' prefix
+    // Routes related to 'abrisham'
     Route::group(['prefix' => 'abrisham', 'as' => 'abrisham.'], function () {
         Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('lessons');
         Route::get('flatLessons', [ProductController::class, 'flatLessons'])->name('flatLessons');
@@ -669,22 +665,20 @@ Route::group(['as' => 'api.v2.'], function () {
         Route::get('/systemReport', [RahAbrishamController::class, 'indexSystemReport'])->name('systemReport.get');
     });
 
-    // Routes related to 'taftan' prefix
+    // Routes related to 'taftan'
     Route::group(['prefix' => 'taftan', 'as' => 'taftan.'], function () {
         Route::get('lessons', [ProductController::class, 'taftanLessons'])->name('lessons');
         Route::get('majors', [ProductController::class, 'taftanMajors'])->name('majors');
     });
 
-    // Routes related to 'chatreNejat' prefix
+    // Routes related to 'chatreNejat'
     Route::group(['prefix' => 'chatreNejat', 'as' => 'chatreNejat.'], function () {
         Route::get('lessons', [ProductController::class, 'chatreNejatLessons'])->name('lessons');
         Route::get('majors', [ProductController::class, 'chatrNejatMajors'])->name('majors');
     });
 
-    // Routes related to 'studyPlan' prefix
-    Route::group(['prefix' => 'studyPlan', 'as' => 'studyPlan.'], function () {
-        Route::get('{studyPlan}/plans', [StudyPlanController::class, 'plans'])->name('plans');
-    });
+    // Routes related to 'studyPlan'
+
 
     // Routes related to 'studyEvent' prefix
     Route::group(['prefix' => 'studyEvent', 'as' => 'event.'], function () {
