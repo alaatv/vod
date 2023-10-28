@@ -389,17 +389,12 @@ Route::prefix('v2')->group(function () {
     Route::get('unknownUsersCityIndex',
         [UserController::class, 'unknownUsersCityIndex'])->name('user.index.unknown.city');
 
-// Employee Schedule Routes
-
-// Order Routes
-
 // Coupon Routes
-    Route::resource('coupon', '\\'.CouponController::class)->except(['create', 'edit']);
 
-// Activity Log Routes
 
 // Coupon Routes Group
     Route::group(['prefix' => 'coupon', 'as' => 'coupon.'], function () {
+        Route::resource('', '\\'.CouponController::class)->except(['create', 'edit']);
         Route::get('findByCode', [CouponController::class, 'findByCode'])->name('findByCode');
         Route::post('generateMassiveRandomCoupon',
             [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
