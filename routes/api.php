@@ -163,7 +163,6 @@ Route::prefix('v2')->group(function () {
         Route::get('13aban', [LandingPageController::class, 'roozeDaneshAmooz2'])->name('api.v2.landing.13aban');
     });
 
-
 // Ewano routes
     Route::group(['prefix' => 'ewano'], function () {
         Route::get('/', [EwanoController::class, 'root'])->name('ewano.get');
@@ -190,7 +189,6 @@ Route::prefix('v2')->group(function () {
     Route::put('contents/bulk-edit-text', [ContentController::class, 'bulkEditText'])->name('content.bulk-edit-text');
     Route::put('contents/bulk-edit-tags', [ContentController::class, 'bulkEditTags'])->name('content.bulk-edit-tags');
     Route::get('content-statuses', [ContentStatusController::class, 'index']);
-
 
 // Product routes
     Route::prefix('product')->name('api.v2.product.')->group(function () {
@@ -222,12 +220,37 @@ Route::prefix('v2')->group(function () {
             ->name('api.v2.product.updateSetOrder');
         Route::get('soalaa/all', [ProductController::class, 'soalaaProducts'])->name('api.v2.product.soalaaProducts');
     });
-
     Route::get('product-categories', [ProductController::class, 'productCategory'])->name('api.v2.product.category');
     Route::get('product', [ProductController::class, 'index'])->name('api.v2.product.index');
     Route::post('getPricgroupIndexe/{product}',
         [ProductController::class, 'refreshPriceV2'])->name('api.v2.refreshPrice');
 
+    // Routes related to 'abrisham'
+    Route::group(['prefix' => 'abrisham', 'as' => 'abrisham.'], function () {
+        Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('lessons');
+        Route::get('flatLessons', [ProductController::class, 'flatLessons'])->name('flatLessons');
+        Route::get('whereIsKarvan', [StudyEventController::class, 'whereIsKarvan'])->name('whereIsKarvan');
+        Route::get('majors', [ProductController::class, 'abrishamMajors'])->name('majors');
+        Route::get('/selectPlan/create',
+            [RahAbrishamController::class, 'selectPlanCreate'])->name('selectPlan.create');
+        Route::get('/myStudyPlan', [StudyEventController::class, 'showMyStudyEvent'])->name('myStudyPlan.get');
+        Route::post('/myStudyPlan', [StudyEventController::class, 'storeMyStudyEvent'])->name('myStudyPlan.store');
+        Route::get('/findStudyPlan', [StudyEventController::class, 'findStudyPlan'])->name('findStudyPlan');
+        Route::get('/systemReport', [RahAbrishamController::class, 'indexSystemReport'])->name('systemReport.get');
+        Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('bonyadLessons');
+    });
+
+    // Routes related to 'taftan'
+    Route::group(['prefix' => 'taftan', 'as' => 'taftan.'], function () {
+        Route::get('lessons', [ProductController::class, 'taftanLessons'])->name('lessons');
+        Route::get('majors', [ProductController::class, 'taftanMajors'])->name('majors');
+    });
+
+    // Routes related to 'chatre Nejat'
+    Route::group(['prefix' => 'chatreNejat', 'as' => 'chatreNejat.'], function () {
+        Route::get('lessons', [ProductController::class, 'chatreNejatLessons'])->name('lessons');
+        Route::get('majors', [ProductController::class, 'chatrNejatMajors'])->name('majors');
+    });
 
 // Set routes
     Route::prefix('set')->name('api.v2.set.')->group(function () {
@@ -243,7 +266,6 @@ Route::prefix('v2')->group(function () {
     });
     Route::get('content-set/{set}', [SetController::class, 'showWithContents']);
 
-
 // Forrest routes
     Route::resource('/forrest/tree', '\\'.ForrestController::class)->only(['index', 'store', 'update']);
     Route::get('/forrest/tree/{grid}',
@@ -257,16 +279,20 @@ Route::prefix('v2')->group(function () {
     Route::get('contact', '\\'.ContactUsController::class)->name('api.v2.contact');
     Route::get('rule', '\\'.RulesPageController::class)->name('api.v2.rule');
 
-
-// Resource routes
-    Route::resource('ticketDepartment', '\\'.TicketDepartmentController::class,
-        ['as' => 'api'])->only(['index']);
-    Route::resource('ticketPriority', '\\'.TicketPriorityController::class)->only(['index']);
-    Route::resource('plan', '\\'.PlanController::class, ['as' => 'api'])->except(['create', 'edit']);
+// Newsletter Routes
     Route::resource('newsletter', '\\'.NewsletterController::class, ['as' => 'api'])->only(['store']);
+
+
+// Comment Routes
+    Route::resource('comment', '\\'.CommentController::class)->only(['store', 'update', 'destroy', 'show']);
+
+// Watched Routes
+    Route::resource('watched', '\\'.WatchHistoryController::class)->only('store');
+    Route::post('watched-bulk', [WatchHistoryController::class, 'bulkInsert']);
 
 // Donate route
     Route::get('donate', '\\'.DonateController::class)->name('api.v2.donate');
+    Route::post('donate', [OrderController::class, 'donateOrderV2'])->name('api.v2.make.donate');
 
 // Mega route group
     Route::group(['prefix' => 'megaroute', 'as' => 'api.v2.'], function () {
@@ -397,7 +423,6 @@ Route::prefix('v2')->group(function () {
     Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
 
 // User Routes
-
     Route::prefix('user')->group(function () {
 
         Route::get('favored', [UserController::class, 'userFavored'])->name('api.v2.user.favored');
@@ -418,6 +443,7 @@ Route::prefix('v2')->group(function () {
         Route::post('generateMassiveRandomCoupon',
             [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
     });
+    Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
 
 // BonyadEhsan Routes
     Route::group(['prefix' => 'bonyadEhsan', 'as' => 'bonyadEhsan'], function () {
@@ -452,360 +478,300 @@ Route::prefix('v2')->group(function () {
 // Favorable List Routes
     Route::apiResource('favorable-list', '\\'.FavorableListController::class);
 
-
-    // Abrisham Routes Group
-    Route::group(['prefix' => 'abrisham', 'as' => 'abrisham'], function () {
-        // Routes related to Abrisham lessons
-        Route::get('lessons',
-            [
-                \App\Http\Controllers\Api\BonyadEhsan\ProductController::class, 'abrishamLessons'
-            ])->name('bonyadLessons');
-    });
-});
-
 // Voucher Routes
-Route::prefix('voucher')->group(function () {
-    Route::post('createByCompany',
-        [VoucherManagementController::class, 'createVoucherByCompany'])->name('api.v2.admin.createByCompany');
-    Route::post('verify', [VoucherController::class, 'verify'])->name('api.v2.verify.voucher');
-    Route::post('disable', [VoucherController::class, 'disable'])->name('api.v2.disable.voucher');
-    Route::post('submit', [VoucherController::class, 'submit'])->name('api.v2.submit.voucher');
-});
-Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'api.v2.admin.'])->only([
-    'store', 'show', 'update', 'destroy'
-]);
+    Route::prefix('voucher')->group(function () {
+        Route::post('createByCompany',
+            [VoucherManagementController::class, 'createVoucherByCompany'])->name('api.v2.admin.createByCompany');
+        Route::post('verify', [VoucherController::class, 'verify'])->name('api.v2.verify.voucher');
+        Route::post('disable', [VoucherController::class, 'disable'])->name('api.v2.disable.voucher');
+        Route::post('submit', [VoucherController::class, 'submit'])->name('api.v2.submit.voucher');
+    });
+    Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'api.v2.admin.'])->only([
+        'store', 'show', 'update', 'destroy'
+    ]);
 
 // Study Plan routes
-Route::prefix('studyPlan')->group(function () {
-    Route::resource('/', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
-    Route::get('planDate/{plan_date}/event/{event}/showByDate',
-        [StudyPlanController::class, 'showByDateAndEvent'])->name('api.v2.studyPlan.show.by.date');
-    Route::put('planDate/{plan_date}/event/{event}/updateByDate',
-        [StudyPlanController::class, 'updateByDateAndEvent'])->name('api.v2.studyPlan.update.by.date');
-    Route::get('{studyPlan}/plans', [StudyPlanController::class, 'plans'])->name('plans');
-});
+    Route::prefix('studyPlan')->group(function () {
+        Route::resource('/', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
+        Route::get('planDate/{plan_date}/event/{event}/showByDate',
+            [StudyPlanController::class, 'showByDateAndEvent'])->name('api.v2.studyPlan.show.by.date');
+        Route::put('planDate/{plan_date}/event/{event}/updateByDate',
+            [StudyPlanController::class, 'updateByDateAndEvent'])->name('api.v2.studyPlan.update.by.date');
+        Route::get('{studyPlan}/plans', [StudyPlanController::class, 'plans'])->name('plans');
+    });
+    Route::resource('plan', '\\'.PlanController::class, ['as' => 'api'])->except(['create', 'edit']);
 
 // Subscriptions routes
-Route::get('subscriptions/user',
-    ['\\'.SubscriptoinController::class, 'userSubscriptions'])->name('user.subscriptions');
-Route::post('user/subscription/inquiry',
-    ['\\'.SubscriptoinController::class, 'subscriptionInquiry'])->name('user.subscriptions.inquiry');
-Route::post('subscription/update/value',
-    ['\\'.SubscriptoinController::class, 'updateValue'])->name('user.subscriptions.updateValue');
-Route::resource('subscription', '\\'.SubscriptoinController::class)->only(['store']);
-
-// Other resource routes
-Route::resource('timepoint', '\\'.TimepointController::class)->except(['create', 'edit']);
-Route::resource('ticket', '\\'.TicketController::class)->except(['edit']);
-Route::resource('ticketMessage', '\\'.TicketMessageController::class)->except(['create', 'edit']);
-Route::resource('firebasetoken', '\\'.FirebasetokenController::class)->only('store');
-Route::resource('contentIncome', '\\'.ContentInComeController::class)->only(['index', 'show']);
-Route::resource('comment', '\\'.CommentController::class)->only('store', 'update', 'destroy', 'show');
-Route::resource('watched', '\\'.WatchHistoryController::class)->only('store');
-Route::post('watched-bulk', [WatchHistoryController::class, 'bulkInsert']);
-Route::resource('livedescription',
-    '\\'.LiveDescriptionController::class)->where(['livedescription' => '[0-9]+'])->except(['create', 'edit']);
+    Route::get('subscriptions/user',
+        ['\\'.SubscriptoinController::class, 'userSubscriptions'])->name('user.subscriptions');
+    Route::post('user/subscription/inquiry',
+        ['\\'.SubscriptoinController::class, 'subscriptionInquiry'])->name('user.subscriptions.inquiry');
+    Route::post('subscription/update/value',
+        ['\\'.SubscriptoinController::class, 'updateValue'])->name('user.subscriptions.updateValue');
+    Route::resource('subscription', '\\'.SubscriptoinController::class)->only(['store']);
 
 // Entekhab Reshte routes
-Route::resource('entekhab-reshte', '\\'.EntekhabReshteController::class)->only('store');
+    Route::resource('entekhab-reshte', '\\'.EntekhabReshteController::class)->only('store');
 
 // Watch History routes
-Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
+    Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
 
 // Content Income routes
-Route::get('contentIncomeGroupIndex', [ContentInComeController::class, 'groupIndex']);
+    Route::get('contentIncomeGroupIndex', [ContentInComeController::class, 'groupIndex']);
+    Route::resource('contentIncome', '\\'.ContentInComeController::class)->only(['index', 'show']);
 
 // Order routes
-Route::post('donate', [OrderController::class, 'donateOrderV2'])->name('api.v2.make.donate');
-Route::post('orderproduct', [OrderproductController::class, 'storeV2'])->name('api.v2.orderproduct.store');
-Route::delete('orderproduct/{orderproduct}',
-    [OrderproductController::class, 'destroyV2'])->name('api.v2.orderproduct.destroy');
-Route::post('orderproduct/restore',
-    [OrderproductController::class, 'restore'])->name('api.v2.orderproduct.restore');
-Route::delete('remove-order-product/{product}',
-    [OrderController::class, 'removeOrderProduct'])->name('api.v2.order.remove-order-product');
-Route::post('orderCoupon', [OrderController::class, 'submitCouponV2'])->name('api.v2.coupon.submit');
-Route::delete('orderCoupon', [OrderController::class, 'removeCouponV2'])->name('api.v2.coupon.remove');
-Route::post('/order-referral-code',
-    [OrderController::class, 'submitReferralCode'])->name('api.v2.order.submitGiftCard');
-Route::delete('/order-referral-code',
-    [OrderController::class, 'removeReferralCode'])->name('api.v2.order.removeGiftCard');
+    Route::post('orderproduct', [OrderproductController::class, 'storeV2'])->name('api.v2.orderproduct.store');
+    Route::delete('orderproduct/{orderproduct}',
+        [OrderproductController::class, 'destroyV2'])->name('api.v2.orderproduct.destroy');
+    Route::post('orderproduct/restore',
+        [OrderproductController::class, 'restore'])->name('api.v2.orderproduct.restore');
+    Route::delete('remove-order-product/{product}',
+        [OrderController::class, 'removeOrderProduct'])->name('api.v2.order.remove-order-product');
+    Route::post('orderCoupon', [OrderController::class, 'submitCouponV2'])->name('api.v2.coupon.submit');
+    Route::delete('orderCoupon', [OrderController::class, 'removeCouponV2'])->name('api.v2.coupon.remove');
+    Route::post('/order-referral-code',
+        [OrderController::class, 'submitReferralCode'])->name('api.v2.order.submitGiftCard');
+    Route::delete('/order-referral-code',
+        [OrderController::class, 'removeReferralCode'])->name('api.v2.order.removeGiftCard');
 
 // Order nested routes
-Route::group(['prefix' => 'order'], function () {
-    Route::post('3a', [OrderController::class, 'create3aOrder'])->name('api.v2.order.3a');
-    Route::post('freeSubscription',
-        [OrderController::class, 'freeSubscription'])->name('api.v2.order.freeSubscription');
-});
+    Route::group(['prefix' => 'order'], function () {
+        Route::post('3a', [OrderController::class, 'create3aOrder'])->name('api.v2.order.3a');
+        Route::post('freeSubscription',
+            [OrderController::class, 'freeSubscription'])->name('api.v2.order.freeSubscription');
+    });
 
 // Referral Code routes
-Route::prefix('referral-code')->name('api.v2.referral-code.')->group(function () {
-    Route::get('/', [ReferralCodesController::class, 'index'])->name('index');
-    Route::get('/orderproducts', [ReferralCodesController::class, 'indexOrderproducts'])->name('orderproducts');
-    Route::get('/noneProfitableOrderproducts',
-        [ReferralCodesController::class, 'indexNoneProfitableOrderproducts'])->name('orderproducts.noneProfitable');
-    Route::get('/{referralCode}', [ReferralCodesController::class, 'show'])->name('show');
-    Route::post('/batch-store', [ReferralCodesController::class, 'batchStore'])->name('batch-store');
-    Route::post('/{referralCode}/assign', [ReferralCodesController::class, 'assign'])->name('assign');
-});
+    Route::prefix('referral-code')->name('api.v2.referral-code.')->group(function () {
+        Route::get('/', [ReferralCodesController::class, 'index'])->name('index');
+        Route::get('/orderproducts', [ReferralCodesController::class, 'indexOrderproducts'])->name('orderproducts');
+        Route::get('/noneProfitableOrderproducts',
+            [ReferralCodesController::class, 'indexNoneProfitableOrderproducts'])->name('orderproducts.noneProfitable');
+        Route::get('/{referralCode}', [ReferralCodesController::class, 'show'])->name('show');
+        Route::post('/batch-store', [ReferralCodesController::class, 'batchStore'])->name('batch-store');
+        Route::post('/{referralCode}/assign', [ReferralCodesController::class, 'assign'])->name('assign');
+    });
 
 // User routes
-Route::group(['prefix' => 'user', 'as' => 'api.v2.user.'], function () {
-    Route::get('', [UserController::class, 'index'])->name('index');
-    Route::get('{user}/orders', [UserController::class, 'userOrdersV2'])->name('orders');
-    Route::get('{user}/transactions', [UserController::class, 'userTransactionsV2'])->name('transactions');
-    Route::get('{user}/installments', [UserController::class, 'userInstallmentsV2'])->name('installments');
-    Route::get('{user}/dashboard', '\\'.DashboardPageV2Controller::class)->name('dashboard');
-    Route::post('{user}/firebasetoken', [FirebasetokenController::class, 'storeByUser']);
-    Route::post('getInfo', [UserController::class, 'getInfo'])->name('getInfo');
-    Route::post('national-card-photo',
-        [UserController::class, 'storeNationalCardPhoto'])->name('store.nationalPhoto');
-    Route::get('national-card-photo/get',
-        [UserController::class, 'getNationalCardPhoto'])->name('get.nationalPhoto');
-    Route::get('/products/hasPurchased', [UserController::class, 'hasPurchased'])->name('api.v2.user.hasPurchased');
-    Route::get('/isPermittedToPurchase/{product}',
-        [UserController::class, 'isPermittedToPurchase'])->name('api.v2.user.isPermittedToPurchase');
-    Route::get('/get/entekhab-reshte',
-        [UserController::class, 'getEntekhabReshte'])->name('api.v2.user.getEntekhabReshte');
-});
+    Route::group(['prefix' => 'user', 'as' => 'api.v2.user.'], function () {
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::get('{user}/orders', [UserController::class, 'userOrdersV2'])->name('orders');
+        Route::get('{user}/transactions', [UserController::class, 'userTransactionsV2'])->name('transactions');
+        Route::get('{user}/installments', [UserController::class, 'userInstallmentsV2'])->name('installments');
+        Route::get('{user}/dashboard', '\\'.DashboardPageV2Controller::class)->name('dashboard');
+        Route::post('{user}/firebasetoken', [FirebasetokenController::class, 'storeByUser']);
+        Route::post('getInfo', [UserController::class, 'getInfo'])->name('getInfo');
+        Route::post('national-card-photo',
+            [UserController::class, 'storeNationalCardPhoto'])->name('store.nationalPhoto');
+        Route::get('national-card-photo/get',
+            [UserController::class, 'getNationalCardPhoto'])->name('get.nationalPhoto');
+        Route::get('/products/hasPurchased', [UserController::class, 'hasPurchased'])->name('api.v2.user.hasPurchased');
+        Route::get('/isPermittedToPurchase/{product}',
+            [UserController::class, 'isPermittedToPurchase'])->name('api.v2.user.isPermittedToPurchase');
+        Route::get('/get/entekhab-reshte',
+            [UserController::class, 'getEntekhabReshte'])->name('api.v2.user.getEntekhabReshte');
+    });
 
 // Sales Man routes
-Route::prefix('sales-man')->name('api.v2.sales-man')->group(function () {
-    Route::get('/', [SalesManController::class, 'index'])->name('index');
-    Route::post('/contract', [SalesManController::class, 'submitContract'])->name('contract');
-});
+    Route::prefix('sales-man')->name('api.v2.sales-man')->group(function () {
+        Route::get('/', [SalesManController::class, 'index'])->name('index');
+        Route::post('/contract', [SalesManController::class, 'submitContract'])->name('contract');
+    });
 
 // Mobile Verification routes
-Route::group(['prefix' => 'mobile', 'as' => 'api'], function () {
-    Route::post('verify', [MobileVerificationController::class, 'verify'])->name('mobile.verification.verify');
-    Route::get('resend', [MobileVerificationController::class, 'resend'])->name('mobile.verification.resend');
-});
+    Route::prefix('mobile')->group(function () {
+        Route::post('verify', [MobileVerificationController::class, 'verify'])->name('api.mobile.verification.verify');
+        Route::get('resend', [MobileVerificationController::class, 'resend'])->name('api.mobile.verification.resend');
+        Route::get('resendGuest',
+            [MobileVerificationController::class, 'resendGuest'])->name('mobile.verification.resendGuest');
+        Route::post('verifyMoshavereh',
+            [MobileVerificationController::class, 'verifyMoshavereh'])->name('mobile.verification.verifyMoshavereh');
+    });
 
 // Dashboard routes
-Route::group(['prefix' => 'dashboard'], function () {
-    Route::get('/', '\\'.DashboardPageV2Controller::class)->name('api.v2.asset');
-    Route::get('/abrisham', '\\'.AbrishamDashboardPageV2Controller::class)->name('api.v2.asset.abrisham');
-});
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/', '\\'.DashboardPageV2Controller::class)->name('api.v2.asset');
+        Route::get('/abrisham', '\\'.AbrishamDashboardPageV2Controller::class)->name('api.v2.asset.abrisham');
+    });
 
 // Bookmark route
-Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
+    Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
 
 // Checkout routes
-Route::group(['prefix' => 'checkout'], function () {
-    Route::get('payment', [OrderController::class, 'checkoutPayment'])->name('api.v2.checkout.payment');
-    Route::post('addDonate', [OrderController::class, 'addDonate']);
-    Route::delete('removeDonate', [OrderController::class, 'removeDonate']);
-});
+    Route::group(['prefix' => 'checkout'], function () {
+        Route::get('payment', [OrderController::class, 'checkoutPayment'])->name('api.v2.checkout.payment');
+        Route::post('addDonate', [OrderController::class, 'addDonate']);
+        Route::delete('removeDonate', [OrderController::class, 'removeDonate']);
+    });
 
 // Payment redirect link
-Route::any('getPaymentRedirectEncryptedLink',
-    '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v2.payment.getEncryptedLink');
-
+    Route::any('getPaymentRedirectEncryptedLink',
+        '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v2.payment.getEncryptedLink');
 
 // Insert KMT route
-Route::post('insertKMT', [BotsController::class, 'queueBatchInsertJob'])->name('api.bot.pk');
+    Route::post('insertKMT', [BotsController::class, 'queueBatchInsertJob'])->name('api.bot.pk');
 
-
-// Timepoint routes
-Route::group(['prefix' => 'timepoint'], function () {
-    Route::get('{timepoint}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
-        ->name('api.v2.get.user.favorite.content.timepoint');
-    Route::post('{timepoint}/favored', [FavorableController::class, 'markFavorableFavorite'])
-        ->name('api.v2.mark.favorite.content.timepoint');
-    Route::post('{timepoint}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
-        ->name('api.v2.mark.unfavorite.content.timepoint');
-});
+// Time point routes
+    Route::group(['prefix' => 'timepoint'], function () {
+        Route::resource('', '\\'.TimepointController::class)->except(['create', 'edit']);
+        Route::get('{timepoint}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
+            ->name('api.v2.get.user.favorite.content.timepoint');
+        Route::post('{timepoint}/favored', [FavorableController::class, 'markFavorableFavorite'])
+            ->name('api.v2.mark.favorite.content.timepoint');
+        Route::post('{timepoint}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
+            ->name('api.v2.mark.unfavorite.content.timepoint');
+    });
 
 // Ticket routes
-Route::group(['prefix' => 'ticket'], function () {
-    Route::post('{ticket}/sendTicketStatusNotice', [TicketController::class, 'sendTicketStatusChangeNotice']);
-    Route::post('{ticket}/assign', [TicketController::class, 'assign']);
-    Route::post('{ticket}/rate', [TicketController::class, 'rate']);
-});
-Route::group(['prefix' => 'ticketMessage'], function () {
-    Route::post('{ticketMessage}/report', [TicketMessageController::class, 'report']);
-});
+    Route::group(['prefix' => 'ticket'], function () {
+        Route::resource('', '\\'.TicketController::class)->except(['edit']);
+        Route::post('{ticket}/sendTicketStatusNotice', [TicketController::class, 'sendTicketStatusChangeNotice']);
+        Route::post('{ticket}/assign', [TicketController::class, 'assign']);
+        Route::post('{ticket}/rate', [TicketController::class, 'rate']);
+    });
+    Route::group(['prefix' => 'ticketMessage'], function () {
+        Route::post('{ticketMessage}/report', [TicketMessageController::class, 'report']);
+    });
+    Route::resource('ticketPriority', '\\'.TicketPriorityController::class)->only(['index']);
+    Route::resource('ticketDepartment', '\\'.TicketDepartmentController::class, ['as' => 'api'])->only(['index']);
+    Route::resource('ticketMessage', '\\'.TicketMessageController::class)->except(['create', 'edit']);
 
 // Firebase token routes
-Route::group(['prefix' => 'firebasetoken'], function () {
-    Route::delete('{refreshToken}', [FirebasetokenController::class, 'destroyByRefreshToken']);
-    Route::put('{refreshToken}', [FirebasetokenController::class, 'updateByRefreshToken']);
-});
+    Route::group(['prefix' => 'firebasetoken'], function () {
+        Route::resource('', '\\'.FirebasetokenController::class)->only('store');
+        Route::delete('{refreshToken}', [FirebasetokenController::class, 'destroyByRefreshToken']);
+        Route::put('{refreshToken}', [FirebasetokenController::class, 'updateByRefreshToken']);
+    });
 
 // Routes related to BotsController
-Route::post('insertExcel', [BotsController::class, 'queueExcelInsertion'])->name('api.v2.queueExcelInsertion');
-Route::post('sc', [BotsController::class, 'sendCodeToUnknownNumber'])->name('api.v2.sendCodeToUnknownNumber');
-Route::get('getUserData/{user}', [BotsController::class, 'getUserData']);
+    Route::post('insertExcel', [BotsController::class, 'queueExcelInsertion'])->name('api.v2.queueExcelInsertion');
+    Route::post('sc', [BotsController::class, 'sendCodeToUnknownNumber'])->name('api.v2.sendCodeToUnknownNumber');
+    Route::get('getUserData/{user}', [BotsController::class, 'getUserData']);
 
 // Routes related to HomeController
-Route::get('getTelescopeExpiration', [HomeController::class, 'getUserTelescopeExpiration']);
+    Route::get('getTelescopeExpiration', [HomeController::class, 'getUserTelescopeExpiration']);
 
-// Routes related to _3AController
-Route::get('getUserFor3a', [_3AController::class, 'getUserFor3a']);
-Route::get('getUserRoleAndPermission', [_3AController::class, 'getUserFor3a']);
+// Routes related to 3AController
+    Route::get('getUserFor3a', [_3AController::class, 'getUserFor3a']);
+    Route::get('getUserRoleAndPermission', [_3AController::class, 'getUserFor3a']);
 
 // Tag group routes
-Route::resource('tagGroup', '\\'.TagGroupController::class)->only(['index']);
+    Route::resource('tagGroup', '\\'.TagGroupController::class)->only(['index']);
 
 // Routes map-details
-Route::group(['as' => 'api.v2.'], function () {
-    Route::resource('map-details', '\\'.MapDetailController::class)->except(['create', 'edit']);
-
-    // Routes related to 'abrisham'
-    Route::group(['prefix' => 'abrisham', 'as' => 'abrisham.'], function () {
-        Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('lessons');
-        Route::get('flatLessons', [ProductController::class, 'flatLessons'])->name('flatLessons');
-        Route::get('whereIsKarvan', [StudyEventController::class, 'whereIsKarvan'])->name('whereIsKarvan');
-        Route::get('majors', [ProductController::class, 'abrishamMajors'])->name('majors');
-        Route::get('/selectPlan/create',
-            [RahAbrishamController::class, 'selectPlanCreate'])->name('selectPlan.create');
-        Route::get('/myStudyPlan', [StudyEventController::class, 'showMyStudyEvent'])->name('myStudyPlan.get');
-        Route::post('/myStudyPlan', [StudyEventController::class, 'storeMyStudyEvent'])->name('myStudyPlan.store');
-        Route::get('/findStudyPlan', [StudyEventController::class, 'findStudyPlan'])->name('findStudyPlan');
-        Route::get('/systemReport', [RahAbrishamController::class, 'indexSystemReport'])->name('systemReport.get');
+    Route::group(['as' => 'api.v2.'], function () {
+        Route::resource('map-details', '\\'.MapDetailController::class)->except(['create', 'edit']);
     });
 
-    // Routes related to 'taftan'
-    Route::group(['prefix' => 'taftan', 'as' => 'taftan.'], function () {
-        Route::get('lessons', [ProductController::class, 'taftanLessons'])->name('lessons');
-        Route::get('majors', [ProductController::class, 'taftanMajors'])->name('majors');
-    });
-
-    // Routes related to 'chatreNejat'
-    Route::group(['prefix' => 'chatreNejat', 'as' => 'chatreNejat.'], function () {
-        Route::get('lessons', [ProductController::class, 'chatreNejatLessons'])->name('lessons');
-        Route::get('majors', [ProductController::class, 'chatrNejatMajors'])->name('majors');
-    });
-
-    // Routes related to 'studyPlan'
-
-
-    // Routes related to 'studyEvent' prefix
+// Routes related to 'studyEvent'
     Route::group(['prefix' => 'studyEvent', 'as' => 'event.'], function () {
         Route::get('{studyevent}/studyPlans', [StudyEventController::class, 'studyPlans'])->name('studyPlans');
         Route::get('whereIsEvent', [StudyEventController::class, 'whereIsEvent'])->name('whereIsEvent');
     });
 
-    // Routes related to 'employeetimesheet' prefix
+// Routes related to 'employee timesheet'
     Route::group(['prefix' => 'employeetimesheet', 'as' => 'employeetimesheet.'], function () {
         Route::post('confirmOverTime',
             [EmployeetimesheetController::class, 'confirmEmployeeOverTime'])->name('confirmOverTime');
     });
-});
 
-Route::group(['prefix' => 'livedescription', 'as' => 'LiveDescriptionController.'], function () {
+//Live Routes
+    Route::group(['prefix' => 'livedescription', 'as' => 'LiveDescriptionController.'], function () {
+        Route::resource('',
+            '\\'.LiveDescriptionController::class)->where(['livedescription' => '[0-9]+'])->except(['create', 'edit']);
+        Route::get('/getPined', [LiveDescriptionController::class, 'getPined'])
+            ->name('getPined');
+        Route::get('/{livedescription}/pin', [LiveDescriptionController::class, 'pin'])
+            ->name('pin');
+        Route::get('/{livedescription}/unpin', [LiveDescriptionController::class, 'unpin'])
+            ->name('unpin');
+        Route::get('/{livedescription}/seen', [LiveDescriptionController::class, 'increaseSeen'])
+            ->name('increaseSeeliveDescriptionn');
+    });
 
-    // Route for getting the pinned live description
-    Route::get('/getPined', [LiveDescriptionController::class, 'getPined'])
-        ->name('getPined');
-
-    // Route for pinning a specific live description
-    Route::get('/{livedescription}/pin', [LiveDescriptionController::class, 'pin'])
-        ->name('pin');
-
-    // Route for unpinning a specific live description
-    Route::get('/{livedescription}/unpin', [LiveDescriptionController::class, 'unpin'])
-        ->name('unpin');
-
-    // Route for increasing the seen count of a specific live description
-    Route::get('/{livedescription}/seen', [LiveDescriptionController::class, 'increaseSeen'])
-        ->name('increaseSeeliveDescriptionn');
-});
-
-Route::post('authorize', [RolePermissionController::class, 'getResponse']);
-Route::post('authorizeWithPermissionName', [RolePermissionController::class, 'authorizeWithPermissionName']);
-
+//Role Routes
+    Route::post('authorize', [RolePermissionController::class, 'getResponse']);
+    Route::post('authorizeWithPermissionName', [RolePermissionController::class, 'authorizeWithPermissionName']);
 
 // Exam routes
-Route::group(['prefix' => 'exam'], function () {
-    Route::get('rank-chart', [ExamResultsController::class, 'rankChart'])->name('api.v2.rank.charts');
-    Route::get('user-rank', [ExamResultsController::class, 'userRank'])->name('api.v2.user.rank');
-    Route::get('averageRank', [ExamResultsController::class, 'averageRanking'])->name('api.v2.average.rank');
-    Route::get('getUsersOfBonyad', [ExamResultsController::class, 'getUsers'])->name('api.v2.get.users');
-    Route::get('check-export/{excelExport}',
-        [ExamResultsController::class, 'checkExport'])->name('api.v2.check.export');
-});
-
-// Payment status routes
-Route::resource('paymentstatuses', '\\'.PaymentStatusController::class)->only(['index']);
-Route::post('bank-accounts', [BankAccountController::class, 'store'])->name('api.v2.bank-account.store');
-Route::get('bank-accounts', [BankAccountController::class, 'index'])->name('api.v2.bank-account.index');
-Route::post('wallet/withdraw', [WalletController::class, 'withdrawWallet'])->name('api.v2.wallet.withdraw');
-Route::get('wallet/withdraw-requests',
-    [WalletController::class, 'withdrawRequests'])->name('api.v2.wallet.request');
-
-// Event result routes
-Route::resource('event-result', '\\'.EventResultController::class)->only(['index', 'create', 'store', 'show']);
-Route::get('event-result/event/{event}',
-    [EventResultController::class, 'getInfoByEvent'])->name('api.v2.eventResult.getInfo.byEvent');
-
-// Study event routes
-Route::prefix('events')->name('event.')->group(function () {
-    Route::get('/', [StudyEventController::class, 'index'])->name('index');
-    Route::get('{studyEvent}/advisor', [StudyEventController::class, 'advisor'])->name('advisor');
-    Route::get('{studyEvent}/products', [StudyEventController::class, 'products'])->name('products');
-});
-Route::resource('events', '\\'.EventController::class, ['as' => 'api'])->only(['show', 'store']);
-
-// Additional miscellaneous routes
-Route::get('konkur1403Countdown',
-    [HomeController::class, 'getKonkur1403Countdown'])->name('api.v2.getKonkur1403Countdown');
-
-
-// Route for marking a study event report as read
-Route::prefix('study-event-report')->name('study-event-report.')->group(function () {
-    Route::get('/{studyEventReport}/mark-as-read',
-        [StudyEventReportController::class, 'markAsRead'])->name('mark-as-read');
-});
-
-// Route for updating the view of a live conductor
-Route::prefix('/live-conductor')->name('live-conductor.')->group(function () {
-    Route::put('/view', [LiveConductorController::class, 'view'])->name('view');
-});
-
-// Route for showing live conductor information
-Route::get('conductor/{liveConductor}/live', [LiveConductorController::class, 'show'])->name('show');
-
-// Seo Controller Route
-Route::get('/seo', '\\'.SeoController::class);
-
-
-// Coupon Controller Routes
-Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
-
-// Bots Controller Routes
-Route::post('sc/pen',
-    [BotsController::class, 'sendCodeToUnknownNumberPen'])->name('api.v2.sendCodeToUnknownNumberPen');
+    Route::group(['prefix' => 'exam'], function () {
+        Route::get('rank-chart', [ExamResultsController::class, 'rankChart'])->name('api.v2.rank.charts');
+        Route::get('user-rank', [ExamResultsController::class, 'userRank'])->name('api.v2.user.rank');
+        Route::get('averageRank', [ExamResultsController::class, 'averageRanking'])->name('api.v2.average.rank');
+        Route::get('getUsersOfBonyad', [ExamResultsController::class, 'getUsers'])->name('api.v2.get.users');
+        Route::get('check-export/{excelExport}',
+            [ExamResultsController::class, 'checkExport'])->name('api.v2.check.export');
+    });
 
 // Exam Results Controller Route
-Route::post('/exam/store',
-    [ExamResultsController::class, 'store'])->name('api.v2.store.exam')->middleware('3aIpAccess');
+    Route::post('/exam/store',
+        [ExamResultsController::class, 'store'])->name('api.v2.store.exam')->middleware('3aIpAccess');
 
-Route::group(['prefix' => 'checkout'], function () {
-    Route::get('review', [OrderController::class, 'checkoutReviewV2'])->name('api.v2.checkout.review');
-});
-Route::get('/orderWithTransaction/{order}',
-    [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
+    Route::group(['prefix' => 'checkout'], function () {
+        Route::get('review', [OrderController::class, 'checkoutReviewV2'])->name('api.v2.checkout.review');
+    });
+    Route::get('/orderWithTransaction/{order}',
+        [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
+
+// Payment status routes
+    Route::resource('paymentstatuses', '\\'.PaymentStatusController::class)->only(['index']);
+    Route::post('bank-accounts', [BankAccountController::class, 'store'])->name('api.v2.bank-account.store');
+    Route::get('bank-accounts', [BankAccountController::class, 'index'])->name('api.v2.bank-account.index');
+    Route::post('wallet/withdraw', [WalletController::class, 'withdrawWallet'])->name('api.v2.wallet.withdraw');
+    Route::get('wallet/withdraw-requests',
+        [WalletController::class, 'withdrawRequests'])->name('api.v2.wallet.request');
+
+// Event result routes
+    Route::resource('event-result', '\\'.EventResultController::class)->only(['index', 'create', 'store', 'show']);
+    Route::get('event-result/event/{event}',
+        [EventResultController::class, 'getInfoByEvent'])->name('api.v2.eventResult.getInfo.byEvent');
+
+// Study event routes
+    Route::prefix('events')->name('event.')->group(function () {
+        Route::get('/', [StudyEventController::class, 'index'])->name('index');
+        Route::get('{studyEvent}/advisor', [StudyEventController::class, 'advisor'])->name('advisor');
+        Route::get('{studyEvent}/products', [StudyEventController::class, 'products'])->name('products');
+    });
+    Route::resource('events', '\\'.EventController::class, ['as' => 'api'])->only(['show', 'store']);
+    Route::prefix('study-event-report')->name('study-event-report.')->group(function () {
+        Route::get('/{studyEventReport}/mark-as-read',
+            [StudyEventReportController::class, 'markAsRead'])->name('mark-as-read');
+    });
+
+// Additional miscellaneous routes
+    Route::get('konkur1403Countdown',
+        [HomeController::class, 'getKonkur1403Countdown'])->name('api.v2.getKonkur1403Countdown');
+
+// Route for updating the view of a live conductor
+    Route::prefix('/live-conductor')->name('live-conductor.')->group(function () {
+        Route::put('/view', [LiveConductorController::class, 'view'])->name('view');
+    });
+
+// Route for showing live conductor information
+    Route::get('conductor/{liveConductor}/live', [LiveConductorController::class, 'show'])->name('show');
+
+// Seo Controller Route
+    Route::get('/seo', '\\'.SeoController::class);
+
+// Coupon Controller Routes
+    Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
+
+// Bots Controller Routes
+    Route::post('sc/pen',
+        [BotsController::class, 'sendCodeToUnknownNumberPen'])->name('api.v2.sendCodeToUnknownNumberPen');
 
 // Gateway Controller Route
-Route::get('/gateways', [GatewayController::class, 'index'])->name('api.v2.gateways');
+    Route::get('/gateways', [GatewayController::class, 'index'])->name('api.v2.gateways');
 
 // Android Log Controller Route
-Route::group(['prefix' => 'androidLog'], function () {
-    Route::get('failTrack', [AndroidLogController::class, 'failTrack']);
-});
-
-// Mobile Verification Controller Routes
-Route::group(['prefix' => 'mobile'], function () {
-    Route::get('resendGuest',
-        [MobileVerificationController::class, 'resendGuest'])->name('mobile.verification.resendGuest');
-    Route::post('verifyMoshavereh',
-        [MobileVerificationController::class, 'verifyMoshavereh'])->name('mobile.verification.verifyMoshavereh');
-});
-
+    Route::group(['prefix' => 'androidLog'], function () {
+        Route::get('failTrack', [AndroidLogController::class, 'failTrack']);
+    });
 
 // Api Channel Controller Route
-Route::resource('ch', '\\'.ApiChannelController::class, ['as' => 'api'])->only(['show']);
+    Route::resource('ch', '\\'.ApiChannelController::class, ['as' => 'api'])->only(['show']);
 
 // Voip Controller Route
-Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
+    Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
+});
