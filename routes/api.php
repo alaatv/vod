@@ -379,7 +379,7 @@ Route::prefix('v2')->group(function () {
         Route::post('file', [SettingController::class, 'file'])->name('file');
     });
 
-// Other routes
+// Upload Center routes
     Route::post('upload/presigned-request',
         [UploadCenterController::class, 'presignedRequest'])->name('upload.presigned-request');
     Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
