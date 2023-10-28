@@ -210,9 +210,17 @@ Route::post('getPricgroupIndexe/{product}',
 
 
 // Set routes
-Route::get('set/{set}', [SetController::class, 'showV2'])->name('api.v2.set.show');
-Route::get('set/{set}/contents', [SetController::class, 'contents'])->name('api.v2.set.contents');
-Route::get('set', [SetController::class, 'index'])->name('api.v2.set.index');
+Route::prefix('set')->name('api.v2.set.')->group(function () {
+    Route::get('', [SetController::class, 'index'])->name('index');
+    Route::get('{set}', [SetController::class, 'showV2'])->name('show');
+    Route::get('{set}/contents', [SetController::class, 'contents'])->name('contents');
+    Route::get('{set}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
+        ->name('api.v2.get.user.favorite.set');
+    Route::post('{set}/favored', [FavorableController::class, 'markFavorableFavorite'])
+        ->name('api.v2.mark.favorite.set');
+    Route::post('{set}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
+        ->name('api.v2.mark.unfavorite.set');
+});
 Route::get('content-set/{set}', [SetController::class, 'showWithContents']);
 
 
@@ -615,15 +623,6 @@ Route::group(['prefix' => 'timepoint'], function () {
         ->name('api.v2.mark.unfavorite.content.timepoint');
 });
 
-// Set routes
-Route::group(['prefix' => 'set'], function () {
-    Route::get('{set}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
-        ->name('api.v2.get.user.favorite.set');
-    Route::post('{set}/favored', [FavorableController::class, 'markFavorableFavorite'])
-        ->name('api.v2.mark.favorite.set');
-    Route::post('{set}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
-        ->name('api.v2.mark.unfavorite.set');
-});
 
 // Ticket routes
 Route::group(['prefix' => 'ticket'], function () {
