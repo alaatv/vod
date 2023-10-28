@@ -145,6 +145,8 @@ Route::prefix('v2')->group(function () {
 // Ewano routes
 Route::group(['prefix' => 'ewano'], function () {
     Route::get('/', [EwanoController::class, 'root'])->name('ewano.get');
+    Route::post('/order', [EwanoController::class, 'makeOrder'])->name('ewano.make.order');
+    Route::post('/pay', [EwanoController::class, 'pay'])->name('ewano.pay');
 });
 
 // Search route
@@ -438,13 +440,6 @@ Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
 });
 Route::resource('setting', '\\'.SettingController::class)->only(['index', 'store', 'update']);
 Route::post('setting/file', [SettingController::class, 'file'])->name('file');
-
-// Ewano Routes
-Route::group(['prefix' => 'ewano'], function () {
-    // Ewano routes for making orders and payment
-    Route::post('/order', [EwanoController::class, 'makeOrder'])->name('ewano.make.order');
-    Route::post('/pay', [EwanoController::class, 'pay'])->name('ewano.pay');
-});
 
 // Favorable List Routes
 Route::apiResource('favorable-list', '\\'.FavorableListController::class);
