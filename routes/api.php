@@ -144,6 +144,10 @@ Route::prefix('v2')->group(function () {
     });
     Route::get('get-blocks', [BlockController::class, 'block'])
         ->name('blocks.get');
+    Route::get('blockSlideShows', [BlockSlideshowController::class, 'index'])->name('blockSlideShow.index');
+    Route::get('blockTypes', [BlockTypesController::class, 'index'])->name('blockTypes.index');
+    Route::get('blockSets', [BlockSetsController::class, 'index'])->name('blockSets.index');
+    Route::get('blockProducts', [BlockProductsController::class, 'index'])->name('blockProducts.index');
 
     // Debug routes
     Route::get('debug', [HomeController::class, 'debug'])->name('api.v2.debug');
@@ -185,10 +189,6 @@ Route::prefix('v2')->group(function () {
     Route::put('contents/bulk-update', [ContentController::class, 'bulkUpdate'])->name('content.bulk-update');
     Route::put('contents/bulk-edit-text', [ContentController::class, 'bulkEditText'])->name('content.bulk-edit-text');
     Route::put('contents/bulk-edit-tags', [ContentController::class, 'bulkEditTags'])->name('content.bulk-edit-tags');
-    Route::resource('contents', '\\'.AdminContentController::class, ['as' => 'api'])->only(['index', 'show', 'update']);
-    Route::get('c', [AdminContentController::class, 'index'])->name('c.index');
-    Route::post('contents/destroy', [AdminContentController::class, 'destroy'])->name('content.bulk.destroy');
-    Route::post('content/{content}/copy', [AdminContentController::class, 'copy'])->name('content.copy');
     Route::get('content-statuses', [ContentStatusController::class, 'index']);
 
 
@@ -294,20 +294,20 @@ Route::prefix('v2')->group(function () {
 // Admin Routes
     Route::group(['middleware' => 'auth:api'], function () {
 
-        // Cache Clear
+        // Admin-Clear Cache
         Route::get('/admin/cache-clear', '\\'.CacheController::class)
             ->name('admin.cache-clear');
 
-        // Transaction Resource
+        // Admin-Manage Transactions
         Route::resource('admin/transaction', '\\'.TransactionController::class);
 
-        // Attribute Resource
+        // Admin-Manage Attributes
         Route::resource('admin/attribute', '\\'.AttributeController::class);
 
-        // Attribute Set Resource
+        // Admin-Manage Attribute Sets
         Route::resource('admin/attribute-set', '\\'.AttributeSetController::class);
 
-        // FAQ Routes
+        // Admin-FAQs
         Route::group(['prefix' => 'admin/faq', 'as' => 'admin.faq.'], function () {
             Route::get('/', [AdminFaqController::class, 'index'])
                 ->name('index');
@@ -320,64 +320,89 @@ Route::prefix('v2')->group(function () {
         });
     });
 
-// Block routes
+// Admin-Block Routes
     Route::resource('block', '\\'.AdminBlockController::class)->except(['create', 'edit']);
-
-
-// Additional block routes
     Route::patch('/block/{block}/syncProducts', [AdminBlockController::class, 'syncProducts'])->name('syncProducts');
     Route::patch('/block/{block}/syncSets', [AdminBlockController::class, 'syncSets'])->name('syncSets');
     Route::patch('/block/{block}/syncBanners', [AdminBlockController::class, 'syncBanners'])->name('syncBanners');
     Route::patch('/block/{block}/syncContents', [AdminBlockController::class, 'syncContents'])->name('syncContents');
-    Route::get('blockSlideShows', [BlockSlideshowController::class, 'index'])->name('blockSlideShow.index');
-    Route::get('blockTypes', [BlockTypesController::class, 'index'])->name('blockTypes.index');
-    Route::get('blockSets', [BlockSetsController::class, 'index'])->name('blockSets.index');
-    Route::get('blockProducts', [BlockProductsController::class, 'index'])->name('blockProducts.index');
 
-// Set routes
+// Admin-Content Routes
+    Route::resource('contents', '\\'.AdminContentController::class, ['as' => 'api'])->only(['index', 'show', 'update']);
+    Route::get('c', [AdminContentController::class, 'index'])->name('c.index');
+    Route::post('contents/destroy', [AdminContentController::class, 'destroy'])->name('content.bulk.destroy');
+    Route::post('content/{content}/copy', [AdminContentController::class, 'copy'])->name('content.copy');
+
+// Admin-Set Routes
     Route::resource('set', '\\'.AdminSetController::class, ['as' => 'api']);
     Route::post('set/{set}/c/attach', [AdminSetController::class, 'attachContents'])->name('set.attachContents');
     Route::get('set/{set}/contents', [AdminSetController::class, 'contents'])->name('set.contents');
 
-
-// Other routes
-    Route::post('upload/presigned-request',
-        [UploadCenterController::class, 'presignedRequest'])->name('upload.presigned-request');
-    Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
+// Admin-Product Routes
     Route::post('product/set-discount', [AdminProductController::class, 'setDiscount'])->name('product.set-discount');
     Route::put('product/bulk-update-statuses',
         [AdminProductController::class, 'bulkUpdateStatuses'])->name('product.bulk-update-statuses');
     Route::resource('product', '\\'.AdminProductController::class, ['as' => 'api'])->except(['create', 'edit']);
     Route::get('product/{product}/sets', [AdminProductController::class, 'sets'])->name('product.sets');
     Route::post('product/{product}/copy', [AdminProductController::class, 'copy'])->name('product.copy');
+
+// Admin-User Routes
     Route::resource('user', '\\'.AdminUserController::class, ['as' => 'api'])->except(['create', 'edit']);
+
+// Admin-Permission Routes
     Route::resource('permission', '\\'.AdminPermissionController::class, ['as' => 'api'])->except(['create', 'edit']);
+
+// Admin-Role Routes
     Route::resource('role', '\\'.AdminRoleController::class, ['as' => 'api'])->except(['create', 'edit']);
-    Route::post('orderBatchTransfer',
-        [AdminOrderController::class, 'orderBatchTransfer'])->name('order.batchTransfer');
+
+// Admin-Order Routes
+    Route::post('orderBatchTransfer', [AdminOrderController::class, 'orderBatchTransfer'])->name('order.batchTransfer');
+    Route::resource('order', '\\'.AdminOrderController::class)->except(['create', 'edit']);
+
+// Admin-Employee Schedule Routes
+    Route::post('employeeSchedule/batchUpdate',
+        [AdminEmployeeScheduleController::class, 'batchUpdate'])->name('employeeSchedule.batchUpdate');
+    Route::resource('employeeSchedules', '\\'.AdminEmployeeScheduleController::class)->only(['index', 'store']);
+
+// Admin-Activity Log Routes
+    Route::resource('activityLog', '\\'.AdminActivityLogController::class)->only(['index']);
+
+// Admin-Slideshow Routes
+    Route::resource('slideshow', '\\'.AdminSlideshowController::class)->only(['index']);
+
+// Admin-Abrisham Product Choice Route
+    Route::get('abrisham/productChoice',
+        [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
+
+    // Setting Routes
+    Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
+        // Setting routes for index, store, update, and destroy
+        Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
+        Route::post('/', [SettingController::class, 'store'])->name('admin.setting.store');
+        Route::put('{setting:key}', [SettingController::class, 'update'])->name('admin.setting.update');
+        Route::delete('{setting}', [SettingController::class, 'destroy'])->name('admin.setting.destroy');
+    });
+    Route::resource('setting', '\\'.SettingController::class)->only(['index', 'store', 'update']);
+    Route::post('setting/file', [SettingController::class, 'file'])->name('file');
+
+// Other routes
+    Route::post('upload/presigned-request',
+        [UploadCenterController::class, 'presignedRequest'])->name('upload.presigned-request');
+    Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
+
 
 // User Routes
     Route::get('unknownUsersCityIndex',
         [UserController::class, 'unknownUsersCityIndex'])->name('user.index.unknown.city');
 
 // Employee Schedule Routes
-    Route::post('employeeSchedule/batchUpdate',
-        [AdminEmployeeScheduleController::class, 'batchUpdate'])->name('employeeSchedule.batchUpdate');
 
 // Order Routes
-    Route::resource('order', '\\'.AdminOrderController::class)->except(['create', 'edit']);
-
-// Employee Schedule Routes
-    Route::resource('employeeSchedules', '\\'.AdminEmployeeScheduleController::class)->only(['index', 'store']);
 
 // Coupon Routes
     Route::resource('coupon', '\\'.CouponController::class)->except(['create', 'edit']);
 
 // Activity Log Routes
-    Route::resource('activityLog', '\\'.AdminActivityLogController::class)->only(['index']);
-
-// Slideshow Routes
-    Route::resource('slideshow', '\\'.AdminSlideshowController::class)->only(['index']);
 
 // Coupon Routes Group
     Route::group(['prefix' => 'coupon', 'as' => 'coupon.'], function () {
@@ -385,10 +410,6 @@ Route::prefix('v2')->group(function () {
         Route::post('generateMassiveRandomCoupon',
             [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
     });
-
-// Abrisham Routes
-    Route::get('abrisham/productChoice',
-        [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
 
 // BonyadEhsan Routes Group
     Route::group(['prefix' => 'bonyadEhsan', 'as' => 'bonyadEhsan'], function () {
@@ -414,16 +435,6 @@ Route::prefix('v2')->group(function () {
 // Form Builder Routes
     Route::get('/form-builder', '\\'.FormBuilder::class);
 
-// Setting Routes
-    Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
-        // Setting routes for index, store, update, and destroy
-        Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
-        Route::post('/', [SettingController::class, 'store'])->name('admin.setting.store');
-        Route::put('{setting:key}', [SettingController::class, 'update'])->name('admin.setting.update');
-        Route::delete('{setting}', [SettingController::class, 'destroy'])->name('admin.setting.destroy');
-    });
-    Route::resource('setting', '\\'.SettingController::class)->only(['index', 'store', 'update']);
-    Route::post('setting/file', [SettingController::class, 'file'])->name('file');
 
 // Favorable List Routes
     Route::apiResource('favorable-list', '\\'.FavorableListController::class);
