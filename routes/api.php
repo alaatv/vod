@@ -452,9 +452,6 @@ Route::prefix('v2')->group(function () {
 // Favorable List Routes
     Route::apiResource('favorable-list', '\\'.FavorableListController::class);
 
-// BonyadEhsan Routes Group
-    Route::group(['prefix' => 'bonyadEhsan', 'as' => 'bonyadEhsan'], function () {
-    });
 
     // Abrisham Routes Group
     Route::group(['prefix' => 'abrisham', 'as' => 'abrisham'], function () {
@@ -466,13 +463,17 @@ Route::prefix('v2')->group(function () {
     });
 });
 
-
-// Voucher routes
+// Voucher Routes
+Route::prefix('voucher')->group(function () {
+    Route::post('createByCompany',
+        [VoucherManagementController::class, 'createVoucherByCompany'])->name('api.v2.admin.createByCompany');
+    Route::post('verify', [VoucherController::class, 'verify'])->name('api.v2.verify.voucher');
+    Route::post('disable', [VoucherController::class, 'disable'])->name('api.v2.disable.voucher');
+    Route::post('submit', [VoucherController::class, 'submit'])->name('api.v2.submit.voucher');
+});
 Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'api.v2.admin.'])->only([
     'store', 'show', 'update', 'destroy'
 ]);
-Route::post('vouchers/createByCompany',
-    [VoucherManagementController::class, 'createVoucherByCompany'])->name('api.v2.admin.createByCompany');
 
 // Study Plan routes
 Route::resource('studyPlan', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
@@ -599,10 +600,6 @@ Route::group(['prefix' => 'checkout'], function () {
 Route::any('getPaymentRedirectEncryptedLink',
     '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v2.payment.getEncryptedLink');
 
-// Voucher routes
-Route::post('voucher/verify', [VoucherController::class, 'verify'])->name('api.v2.verify.voucher');
-Route::post('voucher/disable', [VoucherController::class, 'disable'])->name('api.v2.disable.voucher');
-Route::post('voucher/submit', [VoucherController::class, 'submit'])->name('api.v2.submit.voucher');
 
 // Insert KMT route
 Route::post('insertKMT', [BotsController::class, 'queueBatchInsertJob'])->name('api.bot.pk');
