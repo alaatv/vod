@@ -246,7 +246,7 @@ Route::prefix('v2')->group(function () {
 // Donate route
     Route::get('donate', '\\'.DonateController::class)->name('api.v2.donate');
 
-// Megaroute group
+// Mega route group
     Route::group(['prefix' => 'megaroute', 'as' => 'api.v2.'], function () {
         Route::get('getUserFormData',
             [UserController::class, 'getUserFormData'])->name('user.formData');
@@ -258,21 +258,13 @@ Route::prefix('v2')->group(function () {
         Route::get('mediana-get-credit', [SmsController::class, 'getCreditForMediana'])
             ->middleware('auth:api')
             ->name('sms.mediana-get-credit');
-
-        // Receive SMS
         Route::get('/receive', '\\'.ReceiveSMSController::class)
             ->name('sms.receive');
-
-        // Send Pattern
         Route::post('/sendPattern/{user}', [SmsController::class, 'pattern'])
             ->name('sms.sendPattern');
-
-        // Send Bulk SMS
         Route::post('/sendBulk', [SmsController::class, 'sendBulk'])
             ->middleware('auth:api')
             ->name('sms.sendBulk');
-
-        // Index
         Route::get('/', [SmsController::class, 'index'])
             ->name('sms.index');
     });
