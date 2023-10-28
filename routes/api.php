@@ -286,7 +286,7 @@ Route::prefix('v2')->group(function () {
 
     });
 
-// =============== Admin Routes ===============
+//=================================== Admin Routes ============================================
     Route::group(['middleware' => 'auth:api'], function () {
 
         // Admin-Clear Cache
@@ -369,7 +369,7 @@ Route::prefix('v2')->group(function () {
     Route::get('abrisham/productChoice',
         [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
 
-    // Setting Routes
+    //=================================== Setting Routes ============================================
     Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
         Route::resource('', '\\'.SettingController::class)->only(['index', 'store', 'update']);
         Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
@@ -379,12 +379,35 @@ Route::prefix('v2')->group(function () {
         Route::post('file', [SettingController::class, 'file'])->name('file');
     });
 
+    // Setting Controller Routes
+    Route::prefix('setting')->name('setting.')->group(function () {
+        Route::get('/{setting:key}', [SettingController::class, 'show'])->name('show');
+        Route::post('/uesrStore', [SettingController::class, 'userStore'])->middleware('auth:api')->name('user-store');
+    });
+
+// Website setting routes
+    Route::prefix('website-setting')->name('website-setting.')->group(function () {
+        Route::post('/user', [WebsiteSettingController::class, 'storeUserSetting'])->name('store-user-setting');
+        Route::get('/user', [WebsiteSettingController::class, 'userSetting'])->name('user-setting');
+    });
+
 // Upload Center routes
     Route::post('upload/presigned-request',
         [UploadCenterController::class, 'presignedRequest'])->name('upload.presigned-request');
     Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
 
 // User Routes
+
+    Route::prefix('user')->group(function () {
+
+        Route::get('favored', [UserController::class, 'userFavored'])->name('api.v2.user.favored');
+        Route::post('exam-save', [UserController::class, 'examSave'])->name('api.v2.user.examSave');
+        Route::get('products', [ProductController::class, 'userProducts'])->name('api.v2.user.products');
+        Route::get('{user}', [UserController::class, 'showV2'])->name('api.v2.user.show');
+        Route::put('{user}', [UserController::class, 'updateV2'])->name('api.v2.user.update');
+    });
+
+    Route::post('checkUserAccess', [UserController::class, 'checkUserAccess']);
     Route::get('unknownUsersCityIndex',
         [UserController::class, 'unknownUsersCityIndex'])->name('user.index.unknown.city');
 
@@ -443,12 +466,6 @@ Route::prefix('v2')->group(function () {
     });
 });
 
-// Product routes
-
-// User routes
-Route::get('user/favored', [UserController::class, 'userFavored'])->name('api.v2.user.favored');
-Route::post('user/exam-save', [UserController::class, 'examSave'])->name('api.v2.user.examSave');
-Route::get('user/products', [ProductController::class, 'userProducts'])->name('api.v2.user.products');
 
 // Voucher routes
 Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'api.v2.admin.'])->only([
@@ -498,8 +515,6 @@ Route::put('studyPlan/planDate/{plan_date}/event/{event}/updateByDate',
 
 // Order routes
 Route::post('donate', [OrderController::class, 'donateOrderV2'])->name('api.v2.make.donate');
-Route::get('user/{user}', [UserController::class, 'showV2'])->name('api.v2.user.show');
-Route::put('user/{user}', [UserController::class, 'updateV2'])->name('api.v2.user.update');
 Route::post('orderproduct', [OrderproductController::class, 'storeV2'])->name('api.v2.orderproduct.store');
 Route::delete('orderproduct/{orderproduct}',
     [OrderproductController::class, 'destroyV2'])->name('api.v2.orderproduct.destroy');
@@ -708,7 +723,7 @@ Route::group(['prefix' => 'livedescription', 'as' => 'LiveDescriptionController.
 
 Route::post('authorize', [RolePermissionController::class, 'getResponse']);
 Route::post('authorizeWithPermissionName', [RolePermissionController::class, 'authorizeWithPermissionName']);
-Route::post('checkUserAccess', [UserController::class, 'checkUserAccess']);
+
 
 // Exam routes
 Route::group(['prefix' => 'exam'], function () {
@@ -745,11 +760,6 @@ Route::resource('events', '\\'.EventController::class, ['as' => 'api'])->only(['
 Route::get('konkur1403Countdown',
     [HomeController::class, 'getKonkur1403Countdown'])->name('api.v2.getKonkur1403Countdown');
 
-// Website setting routes
-Route::prefix('website-setting')->name('website-setting.')->group(function () {
-    Route::post('/user', [WebsiteSettingController::class, 'storeUserSetting'])->name('store-user-setting');
-    Route::get('/user', [WebsiteSettingController::class, 'userSetting'])->name('user-setting');
-});
 
 // Route for marking a study event report as read
 Route::prefix('study-event-report')->name('study-event-report.')->group(function () {
@@ -768,11 +778,6 @@ Route::get('conductor/{liveConductor}/live', [LiveConductorController::class, 's
 // Seo Controller Route
 Route::get('/seo', '\\'.SeoController::class);
 
-// Setting Controller Routes
-Route::prefix('setting')->name('setting.')->group(function () {
-    Route::get('/{setting:key}', [SettingController::class, 'show'])->name('show');
-    Route::post('/uesrStore', [SettingController::class, 'userStore'])->middleware('auth:api')->name('user-store');
-});
 
 // Coupon Controller Routes
 Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
