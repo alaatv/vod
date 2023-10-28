@@ -277,21 +277,16 @@ Route::prefix('v2')->group(function () {
 // SMS Routes
     Route::group(['prefix' => 'sms'], function () {
         // Get Credit for Mediana
-        Route::get('mediana-get-credit', [SmsController::class, 'getCreditForMediana'])
-            ->middleware('auth:api')
-            ->name('sms.mediana-get-credit');
-        Route::get('/receive', '\\'.ReceiveSMSController::class)
-            ->name('sms.receive');
-        Route::post('/sendPattern/{user}', [SmsController::class, 'pattern'])
-            ->name('sms.sendPattern');
-        Route::post('/sendBulk', [SmsController::class, 'sendBulk'])
-            ->middleware('auth:api')
-            ->name('sms.sendBulk');
-        Route::get('/', [SmsController::class, 'index'])
-            ->name('sms.index');
+        Route::get('mediana-get-credit',
+            [SmsController::class, 'getCreditForMediana'])->middleware('auth:api')->name('sms.mediana-get-credit');
+        Route::get('/receive', '\\'.ReceiveSMSController::class)->name('sms.receive');
+        Route::post('/sendPattern/{user}', [SmsController::class, 'pattern'])->name('sms.sendPattern');
+        Route::post('/sendBulk', [SmsController::class, 'sendBulk'])->middleware('auth:api')->name('sms.sendBulk');
+        Route::get('/', [SmsController::class, 'index'])->name('sms.index');
+
     });
 
-// Admin Routes
+// =============== Admin Routes ===============
     Route::group(['middleware' => 'auth:api'], function () {
 
         // Admin-Clear Cache
@@ -376,14 +371,13 @@ Route::prefix('v2')->group(function () {
 
     // Setting Routes
     Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
-        // Setting routes for index, store, update, and destroy
+        Route::resource('', '\\'.SettingController::class)->only(['index', 'store', 'update']);
         Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
         Route::post('/', [SettingController::class, 'store'])->name('admin.setting.store');
         Route::put('{setting:key}', [SettingController::class, 'update'])->name('admin.setting.update');
         Route::delete('{setting}', [SettingController::class, 'destroy'])->name('admin.setting.destroy');
+        Route::post('file', [SettingController::class, 'file'])->name('file');
     });
-    Route::resource('setting', '\\'.SettingController::class)->only(['index', 'store', 'update']);
-    Route::post('setting/file', [SettingController::class, 'file'])->name('file');
 
 // Other routes
     Route::post('upload/presigned-request',
