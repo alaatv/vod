@@ -781,3 +781,5 @@ Route::prefix('v2')->group(function () {
 
 Route::any('verifyPayment/online/{paymentMethod}/{device}',
     [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
+Route::any('verifyPayment/online/{status}/{paymentMethod}/{device}', [PaymentStatusController::class, 'show'])
+    ->name('showOnlinePaymentStatus');
