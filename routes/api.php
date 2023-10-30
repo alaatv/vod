@@ -74,6 +74,7 @@ use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderproductController;
 use App\Http\Controllers\Api\PaymentStatusController;
+use App\Http\Controllers\Api\PaymentVerifierController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductLandingController;
@@ -775,3 +776,8 @@ Route::prefix('v2')->group(function () {
 // Voip Controller Route
     Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
 });
+
+//Added Routs
+
+Route::any('verifyPayment/online/{paymentMethod}/{device}',
+    [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');

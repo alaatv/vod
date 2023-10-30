@@ -18,14 +18,19 @@ use App\Traits\logger;
 use App\Traits\ProductCommon;
 use Carbon\Carbon;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @property Repository|\Illuminate\Contracts\Foundation\Application|Application|int|mixed|null $orderstatus_id
+ */
 class Order extends BaseModel implements GiveGift
 {
     use HasFactory;
@@ -1016,7 +1021,7 @@ class Order extends BaseModel implements GiveGift
     /**
      * Recalculates order's cost and updates it's cost
      *
-     * @return array
+     * @return int
      */
     //ToDo : must refresh donate product cost
     public function totalCost()
