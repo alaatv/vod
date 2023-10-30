@@ -98,6 +98,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         'roles',
     ];
     public string $disk;
+    public mixed $openOrders;
     protected $appends = [
         'info',
         'full_name',

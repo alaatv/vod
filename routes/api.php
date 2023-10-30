@@ -71,6 +71,7 @@ use App\Http\Controllers\Api\LiveDescriptionController;
 use App\Http\Controllers\Api\MapDetailController;
 use App\Http\Controllers\Api\MobileVerificationController;
 use App\Http\Controllers\Api\NewsletterController;
+use App\Http\Controllers\Api\OfflinePaymentController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderproductController;
 use App\Http\Controllers\Api\PaymentStatusController;
@@ -779,7 +780,14 @@ Route::prefix('v2')->group(function () {
 
 //Added Routs
 
-Route::any('verifyPayment/online/{paymentMethod}/{device}',
-    [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
-Route::any('verifyPayment/online/{status}/{paymentMethod}/{device}', [PaymentStatusController::class, 'show'])
-    ->name('showOnlinePaymentStatus');
+//Verify Payment Routs
+Route::group(['prefix' => 'verifyPayment'], function () {
+    Route::group(['prefix' => 'online'], function () {
+        Route::any('{paymentMethod}/{device}',
+            [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
+        Route::any('{status}/{paymentMethod}/{device}',
+            [PaymentStatusController::class, 'show'])->name('showOnlinePaymentStatus');
+    });
+    Route::any('offline/{paymentMethod}/{device}',
+        [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
+});

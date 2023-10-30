@@ -79,6 +79,17 @@ class Order extends BaseModel implements GiveGift
     | Properties methods
     |--------------------------------------------------------------------------
     */
+    public Carbon|false $completed_at;
+    /**
+     * @var mixed|string|null
+     */
+    public mixed $customerDescription;
+    /**
+     * @var Repository|\Illuminate\Contracts\Foundation\Application|Application|mixed|string
+     */
+    public mixed $paymentstatus_id;
+    public mixed $user;
+    public mixed $id;
     protected $table = 'orders';
     protected $cascadeDeletes = [
         'orderproducts',
