@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductIndex;
 use App\Http\Resources\ProductInLandingWithoutPagination;
 use App\Http\Resources\ProductInLandingWithoutPagination as ProductLandingResource;
+use App\Http\Resources\SetInIndex;
 use App\Models\Block;
+use App\Models\Contentset;
 use App\Models\Product;
 use App\Models\Studyplan;
 use App\Models\Websitesetting;
@@ -13,8 +16,8 @@ use App\Repositories\ProductRepository;
 use App\Traits\MetaCommon;
 use App\Traits\ProductCommon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
 class ProductLandingController extends Controller
@@ -35,9 +38,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing1(Request $request)
+    public function landing1(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.6', $request->all());
     }
@@ -47,9 +50,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing2(Request $request)
+    public function landing2(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.5', $request->all());
     }
@@ -59,9 +62,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing3(Request $request)
+    public function landing3(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.5', $request->all());
     }
@@ -71,9 +74,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing4(Request $request)
+    public function landing4(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.5', $request->all());
     }
@@ -137,9 +140,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing6(Request $request)
+    public function landing6(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.9', $request->all());
     }
@@ -149,9 +152,9 @@ class ProductLandingController extends Controller
      *
      * @param  Request  $request
      *
-     * @return Response
+     * @return RedirectResponse
      */
-    public function landing7(Request $request)
+    public function landing7(Request $request): RedirectResponse
     {
         return redirect()->route('api.v2.landing.9', $request->all());
     }
@@ -163,7 +166,7 @@ class ProductLandingController extends Controller
      *
      * @return JsonResponse
      */
-    public function landing8(Request $request)
+    public function landing8(Request $request): JsonResponse
     {
         $block = Block::where('id', 138)->get();
         $resource = [
@@ -234,5 +237,48 @@ class ProductLandingController extends Controller
             });
 
         return ProductLandingResource::collection($landingProducts);
+    }
+
+    public function anareshtan(Request $request, Product $product): JsonResponse
+    {
+        $mobile = $request->user() ? $request->user()->id : '';
+        $paymentLink = 'https://alaatv.com/paymentRedirect/parsian/web';
+        $banner = [
+            'enable' => true,
+            'imgDesktopSrc' => 'https://nodes.alaatv.com/upload/landing/anarestan/anarestan_land_desk2.jpg',
+            'imgMobileSrc' => 'https://nodes.alaatv.com/upload/landing/anarestan/anarestan_land_mobile2.jpg'
+        ];
+
+        $url = $request->url();
+
+        $product = null;
+        $products = Cache::remember('landing:anarestan:products', config('constants.CACHE_600'), function () {
+            $products = Product::query()->whereIn('id', array_keys(Product::ALL_ABRISHAM_PRODUCTS))
+                ->enable()
+                ->orderBy('order')
+                ->get();
+
+            $moshavereProduct = Product::find(Product::SHOROO_AZ_NO);
+
+            $products->prepend($moshavereProduct);
+
+            return ProductIndex::collection($products);
+        });
+
+        $sets = Cache::remember('landing:anarestan:sets', config('constants.CACHE_600'), function () {
+            $sets = Contentset::query()->whereIn('id', [1374, 588, 826, 982, 609, 1006])->get();
+
+            return SetInIndex::collection($sets);
+        });
+
+        $responseData = [
+            'mobile' => $mobile,
+            'paymentLink' => $paymentLink,
+            'banner' => $banner,
+            'products' => $products,
+            'sets' => $sets,
+        ];
+
+        return response()->json($responseData);
     }
 }

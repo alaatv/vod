@@ -791,3 +791,8 @@ Route::group(['prefix' => 'verifyPayment'], function () {
     Route::any('offline/{paymentMethod}/{device}',
         [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
 });
+
+//Other
+Route::get('anarestan',
+    [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
+
