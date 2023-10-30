@@ -796,3 +796,7 @@ Route::group(['prefix' => 'verifyPayment'], function () {
 Route::get('anarestan',
     [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
 
+//Study Event
+Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
+Route::get('studyevent/{studyevent}/plansOfDate',
+    [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');

@@ -3,29 +3,40 @@
 namespace App\Http\Controllers\Api;
 
 use App\Classes\LastWatch;
+use App\Classes\SEO\SeoDummyTags;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttachUserStudyEventRequest;
 use App\Http\Requests\EventProductRequest;
 use App\Http\Resources\ContentForStudyPlanResource;
 use App\Http\Resources\Major;
+use App\Http\Resources\Plan as PlanResource;
 use App\Http\Resources\Product as ProductResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\SetWithoutPaginationV2;
 use App\Http\Resources\StudyEventResource;
 use App\Http\Resources\StudyPlan;
+use App\Http\Resources\StudyPlan2;
+use App\Http\Resources\User as UserResource;
 use App\Models\Contentset;
+use App\Models\Ostan;
 use App\Models\Plan;
 use App\Models\Product;
+use App\Models\Shahr;
 use App\Models\Studyevent;
+use App\Repositories\PlanRepo;
+use App\Repositories\StudyeventRepo;
+use App\Repositories\StudyplanRepo;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class StudyEventController extends Controller
 {
+
     public function index()
     {
         return StudyEventResource::collection(Studyevent::all());
@@ -41,7 +52,7 @@ class StudyEventController extends Controller
         $now = now('Asia/Tehran')->format('H:i:s');
         $studyEvent = Studyevent::find($request->get('studyevent'));
         if (!$studyEvent) {
-            return myAbort(\Symfony\Component\HttpFoundation\Response::HTTP_EXPECTATION_FAILED,
+            return myAbort(ResponseAlias::HTTP_EXPECTATION_FAILED,
                 'برنامه مطالعاتی یافت نشد');
         }
 
@@ -318,5 +329,95 @@ class StudyEventController extends Controller
                 'title' => $studyEvent?->studyEventMethod?->display_name,
             ],
         ]);
+    }
+
+    public function store(Request $request, $studyEventName)
+    {
+        //ToDo : if user is not logged in , dont send plans
+        $user = $request->user();
+        $hasEditPermission = $user ? $user->hasPermission(config('constants.UPDATE_STUDY_PLAN')) : false;
+        $userData = new UserResource($user);
+
+        $event = StudyeventRepo::findStudyeventByName($studyEventName);
+        if (!$event) {
+            return response()->json(['message' => 'Study event not found'], ResponseAlias::HTTP_NOT_FOUND);
+        }
+
+        $majorId = optional($user)->major_id;
+
+        $key = 'showStudyEvent:studyPlans:'.$event->id;
+        [$studyPlans, $studyPlanCollection] = Cache::tags([
+            'showStudyEvent', 'showStudyEvent_studyPlans'.$event->id
+        ])->remember($key, config('constants.CACHE_600'), function () use ($event) {
+            $studyPlansCollection = StudyplanRepo::findByEventId($event->id)->get();
+            $studyPlanResource = StudyPlan2::collection($studyPlansCollection)->resource;
+
+            return [$studyPlanResource, $studyPlansCollection];
+        });
+
+        $key = 'showStudyEvent:plans:'.$event->id;
+        $plans = Cache::tags(['showStudyEvent', 'showStudyEvent_plans'.$event->id])->remember($key,
+            config('constants.CACHE_600'), function () use ($studyPlanCollection) {
+                $planCollection = PlanRepo::getPlansByStudyplan($studyPlanCollection->pluck('id')->toArray())->get();
+                return PlanResource::collection($planCollection)->resource;
+            });
+
+        $allOstan = Ostan::query()->select('id', 'name')->get();
+        $allShahr = Shahr::query()->select('id', 'name', 'ostan_id')->get();
+
+        $url = $request->url();
+        $this->generateSeoMetaTags(new SeoDummyTags('برنامه '.$event->title.' آلاء',
+            'برنامه مطالعاتی '.$event->title.' آلاء', $url,
+            $url, route('image', [
+                'category' => '11',
+                'w' => '100',
+                'h' => '100',
+                'filename' => $this->setting->site->siteLogo,
+            ]), '100', '100', null));
+
+        return response()->json([
+            'studyPlans' => $studyPlans,
+            'plans' => $plans,
+            'event' => $event,
+            'majorId' => $majorId,
+            'hasEditPermission' => $hasEditPermission,
+            'userData' => $userData,
+            'allOstan' => $allOstan,
+            'allShahr' => $allShahr,
+        ]);
+    }
+
+    public function whereIsTaftan(Request $request, Studyevent $studyevent)
+    {
+        $date = $request->date ?? today('Asia/Tehran');
+        $now = now('Asia/Tehran')->format('H:i:s');
+
+        $key = 'studyevent:'.$studyevent->id.':plans:'.$date;
+        $cachedContentsCollection = Cache::tags(['content', 'event', 'plan'])
+            ->remember($key, config('constants.CACHE_600'), function () use ($date, $now, $studyevent) {
+
+                $eventStudyPlans = $studyevent->studyPlans()
+                    ->where('plan_date', $date)
+                    ->get();
+
+                $contentsCollection = collect();
+                foreach ($eventStudyPlans as $studyPlan) {
+                    foreach ($studyPlan->plans()->orderBy('start')->get() as $plan) {
+                        $planMajor = $plan->major;
+                        $contents = $plan->contents()
+                            ->active()
+                            ->get();
+                        foreach ($contents as $content) {
+                            $content->plan_start = $plan->start;
+                            $content->plan_end = $plan->end;
+                            $content->plan_is_current = $date == $plan->studyplan->plan_date && $now >= $plan->start && $now <= $plan->end;
+                            $content->plan_major = $planMajor ? new Major($plan->major) : null;
+                            $contentsCollection->push($content);
+                        }
+                    }
+                }
+                return $contentsCollection;
+            });
+        return response()->json(ContentForStudyPlanResource::collection($cachedContentsCollection));
     }
 }
