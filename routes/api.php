@@ -108,6 +108,7 @@ use App\Http\Controllers\Api\WebsiteSettingController;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RolePermissionController;
+use App\PaymentModule\Controllers\RedirectUserToPaymentPage;
 use Illuminate\Support\Facades\Route;
 
 
