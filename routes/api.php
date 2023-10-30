@@ -792,9 +792,12 @@ Route::group(['prefix' => 'verifyPayment'], function () {
         [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
 });
 
-//Other
+//Anarestan Landing
 Route::get('anarestan',
     [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
+
+//Other
+Route::any('paymentRedirect/{paymentMethod}/{device}', '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank');
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');

@@ -4,6 +4,7 @@ namespace App\PaymentModule\Controllers;
 
 
 use App\Classes\Payment\RefinementRequest\RefinementLauncher;
+use App\Classes\Util\Boolean;
 use App\Events\UserRedirectedToPayment;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Requests\RedirectToPaymentRequest;
@@ -11,7 +12,6 @@ use App\Jobs\CheckCouponOfUnpaidOrder;
 use App\Jobs\CheckSubscriptionOrderproductOfUnpaidOrder;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Transaction;
 use App\Models\Transactiongateway;
 use App\Models\User;
 use App\PaymentModule\Money;
@@ -20,19 +20,18 @@ use App\PaymentModule\Responses;
 use App\Repositories\TransactionGatewayRepo;
 use App\Repositories\TransactionRepo;
 use Exception;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class RedirectUserToPaymentPage extends Controller
 {
+
     /**
      * redirect the user to online payment page
      *
@@ -40,11 +39,15 @@ class RedirectUserToPaymentPage extends Controller
      * @param  string  $device
      *
      * @param  RedirectToPaymentRequest  $request
-     *
-     * @return Application|Factory|JsonResponse|View
+     * @param $transaction
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function __invoke(string $paymentMethod, string $device, RedirectToPaymentRequest $request)
+
+    public function __invoke(string $paymentMethod, string $device, RedirectToPaymentRequest $request, $transaction)
     {
+        $paymentMethod = $request->input('paymentMethod');
+        $device = $request->input('device');
 
         $data = $this->getRefinementData($request->all(), $request->user());
 
@@ -53,38 +56,30 @@ class RedirectUserToPaymentPage extends Controller
         /** @var Order $order */
         $order = $data['order'];
         if (is_null($order)) {
-            Log::error("In RedirectUserToPaymentPage : order of user was not found : {$user?->id}");
-            return response()->json('Cart is empty');
+            return response()->json('Cart is empty', 400);
         }
         $seller = $order->seller;
         $gateway = $this->getMyGateway($paymentMethod, $seller);
         if (!$gateway) {
-            return response()->json('Gateway is disabled');
+            return response()->json('Gateway is disabled', 400);
         }
 
         /** @var User $authUser */
         $authUser = $request->user();
         if (!isset($authUser)) {
-            return view('order.checkout.gatewayRedirect');
+            return response()->json('User not authenticated', 401);
         }
 
-
-        if ($data['statusCode'] != Response::HTTP_OK) {
+        if ($data['statusCode'] != ResponseAlias::HTTP_OK) {
             return $this->sendErrorResponse($data['message'] ?: '',
-                $data['statusCode'] ?: Response::HTTP_SERVICE_UNAVAILABLE);
+                $data['statusCode'] ?: ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
         }
 
-        /** @var Order $order */
         $orderUniqueId = $data['orderUniqueId'];
-        /** @var Money $cost */
         $cost = Money::fromTomans((int) $data['cost']);
-        /** @var Transaction $transaction */
-        $transaction = $data['transaction'];
 
         if (isset($order) && $order->user_id != $authUser->id) {
-            auth()->logout();
-            $loginMessage = 'سفارش مورد نظر با اکانتی که با آن لاگین بودید ثبت نشده بود. لطفا با اکانت صاحب سفارش لاگین کنید.';
-            return view('order.checkout.gatewayRedirect', compact('authUser', 'loginMessage'));
+            return response()->json(['message' => 'Order not associated with the authenticated user'], 403);
         }
 
         $customerDescription = $request->get('customerDescription');
@@ -93,11 +88,8 @@ class RedirectUserToPaymentPage extends Controller
             ->thenRespondWith([
                 [Responses::class, 'sendToOfflinePaymentProcess'], [$device, $order, $customerDescription]
             ]);
-
-        /** @var string $description */
         $description = $this->getTransactionDescription($data['description'], $device, $user->mobile, $order);
 
-        // Start going to gateway
         config()->set('payment', config('payment'));
         config()->set('payment.default', $gateway->name);
         config()->set("payment.drivers.$paymentMethod.callbackUrl",
@@ -121,7 +113,7 @@ class RedirectUserToPaymentPage extends Controller
                     TransactionRepo::setAuthorityForTransaction($transactionId, $transaction->id, $gateway->id,
                         $description, $device, $invoice->getUuid())
                         ->orRespondWith([Responses::class, 'editTransactionError']);
-
+//TODO:Check
                     if ($this->shouldCloseOrder($order)) {
                         OrdersRepo::closeOrder($order->id, ['customerDescription' => $customerDescription]);
                         $this->saveOrderInCookie($order);
@@ -140,11 +132,12 @@ class RedirectUserToPaymentPage extends Controller
             );
 
             event(new UserRedirectedToPayment($user));
-            return $providing->pay()->render();
+            $renderedContent = $providing->pay()->render();
+            return response()->json(['rendered_content' => $renderedContent]);
         } catch (Exception $exception) {
             Log::error($exception->getMessage().' - '.$exception->getFile().' : '.$exception->getLine());
-            return view('errors.errorPage',
-                ['message' => 'متاسفانه در حال حاضر درگاه بانکی دچار اختلال شده است ، از شکیبایی شما متشکریم']);
+            return response()->json(['error' => 'متاسفانه در حال حاضر درگاه بانکی دچار اختلال شده است ، از شکیبایی شما متشکریم'],
+                500);
         }
     }
 
@@ -198,17 +191,17 @@ class RedirectUserToPaymentPage extends Controller
      *
      * @return JsonResponse
      */
-    private function sendErrorResponse(string $msg, int $statusCode)
+    private function sendErrorResponse(string $msg, int $statusCode): JsonResponse
     {
         return response()->json(['message' => $msg], $statusCode);
     }
 
     /**
      * @param  int  $cost
-     *
+     * @param $user
      * @return Boolean
      */
-    private function shouldGoToOfflinePayment(int $cost, $user)
+    private function shouldGoToOfflinePayment(int $cost, $user): Boolean
     {
         return boolean($cost <= 0);
     }
@@ -256,7 +249,7 @@ class RedirectUserToPaymentPage extends Controller
      *
      * @return string
      */
-    private function comeBackFromGateWayUrl(string $paymentMethod, string $device)
+    private function comeBackFromGateWayUrl(string $paymentMethod, string $device): string
     {
         return route('verifyOnlinePayment',
             ['paymentMethod' => $paymentMethod, 'device' => $device, '_token' => csrf_token()]);
@@ -277,14 +270,14 @@ class RedirectUserToPaymentPage extends Controller
      *
      * @param  Order  $order
      */
-    private function saveOrderInCookie(Order $order)
+    private function saveOrderInCookie(Order $order): void
     {
         $orderproducts = $order->orderproducts;
 
         $totalCookie = $this->handleOrders($orderproducts);
 
         if (!$totalCookie->isNotEmpty()) {
-            return null;
+            return;
         }
         setcookie('cartItems', $totalCookie->toJson(), time() + 3600, '/');
     }
@@ -327,9 +320,9 @@ class RedirectUserToPaymentPage extends Controller
 
     /**
      * @param  Collection  $totalCookie
-     * @param            $grandProduct
-     * @param            $myProduct
-     * @param            $extraAttributesIds
+     * @param  Product  $grandProduct
+     * @param  Product  $myProduct
+     * @param  array  $extraAttributesIds
      */
     private function makeCookieForSelectableGrand(
         Collection $totalCookie,
@@ -355,9 +348,9 @@ class RedirectUserToPaymentPage extends Controller
 
     /**
      * @param  Collection  $totalCookie
-     * @param            $myProduct
-     * @param            $grandProduct
-     * @param            $extraAttributesIds
+     * @param  Product  $myProduct
+     * @param  Product  $grandProduct
+     * @param  array  $extraAttributesIds
      */
     private function makeCookieForConfigurableGrand(
         Collection $totalCookie,
@@ -377,11 +370,11 @@ class RedirectUserToPaymentPage extends Controller
     }
 
     /**
-     * @param $myProduct
+     * @param  Product  $myProduct
      *
-     * @return mixed
+     * @return array
      */
-    private function getProductAttributes(Product $myProduct)
+    private function getProductAttributes(Product $myProduct): array
     {
         return $myProduct->attributevalues()->whereHas('attribute', function ($q) {
             $q->where('attributetype_id', config('constants.ATTRIBUTE_TYPE_MAIN'));
