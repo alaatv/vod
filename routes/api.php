@@ -798,7 +798,8 @@ Route::get('anarestan',
     [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
 
 //Other
-Route::any('paymentRedirect/{paymentMethod}/{device}', '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank');
+Route::any('paymentRedirect/{paymentMethod}/{device}',
+    '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
