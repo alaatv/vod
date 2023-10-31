@@ -819,3 +819,6 @@ Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
         [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
     Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
 });
+
+//ping
+Route::get('php-ping', [HomeController::class, 'phpPing'])->name('web.phpPing');

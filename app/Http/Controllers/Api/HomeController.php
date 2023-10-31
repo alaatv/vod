@@ -104,4 +104,9 @@ class HomeController extends Controller
         ]);
 
     }
+
+    public function phpPing(Request $request)
+    {
+        echo 'PONG!';
+    }
 }
