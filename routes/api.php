@@ -47,6 +47,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\ContentStatusController;
+use App\Http\Controllers\Api\DashboardPageController;
 use App\Http\Controllers\Api\DashboardPageV2Controller;
 use App\Http\Controllers\Api\DonateController;
 use App\Http\Controllers\Api\EmployeetimesheetController;
@@ -802,6 +803,7 @@ Route::get('anarestan',
 //Other
 Route::any('paymentRedirect/{paymentMethod}/{device}',
     '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
+Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('web.user.dashboard');
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
