@@ -6,6 +6,7 @@
 
 use App\Http\Controllers\AndroidLogController;
 use App\Http\Controllers\Api\_3AController;
+use App\Http\Controllers\Api\AbrishamDashboardPageController;
 use App\Http\Controllers\Api\AbrishamDashboardPageV2Controller;
 use App\Http\Controllers\Api\Admin\ActivityLogController as AdminActivityLogController;
 use App\Http\Controllers\Api\Admin\AttributeController;
@@ -93,6 +94,7 @@ use App\Http\Controllers\Api\StudyEventController;
 use App\Http\Controllers\Api\StudyEventReportController;
 use App\Http\Controllers\Api\StudyPlanController;
 use App\Http\Controllers\Api\SubscriptoinController;
+use App\Http\Controllers\Api\TaftanDashboardPageController;
 use App\Http\Controllers\Api\TagGroupController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TicketDepartmentController;
@@ -805,3 +807,13 @@ Route::any('paymentRedirect/{paymentMethod}/{device}',
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
 Route::get('studyevent/{studyevent}/plansOfDate',
     [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');
+
+//asset
+Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
+    Route::get('/', [UserController::class, 'userProductFiles'])->name('');
+    Route::get('abrisham',
+        [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham');#TODO:Need to change
+    Route::get('abrishamPro',
+        [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
+    Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
+});

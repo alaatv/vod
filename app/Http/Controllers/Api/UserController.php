@@ -432,4 +432,12 @@ class UserController extends Controller
         }
         return new EntekhabReshteResource($authUser->entekhabReshte);
     }
+
+    public function userProductFiles(Request $request)
+    {
+        if (!$request->user()) {
+            return response()->json(['message' => 'دسترسی ندارید'], 401);
+        }
+        return response()->json(['user' => $request->user()], 200);
+    }
 }
