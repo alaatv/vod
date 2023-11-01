@@ -811,6 +811,7 @@ Route::any('paymentRedirect/{paymentMethod}/{device}',
     '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
 Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('web.user.dashboard');
 Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
+Route::get('findByCode', [CouponController::class, 'findByCode'])->name('web.admin.coupon.findByCode');
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
@@ -860,7 +861,7 @@ Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
     Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
 });
 
-//marketing
+//Marketing
 Route::group(['prefix' => 'marketing'], function () {
     Route::post('referalCode/use',
         [NetworkMarketingController::class, 'useCode'])->name('api.marketing.useReferalCode');
@@ -870,3 +871,5 @@ Route::group(['prefix' => 'marketing'], function () {
         [SubscriptionController::class, 'getYaldaDiscount'])->name('api.marketing.getYaldaDiscount');
     Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
 });
+
+
