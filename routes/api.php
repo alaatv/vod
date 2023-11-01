@@ -850,3 +850,9 @@ Route::post('product/{product}/attachExam',
 
 //Billing
 Route::resource('billing', '\\'.BillingController::class)->only(['index']);
+
+//Live Conductors
+Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
+    Route::get('/', [LiveConductorController::class, 'index'])->name('index');
+    Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
+});
