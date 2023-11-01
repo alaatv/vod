@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\Admin\ContentInComeController;
 use App\Http\Controllers\Api\Admin\CouponController;
 use App\Http\Controllers\Api\Admin\EmployeeScheduleController as AdminEmployeeScheduleController;
 use App\Http\Controllers\Api\Admin\FaqController as AdminFaqController;
+use App\Http\Controllers\Api\Admin\MarketingController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\PermissionController as AdminPermissionController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
@@ -74,6 +75,7 @@ use App\Http\Controllers\Api\LiveConductorController;
 use App\Http\Controllers\Api\LiveDescriptionController;
 use App\Http\Controllers\Api\MapDetailController;
 use App\Http\Controllers\Api\MobileVerificationController;
+use App\Http\Controllers\Api\NetworkMarketingController;
 use App\Http\Controllers\Api\NewsletterController;
 use App\Http\Controllers\Api\OfflinePaymentController;
 use App\Http\Controllers\Api\OrderController;
@@ -97,6 +99,7 @@ use App\Http\Controllers\Api\SmsController;
 use App\Http\Controllers\Api\StudyEventController;
 use App\Http\Controllers\Api\StudyEventReportController;
 use App\Http\Controllers\Api\StudyPlanController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SubscriptoinController;
 use App\Http\Controllers\Api\TaftanDashboardPageController;
 use App\Http\Controllers\Api\TagGroupController;
@@ -855,4 +858,15 @@ Route::resource('billing', '\\'.BillingController::class)->only(['index']);
 Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
     Route::get('/', [LiveConductorController::class, 'index'])->name('index');
     Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
+});
+
+//marketing
+Route::group(['prefix' => 'marketing'], function () {
+    Route::post('referalCode/use',
+        [NetworkMarketingController::class, 'useCode'])->name('api.marketing.useReferalCode');
+    Route::post('getPackScores',
+        [NetworkMarketingController::class, 'getPackScores'])->name('api.marketing.getPackScores');
+    Route::get('getYaldaDiscount',
+        [SubscriptionController::class, 'getYaldaDiscount'])->name('api.marketing.getYaldaDiscount');
+    Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
 });
