@@ -846,3 +846,4 @@ Route::post('product/{product}/detachExam/{exam}',
     [Product3aExamController::class, 'detachExam'])->name('web.product.detachExam');
 Route::post('product/{product}/attachExam',
     [Product3aExamController::class, 'attachExam'])->name('web.product.attachExam');
+

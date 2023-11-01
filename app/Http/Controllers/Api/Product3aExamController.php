@@ -11,7 +11,6 @@ class Product3aExamController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.ADMIN_PANEL_ACCESS'));
     }
 
     public function detachExam(Product $product, _3aExam $exam)
