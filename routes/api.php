@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\Admin\VoucherManagementController;
 use App\Http\Controllers\Api\AppVersionController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\BatchContentInsertController;
+use App\Http\Controllers\Api\BillingController;
 use App\Http\Controllers\Api\BlockController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\NotificationController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\OrderController as BonyadEhsanOrderController;
@@ -847,3 +848,5 @@ Route::post('product/{product}/detachExam/{exam}',
 Route::post('product/{product}/attachExam',
     [Product3aExamController::class, 'attachExam'])->name('web.product.attachExam');
 
+//Billing
+Route::resource('billing', '\\'.BillingController::class)->only(['index']);
