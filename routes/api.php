@@ -830,3 +830,10 @@ Route::get('98', [UserController::class, 'submitKonkurResult'])->name('api.user.
 Route::get('99', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.99');
 Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
 Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');
+
+//Chatre nejat Dashboard
+Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
+    Route::get('chatre-nejat', [
+        AbrishamDashboardPageController::class, 'chatreNejatDashboard'
+    ])->name('.chatreNejatDashboard');
+});
