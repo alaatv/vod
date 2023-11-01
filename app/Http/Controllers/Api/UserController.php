@@ -6,8 +6,10 @@ use App\Classes\Search\UserUpdateProvinceCitySearch;
 use App\Classes\SEO\SeoDummyTags;
 use App\Classes\Uploader\Uploader;
 use App\Classes\UserFavored;
+use App\Exports\DefaultClassExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditUserRequest;
+use App\Http\Requests\MarketingReportRequest;
 use App\Http\Requests\NationalPhotoUploadRequest;
 use App\Http\Requests\UserExamSaveRequest;
 use App\Http\Requests\UserFavoredRequest;
@@ -19,6 +21,7 @@ use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Transaction as TransactionResource;
 use App\Http\Resources\User as UserResource;
+use App\Models\Coupon;
 use App\Models\Event;
 use App\Models\Gender;
 use App\Models\Major;
@@ -47,6 +50,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
@@ -511,5 +515,75 @@ class UserController extends Controller
             'regions' => $regions,
             'majors' => $majors
         ]);
+    }
+
+    public function marketingReport(MarketingReportRequest $request)
+    {
+        $purchasedProducts = $request->input('purchased_products');
+        $haveBought = $request->input('have_bought');
+        $sinceDate = $request->input('sinceDate');
+        $tillDate = $request->input('tillDate');
+        $users = User::with([
+            'orders' => function ($query) use ($haveBought, $sinceDate, $tillDate) {
+                return $query->where('orderstatus_id', config('constants.ORDER_STATUS_CLOSED'))
+                    ->whereIn('paymentstatus_id', [config('constants.PAYMENT_STATUS_PAID')])
+                    ->where('completed_at', '>=', $sinceDate)
+                    ->where('completed_at', '<', $tillDate)
+                    ->whereHas('normalOrderproducts', function ($query) use ($haveBought) {
+                        $query->whereIn('product_id', $haveBought);
+                    });
+            },
+        ])
+            ->whereHas('orders', function ($query) use ($purchasedProducts, $sinceDate, $tillDate) {
+                $query->where('orderstatus_id', config('constants.ORDER_STATUS_CLOSED'))
+                    ->whereIn('paymentstatus_id', [config('constants.PAYMENT_STATUS_PAID')])
+                    ->where('completed_at', '>=', $sinceDate)
+                    ->where('completed_at', '<', $tillDate)
+                    ->whereHas('transactions', function ($query) {
+                        $query->where('cost', '>', 0);
+                        $query->where('transactionstatus_id', config('constants.TRANSACTION_STATUS_SUCCESSFUL'));
+                        $query->whereDoesntHave('wallet', function ($query) {
+                            $query->where('wallettype_id', config('constants.WALLET_TYPE_GIFT'));
+                        });
+                    })
+                    ->whereHas('normalOrderproducts', function ($query) use ($purchasedProducts) {
+                        $query->whereIn('product_id', $purchasedProducts);
+                    });
+            })->whereDoesntHave('roles')
+            ->get();
+        $hekmatCoupons = Coupon::select('id')->whereIn('code', ['hekmat50', 'hekmat40'])
+            ->pluck('id')->toArray();
+        $collect = [];
+        foreach ($users as $key => $user) {
+            $collect[$key]['fullName'] = $user->fullName;
+            $collect[$key]['order_completed_at'] = implode(' , ', $user->orders->map(function ($order) {
+                return $order->convertDate($order->completed_at, 'toJalali');
+            })->toArray());
+            $collect[$key]['mobile'] = $user->mobile;
+            $collect[$key]['products'] =
+                implode(' , ', $user->orders->map(function ($order) use ($haveBought) {
+                    return $order->normalOrderproducts
+                        ->whereIn('product_id', $haveBought)
+                        ->map(function ($orderproduct) {
+                            return $orderproduct->product->name;
+                        });
+                })->flatten()->toArray());
+
+            $collect[$key]['buy_with_hekmat_coupon'] =
+                implode(' , ', $user->orders->map(function ($order) use ($hekmatCoupons) {
+                    return in_array($order->coupon_id, $hekmatCoupons) ? 'بله' : 'خیر';
+                })->toArray());
+        }
+        $disk = config('disks.MINIO_UPLOAD_EXCEL');
+        $now = now('Asia/Tehran')->format('YmdHis');
+        $fileName = "marketing_report_$now.xlsx";
+        $headers =
+            [
+                'نام و نام خانوادگی', 'تاریخ ثبت سفارش', 'شماره موبایل', 'عنوان محصولات خریداری شده',
+                'استفاده از حکمت کارت ؟'
+            ];
+        Excel::store(new DefaultClassExport(collect($collect), $headers), 'excel/'.$fileName, $disk);
+        $file = Uploader::url($disk, $fileName);
+        return response()->json(['marketing_report_file' => $file], ResponseAlias::HTTP_OK);
     }
 }

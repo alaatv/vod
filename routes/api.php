@@ -812,6 +812,7 @@ Route::any('paymentRedirect/{paymentMethod}/{device}',
 Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('web.user.dashboard');
 Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
 Route::get('findByCode', [CouponController::class, 'findByCode'])->name('web.admin.coupon.findByCode');
+Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');#TODO:// add route
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
