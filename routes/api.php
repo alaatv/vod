@@ -79,6 +79,7 @@ use App\Http\Controllers\Api\OrderproductController;
 use App\Http\Controllers\Api\PaymentStatusController;
 use App\Http\Controllers\Api\PaymentVerifierController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\Product3aExamController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductLandingController;
 use App\Http\Controllers\Api\RahAbrishamController;
@@ -837,3 +838,9 @@ Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
         AbrishamDashboardPageController::class, 'chatreNejatDashboard'
     ])->name('.chatreNejatDashboard');
 });
+
+//Product 3A Exam
+Route::post('product/{product}/detachExam/{exam}',
+    [Product3aExamController::class, 'detachExam'])->name('web.product.detachExam');
+Route::post('product/{product}/attachExam',
+    [Product3aExamController::class, 'attachExam'])->name('web.product.attachExam');
