@@ -35,6 +35,7 @@ use App\Http\Controllers\Api\Admin\VoipController;
 use App\Http\Controllers\Api\Admin\VoucherManagementController;
 use App\Http\Controllers\Api\AppVersionController;
 use App\Http\Controllers\Api\BankAccountController;
+use App\Http\Controllers\Api\BatchContentInsertController;
 use App\Http\Controllers\Api\BlockController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\NotificationController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\OrderController as BonyadEhsanOrderController;
@@ -805,6 +806,7 @@ Route::get('anarestan',
 Route::any('paymentRedirect/{paymentMethod}/{device}',
     '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
 Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('web.user.dashboard');
+Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
