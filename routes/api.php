@@ -822,3 +822,11 @@ Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
 
 //ping
 Route::get('php-ping', [HomeController::class, 'phpPing'])->name('web.phpPing');
+
+//submit Konkur Result
+Route::get('96', [UserController::class, 'submitKonkurResult']);
+Route::get('97', [UserController::class, 'submitKonkurResult']);
+Route::get('98', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.98');
+Route::get('99', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.99');
+Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
+Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');

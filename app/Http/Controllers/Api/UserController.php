@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Classes\Search\UserUpdateProvinceCitySearch;
+use App\Classes\SEO\SeoDummyTags;
 use App\Classes\Uploader\Uploader;
 use App\Classes\UserFavored;
 use App\Http\Controllers\Controller;
@@ -11,7 +12,6 @@ use App\Http\Requests\NationalPhotoUploadRequest;
 use App\Http\Requests\UserExamSaveRequest;
 use App\Http\Requests\UserFavoredRequest;
 use App\Http\Requests\UserIndexRequest;
-use App\Http\Requests\UserIsPermittedToPurchaseRequest;
 use App\Http\Requests\UserOrdersRequest;
 use App\Http\Resources\Admin\ProfileMetaDataResource;
 use App\Http\Resources\EntekhabReshteResource;
@@ -19,9 +19,12 @@ use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Transaction as TransactionResource;
 use App\Http\Resources\User as UserResource;
+use App\Models\Event;
 use App\Models\Gender;
+use App\Models\Major;
 use App\Models\Ostan;
 use App\Models\Product;
+use App\Models\Region;
 use App\Models\Shahr;
 use App\Models\User;
 use App\Repositories\GradeRepo;
@@ -31,8 +34,10 @@ use App\Repositories\ProductRepository;
 use App\Services\OrderService;
 use App\Services\UserService;
 use App\Traits\Helper;
+use App\Traits\MetaCommon;
 use App\Traits\RequestCommon;
 use App\Traits\UserCommon;
+use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -40,13 +45,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
-use Validator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
 {
     use RequestCommon;
     use UserCommon;
     use Helper;
+    use MetaCommon;
 
     /**
      * UserController constructor.
@@ -68,8 +76,7 @@ class UserController extends Controller
      *
      * @param  EditUserRequest  $request
      * @param  User|null  $user
-     *
-     * @return ResponseFactory|JsonResponse|Response|void
+     * @return Application|ResponseFactory|\Illuminate\Foundation\Application|JsonResponse|Response
      */
     public function updateV2(EditUserRequest $request, User $user = null)
     {
@@ -93,7 +100,7 @@ class UserController extends Controller
         if ($user->id != $authenticatedUser->id) {
             return response()->json([
                 'message' => 'Forbidden.',
-            ], Response::HTTP_FORBIDDEN);
+            ], ResponseAlias::HTTP_FORBIDDEN);
         }
 
         try {
@@ -113,7 +120,7 @@ class UserController extends Controller
                     'line' => $e->getLine(),
                     'file' => $e->getFile(),
                 ],
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         if ($user->checkUserProfileForLocking()) {
@@ -126,7 +133,7 @@ class UserController extends Controller
         }
         return response()->json([
             'message' => 'Database error on updating user',
-        ], Response::HTTP_SERVICE_UNAVAILABLE);
+        ], ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
     }
 
     /**
@@ -251,6 +258,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function getInfo(Request $request)
     {
         Validator::make($request->all(), [
@@ -386,7 +396,7 @@ class UserController extends Controller
     public function isPermittedToPurchase(Product $product, OrderService $orderService): JsonResponse
     {
         if (!$product->isActive()) {
-            return myAbort(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN,
+            return myAbort(ResponseAlias::HTTP_FORBIDDEN,
                 'این گزینه در حال حاضر غیرفعال می باشد');
         }
         $result = match ($product->id) {
@@ -416,7 +426,7 @@ class UserController extends Controller
                 ],
             ]);
         }
-        return myAbort(\Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN,
+        return myAbort(ResponseAlias::HTTP_FORBIDDEN,
             'شما مجاز به انتخاب این گزینه نیستید!');
     }
 
@@ -439,5 +449,67 @@ class UserController extends Controller
             return response()->json(['message' => 'دسترسی ندارید'], 401);
         }
         return response()->json(['user' => $request->user()], 200);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function submitKonkurResult(Request $request)
+    {
+        $setting = alaaSetting();
+        $url = $request->url();
+        $title = 'ثبت رتبه کنکور 1401 | آلاء';
+        $this->generateSeoMetaTags(new SeoDummyTags($title, 'ثبت رتبه کنکور 1401 | آلاء', $url,
+            $url, route('image', [
+                'category' => '11',
+                'w' => '100',
+                'h' => '100',
+                'filename' => $setting->setting->site->siteLogo,
+            ]), '100', '100', null));
+
+        $user = $request->user();
+        $userCompletion = isset($user) ? $user->info['completion'] : 0;
+
+        $event = Event::name('konkur1401')->first();
+        $userKonkurResult = isset($user) ? $user->eventresults->where('event_id', $event->id)->first() : null;
+
+        $sideBarMode = 'closed';
+        $pageType = 'sabteRotbe';
+        $allOstan = collect();
+        $allShahr = collect();
+        $year = 1401;
+
+        $ad = [
+            'enable' => false,
+            'link' => null,
+            'name' => '',
+            'id' => '4k-banner',
+            'creative' => '',
+            'position' => 'landing-nahayi-23-bottom-section',
+            'imgMobileSrc' => 'https://nodes.alaatv.com/upload/sabte_rotbe_1400_mob.jpg',
+            'imgMobileWidth' => '480',
+            'imgMobileHeight' => '241',
+            'imgDesktopSrc' => 'https://nodes.alaatv.com/upload/sabte_rotbe_1400_desk.jpg',
+            'imgDesktopWidth' => '1183',
+            'imgDesktopHeight' => '220'
+        ];
+
+        $regions = Region::all();
+        $majors = Major::all()->except([4]); // 4 = id of علوم و معارف اسلامی
+
+        return response()->json([
+            'user' => $user,
+            'event' => $event,
+            'userKonkurResult' => $userKonkurResult,
+            'sideBarMode' => $sideBarMode,
+            'userCompletion' => $userCompletion,
+            'pageType' => $pageType,
+            'allOstan' => $allOstan,
+            'allShahr' => $allShahr,
+            'year' => $year,
+            'ad' => $ad,
+            'regions' => $regions,
+            'majors' => $majors
+        ]);
     }
 }
