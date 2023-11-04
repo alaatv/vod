@@ -8,8 +8,11 @@ use App\Classes\Uploader\Uploader;
 use App\Classes\UserFavored;
 use App\Exports\DefaultClassExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EditOrderRequest;
 use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\GroupRegistrationRequest;
+use App\Http\Requests\InsertContactRequest;
+use App\Http\Requests\InsertPhoneRequest;
 use App\Http\Requests\MarketingReportRequest;
 use App\Http\Requests\NationalPhotoUploadRequest;
 use App\Http\Requests\UserExamSaveRequest;
@@ -25,13 +28,20 @@ use App\Http\Resources\User as UserResource;
 use App\Imports\UsersOrderImport;
 use App\Jobs\GroupRegistrationJob;
 use App\Models\Afterloginformcontrol;
+use App\Models\Bloodtype;
+use App\Models\Contact;
+use App\Models\Contacttype;
 use App\Models\Coupon;
 use App\Models\Event;
 use App\Models\Gender;
+use App\Models\Grade;
 use App\Models\Major;
+use App\Models\Order;
 use App\Models\Ostan;
+use App\Models\Phonetype;
 use App\Models\Product;
 use App\Models\Region;
+use App\Models\Relative;
 use App\Models\Shahr;
 use App\Models\User;
 use App\Repositories\GradeRepo;
@@ -57,6 +67,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
@@ -634,4 +645,390 @@ class UserController extends Controller
 
         return response()->json(['message' => 'عملیات با موففیت انجام شد']);
     }
+
+    public function information(User $user)
+    {
+        $data = [];
+
+        $validOrders = $user->orders()
+            ->whereHas('orderproducts', function ($q) {
+                $q->whereIn('product_id', config('constants.ORDOO_GHEIRE_HOZOORI_NOROOZ_97_PRODUCT'))
+                    ->orWhereIn('product_id', config('constants.ORDOO_HOZOORI_NOROOZ_97_PRODUCT'))
+                    ->orWhereIn('product_id', [199, 202]);
+            })
+            ->whereIn('orderstatus_id', [config('constants.ORDER_STATUS_CLOSED')])
+            ->get();
+
+        if ($validOrders->isEmpty()) {
+            return response()->json(['message' => 'No valid orders found'], ResponseAlias::HTTP_NOT_FOUND);
+        }
+
+        $unPaidOrders = $validOrders;
+        $paidOrder = $validOrders->whereIn('paymentstatus_id', [
+            config('constants.PAYMENT_STATUS_PAID'),
+            config('constants.PAYMENT_STATUS_INDEBTED'),
+        ])->get();
+
+        $order = $unPaidOrders->first();
+
+        if (is_null($order)) {
+            $order = $paidOrder->first();
+        }
+
+        if (!isset($order)) {
+            return response()->json(['message' => 'Order not found'], ResponseAlias::HTTP_FORBIDDEN);
+        }
+
+        $orderproduct = $order->orderproducts(config('constants.ORDER_PRODUCT_TYPE_DEFAULT'))
+            ->first();
+
+        $product = $orderproduct->product;
+        $data['userProduct'] = $product->grandParent ? $product->grandParent->name : $product->name;
+
+        $simpleContact = Contacttype::where('name', 'simple')->first();
+        $mobilePhoneType = Phonetype::where('name', 'mobile')->first();
+        $parents = Relative::whereIn('name', ['father', 'mother'])->get();
+        $parentsNumber = [];
+        foreach ($parents as $parent) {
+            $parentContacts = $user->contacts->where('relative_id', $parent->id)->where('contacttype_id',
+                $simpleContact->id);
+            if ($parentContacts->isEmpty()) {
+                continue;
+            }
+            $parentContact = $parentContacts->first();
+            $parentMobiles = $parentContact->phones->where('phonetype_id', $mobilePhoneType->id)->sortBy('priority');
+            if ($parentMobiles->isEmpty()) {
+                continue;
+            }
+            $parentMobile = $parentMobiles->first()->phoneNumber;
+            $parentsNumber[$parent->name] = $parentMobile;
+        }
+
+        $data['parentsNumber'] = $parentsNumber;
+        $data['majors'] = Arr::sortRecursive(Major::pluck('name', 'id')->toArray());
+        $data['genders'] = Arr::sortRecursive(Gender::pluck('name', 'id')->toArray());
+        $data['bloodTypes'] = Arr::sortRecursive(Bloodtype::pluck('name', 'id')->toArray());
+        $data['grades'] = Arr::sortRecursive(Grade::pluck('displayName', 'id')->toArray());
+        $data['orderFiles'] = $order->files;
+
+        $lockedFields = [];
+        if ($user->lockProfile) {
+            $lockedFields = $user->returnLockProfileItems();
+        }
+
+        $completionFields = [];
+        $completionPercentage = 0;
+        if (in_array($product->id, config('constants.ORDOO_HOZOORI_NOROOZ_97_PRODUCT'))) {
+            $completionFields = $user->returnCompletionItems();
+            $completionFieldsCount = count($completionFields);
+            $completionPercentage = (int) $user->completion('completeInfo');
+        } else {
+            $completionFields = array_diff($user->returnCompletionItems(), $user->returnMedicalItems());
+            $completionFieldsCount = count($completionFields);
+            $completionPercentage = (int) $user->completion('custom', $completionFields);
+        }
+
+        $completedFieldsCount = (int) ceil(($completionPercentage * $completionFieldsCount) / 100);
+        if ($data['orderFiles']->isNotEmpty()) {
+            $completedFieldsCount++;
+        }
+        $completionFieldsCount++;
+
+        if (isset($order->customerExtraInfo)) {
+            $customerExtraInfo = json_decode($order->customerExtraInfo);
+            foreach ($customerExtraInfo as $item) {
+                if (isset($item->info) && strlen(trim($item->info)) > 0) {
+                    $completedFieldsCount++;
+                }
+                $completionFieldsCount++;
+            }
+        }
+
+        if (isset($parentsNumber['father'])) {
+            $completedFieldsCount++;
+        }
+        $completionFieldsCount++;
+
+        if (isset($parentsNumber['mother'])) {
+            $completedFieldsCount++;
+        }
+        $completionFieldsCount++;
+
+        $completionPercentage = (int) (($completedFieldsCount / $completionFieldsCount) * 100);
+
+        if ($completionPercentage == 100 && $user->completion('lockProfile') == 100) {
+            $user->lockHisProfile();
+            $user->updateWithoutTimestamp();
+        }
+
+        $data['lockedFields'] = $lockedFields;
+        $data['completionPercentage'] = $completionPercentage;
+        $data['customerExtraInfo'] = isset($order->customerExtraInfo) ? json_decode($order->customerExtraInfo) : null;
+
+        return response()->json(['data' => $data], ResponseAlias::HTTP_OK);
+    }
+
+    public function completeInformation(
+        User $user,
+        Request $request,
+        UserController $userController,
+        PhoneController $phoneController,
+        ContactController $contactController,
+        OrderController $orderController
+    ) {
+
+        $request->offsetSet('phone', $this->convertToEnglish(preg_replace('/\s+/', '', $request->get('phone'))));
+        $request->offsetSet('postalCode',
+            $this->convertToEnglish(preg_replace('/\s+/', '', $request->get('postalCode'))));
+        $parentMobiles = [
+            'father' => $this->convertToEnglish(preg_replace('/\s+/', '', $request->get('parentMobiles')['father'])),
+            'mother' => $this->convertToEnglish(preg_replace('/\s+/', '', $request->get('parentMobiles')['mother'])),
+        ];
+        $request->offsetSet('parentMobiles', $parentMobiles);
+
+        $mapConvertToEnglish = [
+            'school',
+            'allergy',
+            'medicalCondition',
+            'diet',
+            'introducer',
+        ];
+        foreach ($mapConvertToEnglish as $item) {
+            $request->offsetSet($item, $this->convertToEnglish($request->get($item)));
+        }
+
+        $this->validate($request, [
+            'photo' => 'image|mimes:jpeg,jpg,png|max:200',
+            'file' => 'mimes:jpeg,jpg,png,zip,pdf,rar',
+        ]);
+        if ($request->user()->id != $user->id) {
+            return response()->json(['message' => 'Unauthorized'], ResponseAlias::HTTP_FORBIDDEN);
+        }
+
+        if (!isset($requestData['order'])) {
+            return response()->json(['message' => 'Order not specified'], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $orderId = $requestData['order'];
+        $order = Order::findOrFail($orderId);
+
+        if ($order->user_id != $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], ResponseAlias::HTTP_FORBIDDEN);
+        }
+        $editUserRequestMap = [
+            'address',
+            'postalCode',
+            'school',
+            'major_id',
+            'grade_id',
+            'gender_id',
+            'shahr_id',
+            'bloodtype_id',
+            'phone',
+            'allergy',
+            'medicalCondition',
+            'diet',
+        ];
+        foreach ($editUserRequestMap as $item) {
+            if ($request->get($item) != 0) {
+                $editUserRequest->offsetSet($item, $request->get($item));
+            }
+        }
+        $userController->update($editUserRequest, $user);
+
+        /**
+         *
+         */
+        /**
+         * Parent's basic info
+         **/
+        $simpleContact = Contacttype::where('name', 'simple')
+            ->get()
+            ->first();
+        $mobilePhoneType = Phonetype::where('name', 'mobile')
+            ->get()
+            ->first();
+        $parentsNumber = $request->get('parentMobiles');
+
+        foreach ($parentsNumber as $relative => $mobile) {
+            if (strlen(preg_replace('/\s+/', '', $mobile)) == 0) {
+                continue;
+            }
+            $parent = Relative::where('name', $relative)
+                ->get()
+                ->first();
+            $parentContacts = $user->contacts->where('relative_id', $parent->id)
+                ->where('contacttype_id', $simpleContact->id);
+            if ($parentContacts->isEmpty()) {
+                $storeContactRequest = new InsertContactRequest();
+                $storeContactRequest->offsetSet('name', $relative);
+                $storeContactRequest->offsetSet('user_id', $user->id);
+                $storeContactRequest->offsetSet('contacttype_id', $simpleContact->id);
+                $storeContactRequest->offsetSet('relative_id', $parent->id);
+                $storeContactRequest->offsetSet('isServiceRequest', true);
+                $response = $contactController->store($storeContactRequest);
+                if ($response->getStatusCode() == ResponseAlias::HTTP_OK) {
+                    $responseContent = json_decode($response->getContent('contact'));
+                    $parentContact = $responseContent->contact;
+                }
+            } else {
+                $parentContact = $parentContacts->first();
+            }
+            if (!isset($parentContact)) {
+                continue;
+            }
+            $parentContact = Contact::where('id', $parentContact->id)
+                ->get()
+                ->first();
+            $parentMobiles = $parentContact->phones->where('phonetype_id', $mobilePhoneType->id)
+                ->sortBy('priority');
+            if ($parentMobiles->isEmpty()) {
+                $storePhoneRequest = new InsertPhoneRequest();
+                $storePhoneRequest->offsetSet('phoneNumber', $mobile);
+                $storePhoneRequest->offsetSet('contact_id', $parentContact->id);
+                $storePhoneRequest->offsetSet('phonetype_id', $mobilePhoneType->id);
+                $response = $phoneController->store($storePhoneRequest);
+                $response->getStatusCode();
+            } else {
+                $parentMobile = $parentMobiles->first();
+                $parentMobile->phoneNumber = $mobile;
+                $parentMobile->update();
+            }
+        }
+
+        $updateOrderRequest = new EditOrderRequest();
+        if ($request->hasFile('file')) {
+            $updateOrderRequest->offsetSet('file', $request->file('file'));
+        }
+        /**
+         * customerExtraInfo
+         */
+        $jsonConcats = '';
+        $extraInfoQuestions = Arr::sortRecursive($request->get('customerExtraInfoQuestion'));
+        $customerExtraInfoAnswers = $request->get('customerExtraInfoAnswer');
+        foreach ($extraInfoQuestions as $key => $question) {
+            $obj = new stdClass();
+            $obj->title = $question;
+            $obj->info = null;
+            if (strlen(preg_replace('/\s+/', '', $customerExtraInfoAnswers[$key])) > 0) {
+                $obj->info = $customerExtraInfoAnswers[$key];
+            }
+            if (strlen($jsonConcats) > 0) {
+                $jsonConcats = $jsonConcats.','.json_encode($obj, JSON_UNESCAPED_UNICODE);
+            } else {
+                $jsonConcats = json_encode($obj, JSON_UNESCAPED_UNICODE);
+            }
+        }
+        $customerExtraInfo = '['.$jsonConcats.']';
+        $updateOrderRequest->offsetSet('customerExtraInfo', $customerExtraInfo);
+        $orderController->update($updateOrderRequest, $order);
+
+        return response()->json(['message' => 'اطلاعات با موفقیت ذخیره شد'], ResponseAlias::HTTP_OK);
+    }
+
+    public function userOrders(Request $request)
+    {
+        $user = $request->user();
+
+        $ordersPageNum = $request->get('orders', 1);
+
+        [
+            $orders,
+            $transactions,
+            $instalments,
+            $gateways,
+            $credit,
+        ] = [
+            $user->getClosedOrders($ordersPageNum),
+            $this->getUserTransactions($user),
+            $this->getUserInstalments($user),
+            $this->makeGatewayCollection(),
+            $user->getTotalWalletBalance(),
+        ];
+
+        $orderIdString = $orders->pluck('id')->implode('-');
+        $key = 'orders:coupons:'.md5($orderIdString);
+        $cacheTags = ['order', 'coupon'];
+        foreach ($orders as $order) {
+            $cacheTags[] = 'order_'.$order->id;
+            $cacheTags[] = 'order_'.$order->id.'_coupon';
+        }
+        $orderCoupons = Cache::tags($cacheTags)->remember($key, config('constants.CACHE_60'),
+            function () use ($orders) {
+                return $orders->getCoupons();
+            });
+        $this->generateSeoMetaTags(new SeoDummyTags('سفارش های من',
+            'اطلاعات سفارش های شما', $request->url(),
+            $request->url(), route('image', [
+                'category' => '11',
+                'w' => '100',
+                'h' => '100',
+                'filename' => $this->setting->site->siteLogo,
+            ]), '100', '100', null));
+
+        return response()->json([
+            'orders' => $orders,
+            'gateways' => $gateways,
+            'transactions' => $transactions,
+            'instalments' => $instalments,
+            'orderCoupons' => $orderCoupons,
+            'credit' => $credit
+        ]);
+    }
+
+    public function partialUpdate(Request $request)
+    {
+        $user = $request->user();
+        $this->fillUserFromRequest($request->all(), $user);
+
+        $updateResult = false;
+        if ($user->update()) {
+            $updateResult = true;
+        }
+
+        if (!$updateResult) {
+            return response()->json([
+                'error' => [
+                    'message' => 'خطا در اصلاح اطلاعات کاربر',
+                ],
+            ]);
+        }
+
+        $wallet = $user->wallets->where('wallettype_id', config('constants.WALLET_TYPE_GIFT'))->first();
+        if (isset($wallet)) {
+            $depositTransactions = $wallet->transactions->where('cost', '<', 0)->where('created_at', '>=',
+                '2019-11-03 00:00:00');
+            if ($depositTransactions->isNotEmpty()) {
+                return response()->json([
+                    'error' => [
+                        'message' => 'شما قبلا هدیه کیف پول را دریافت کرده اید',
+                    ]
+                ]);
+            }
+        }
+
+        $userCompletion = $user->completion('custom', LandingPageController::ROOZE_DANESH_AMOOZ_USER_NECESSARY_INFO);
+        if ($userCompletion == 100) {
+            $depositResult = $user->deposit(LandingPageController::ROOZE_DANESH_AMOOZ_GIFT_CREDIT,
+                config('constants.WALLET_TYPE_GIFT'));
+            if ($depositResult['result']) {
+                return response()->json([
+                    'message' => '14 هزار تومان اعتبار هدیه به کیف پول شما افزوده شد'
+                ]);
+            } else {
+                return response()->json([
+                    'error' => [
+                        'message' => 'خطایی در اعدای هدیه کیف پول رخ داد. لطفا دوباره اقدام کنید',
+                    ]
+                ]);
+            }
+        }
+
+        return response()->json([
+            'error' => [
+                'message' => 'اطلاعات شما تکمیل نیست',
+            ],
+        ]);
+    }
+
 }

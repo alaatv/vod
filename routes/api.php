@@ -889,4 +889,11 @@ Route::group(['prefix' => 'orderproduct'], function () {
         [OrderproductController::class, 'restore'])->name('api.orderproduct.restore');
 });
 
+//User
+Route::get('{user}/info', [UserController::class, 'information']);
+Route::post('{user}/completeInfo', [UserController::class, 'completeInformation']);
+Route::get('orders', [UserController::class, 'userOrders'])->name('api.user.orders');
+Route::post('update/partialInfo',
+    [UserController::class, 'partialUpdate'])->name('api.user.update.partial');
+
 
