@@ -874,4 +874,11 @@ Route::group(['prefix' => 'marketing'], function () {
     Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
 });
 
+//translation
+Route::post('transactionToDonate/{transaction}', [TransactionController::class, 'convertToDonate']);
+Route::post('completeTransaction/{transaction}', [TransactionController::class, 'completeTransaction']);
+Route::post('myTransaction/{transaction}', [TransactionController::class, 'limitedUpdate']);
+Route::get('getUnverifiedTransactions',
+    [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
+
 
