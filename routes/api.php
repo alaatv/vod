@@ -883,4 +883,10 @@ Route::post('myTransaction/{transaction}', [TransactionController::class, 'limit
 Route::get('getUnverifiedTransactions',
     [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
 
+//orderproduct
+Route::group(['prefix' => 'orderproduct'], function () {
+    Route::post('restore',
+        [OrderproductController::class, 'restore'])->name('api.orderproduct.restore');
+});
+
 
