@@ -816,7 +816,6 @@ Route::post('marketing-report', [UserController::class, 'marketingReport'])->nam
 Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
 Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
 
-
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
 Route::get('studyevent/{studyevent}/plansOfDate',
