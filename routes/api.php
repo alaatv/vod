@@ -815,6 +815,7 @@ Route::get('findByCode', [CouponController::class, 'findByCode'])->name('web.adm
 Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');
 Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
 Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
+Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('web.groupRegistration');
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');

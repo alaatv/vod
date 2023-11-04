@@ -9,6 +9,7 @@ use App\Classes\UserFavored;
 use App\Exports\DefaultClassExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditUserRequest;
+use App\Http\Requests\GroupRegistrationRequest;
 use App\Http\Requests\MarketingReportRequest;
 use App\Http\Requests\NationalPhotoUploadRequest;
 use App\Http\Requests\UserExamSaveRequest;
@@ -21,6 +22,8 @@ use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Transaction as TransactionResource;
 use App\Http\Resources\User as UserResource;
+use App\Imports\UsersOrderImport;
+use App\Jobs\GroupRegistrationJob;
 use App\Models\Afterloginformcontrol;
 use App\Models\Coupon;
 use App\Models\Event;
@@ -48,6 +51,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -611,5 +615,23 @@ class UserController extends Controller
         }
 
         return response()->json(compact('formFields', 'note', 'formByPass', 'tables'), 200);
+    }
+
+    public function groupRegistration(GroupRegistrationRequest $request)
+    {
+        $file = Arr::get($request, 'file');
+        $products = Arr::get($request, 'productIds', []);
+        $giftProducts = Arr::get($request, 'giftIds', []);
+        $discount = Arr::get($request, 'discount', 0);
+        $paymentStatusId = Arr::get($request, 'paymentStatusId');
+        $orderStatusId = Arr::get($request, 'orderStatusId');
+
+        (new UsersOrderImport())->import($file);
+        $rows = UsersOrderImport::$rows;
+
+        dispatch(new GroupRegistrationJob($request->user(), $rows, $products, $giftProducts, $discount,
+            $paymentStatusId, $orderStatusId));
+
+        return response()->json(['message' => 'عملیات با موففیت انجام شد']);
     }
 }
