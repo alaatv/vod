@@ -1010,5 +1010,85 @@ class OrderController extends Controller
             'status' => 'product deleted from cart successfully',
         ]);
     }
+
+    public function exchangeOrderproduct(Order $order, Request $request, TransactionController $transactionController)
+    {
+        $done = false;
+        $data = [];
+
+        $exchangeArray1 = $request->get('exchange-a');
+        foreach ($exchangeArray1 as $key => $item) {
+            $newProduct = Product::where('id', $item['orderproductExchangeNewProduct'])
+                ->first();
+            if (isset($newProduct)) {
+                $done = true;
+                $orderproduct = Orderproduct::where('id', $key)
+                    ->first();
+                if ($orderproduct->order_id != $order->id) {
+                    continue;
+                }
+                if (isset($orderproduct)) {
+                    $orderproduct->product_id = $newProduct->id;
+                    if (strlen(trim($item['orderproductExchangeNewCost'])) > 0) {
+                        $orderproduct->cost = $item['orderproductExchangeNewCost'];
+                    }
+                    if (strlen(trim($item['orderproductExchangeNewDiscountAmount'])) > 0) {
+                        $orderproduct->discountAmount = $item['orderproductExchangeNewDiscountAmount'];
+                    }
+                    $orderproduct->discountPercentage = 0;
+                    $orderproduct->includedInCoupon = 0;
+                    $orderproduct->save();
+                    $data[] = $orderproduct;
+                }
+            }
+        }
+
+        $exchangeArray2 = $request->get('exchange-b');
+        foreach ($exchangeArray2 as $item) {
+            $newProduct = Product::where('id', $item['newOrderproductProduct'])
+                ->first();
+            if (isset($newProduct)) {
+                $done = true;
+                $orderproduct = new Orderproduct();
+                $orderproduct->product_id = $newProduct->id;
+                $orderproduct->order_id = $order->id;
+                if (strlen(trim($item['neworderproductCost'])) > 0) {
+                    $orderproduct->cost = $item['neworderproductCost'];
+                }
+                $orderproduct->save();
+                $data[] = $orderproduct;
+            }
+        }
+
+        if ($request->has('orderproductExchangeTransacctionCheckbox')) {
+            $done = true;
+            $request->merge(['order_id' => $order->id]);
+            $transactionRequest = $request->only([
+                'order_id', 'cost', 'traceNumber', 'referenceNumber', 'paycheckNumber', 'managerComment',
+                'paymentmethod_id', 'transactionstatus_id'
+            ]);
+            $transactionController->store($transactionRequest);
+        }
+
+        if (!$done) {
+            return response()->json(['message' => 'No operation was performed'], HTTPResponse::HTTP_BAD_REQUEST);
+        }
+
+        $newOrder = Order::where('id', $order->id)
+            ->first();
+        if ($newOrder) {
+            $orderCost = $newOrder->obtainOrderCost(true, false, 'REOBTAIN');
+            $newOrder->cost = $orderCost['rawCostWithDiscount'];
+            $newOrder->costwithoutcoupon = $orderCost['rawCostWithoutDiscount'];
+            $newOrder->save();
+            $data[] = $newOrder;
+        } else {
+            return response()->json(['message' => 'Failed to update order price'],
+                HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return response()->json(['data' => $data, 'message' => 'Items exchanged successfully'], HTTPResponse::HTTP_OK);
+    }
+
 }
 

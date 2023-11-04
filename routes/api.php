@@ -814,6 +814,8 @@ Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class
 Route::get('findByCode', [CouponController::class, 'findByCode'])->name('web.admin.coupon.findByCode');
 Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');
 Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
+Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
+
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
