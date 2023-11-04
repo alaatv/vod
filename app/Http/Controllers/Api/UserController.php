@@ -21,6 +21,7 @@ use App\Http\Resources\Order as OrderResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Transaction as TransactionResource;
 use App\Http\Resources\User as UserResource;
+use App\Models\Afterloginformcontrol;
 use App\Models\Coupon;
 use App\Models\Event;
 use App\Models\Gender;
@@ -48,6 +49,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -585,5 +587,29 @@ class UserController extends Controller
         Excel::store(new DefaultClassExport(collect($collect), $headers), 'excel/'.$fileName, $disk);
         $file = Uploader::url($disk, $fileName);
         return response()->json(['marketing_report_file' => $file], ResponseAlias::HTTP_OK);
+    }
+
+    public function completeRegister(Request $request)
+    {
+        $targetUrl = $request->has('redirectTo') ? $request->get('redirectTo') : action('Web\IndexPageController');
+
+        if ($request->user()->completion('afterLoginForm') == 100) {
+            return response()->json(['message' => 'User registration already completed.'], 200);
+        }
+
+        $previousPath = url()->previous();
+        $formByPass = strcmp($previousPath, route('login')) != 0;
+        $note = $formByPass ? 'برای استفاده از این خدمت سایت لطفا اطلاعات زیر را تکمیل نمایید' : 'برای ورود به سایت لطفا اطلاعات زیر را تکمیل نمایید';
+
+        $formFields = Afterloginformcontrol::getFormFields();
+        $tables = [];
+        foreach ($formFields as $formField) {
+            if (strpos($formField->name, '_id')) {
+                $tableName = str_replace('_id', 's', $formField->name);
+                $tables[$formField->name] = DB::table($tableName)->pluck('name', 'id');
+            }
+        }
+
+        return response()->json(compact('formFields', 'note', 'formByPass', 'tables'), 200);
     }
 }
