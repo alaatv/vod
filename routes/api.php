@@ -35,6 +35,7 @@ use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\VoipController;
 use App\Http\Controllers\Api\Admin\VoucherManagementController;
 use App\Http\Controllers\Api\AppVersionController;
+use App\Http\Controllers\Api\AttributevalueController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\BatchContentInsertController;
 use App\Http\Controllers\Api\BillingController;
@@ -86,6 +87,7 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Product3aExamController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductLandingController;
+use App\Http\Controllers\Api\ProductphotoController;
 use App\Http\Controllers\Api\RahAbrishamController;
 use App\Http\Controllers\Api\ReceiveSMSController;
 use App\Http\Controllers\Api\ReferralCodesController;
@@ -809,13 +811,13 @@ Route::get('anarestan',
 //Other
 Route::any('paymentRedirect/{paymentMethod}/{device}',
     '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
-Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('web.user.dashboard');
+Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('api.user.dashboard');
 Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
-Route::get('findByCode', [CouponController::class, 'findByCode'])->name('web.admin.coupon.findByCode');
+Route::get('findByCode', [CouponController::class, 'findByCode'])->name('api.admin.coupon.findByCode');
 Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');
 Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
 Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
-Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('web.groupRegistration');
+Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('api.groupRegistration');
 
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
@@ -833,7 +835,7 @@ Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
 });
 
 //ping
-Route::get('php-ping', [HomeController::class, 'phpPing'])->name('web.phpPing');
+Route::get('php-ping', [HomeController::class, 'phpPing'])->name('api.phpPing');
 
 //submit Konkur Result
 Route::get('96', [UserController::class, 'submitKonkurResult']);
@@ -852,9 +854,9 @@ Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
 
 //Product 3A Exam
 Route::post('product/{product}/detachExam/{exam}',
-    [Product3aExamController::class, 'detachExam'])->name('web.product.detachExam');
+    [Product3aExamController::class, 'detachExam'])->name('api.product.detachExam');
 Route::post('product/{product}/attachExam',
-    [Product3aExamController::class, 'attachExam'])->name('web.product.attachExam');
+    [Product3aExamController::class, 'attachExam'])->name('api.product.attachExam');
 
 //Billing
 Route::resource('billing', '\\'.BillingController::class)->only(['index']);
@@ -905,3 +907,40 @@ Route::group(['prefix' => 'order'], function () {
     Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
 });
 
+//Product
+Route::group(['prefix' => 'product'], function () {
+    Route::get('{product}/transferToDana',
+        [ProductController::class, 'transferToDana'])->name('api.product.transferToDana');
+    Route::get('{product}/createConfiguration', [ProductController::class, 'createConfiguration']);
+    Route::patch('updateProductsConfig',
+        [ProductController::class, 'updateProductsConfig'])->name('updateProductsConfig');
+    Route::post('{product}/makeConfiguration', [ProductController::class, 'makeConfiguration']);
+    Route::get('{product}/editAttributevalues',
+        [ProductController::class, 'editAttributevalues'])->name('api.product.attributevalue.edit');
+    Route::post('{product}/updateAttributevalues',
+        [ProductController::class, 'updateAttributevalues'])->name('api.product.attributevalue.update');
+    Route::post('{product}/attribute-value/attach',
+        [ProductController::class, 'attachAttributeValue'])->name('api.product.attributevalue.attach');
+    Route::delete('{product}/attribute-value/{attribute_value}/detach',
+        [ProductController::class, 'detachAttributeValue'])->name('api.product.attributevalue.detach');
+
+    Route::put('{product}/addGift', [ProductController::class, 'addGift']);
+    Route::delete('{product}/removeGift', [ProductController::class, 'removeGift']);
+    Route::post('{product}/copy', [ProductController::class, 'copy']);
+    Route::post('{product}/attachBlock', [ProductController::class, 'attachBlock'])->name('api.product.attach.block');
+    Route::delete('{product}/detachBlock', [ProductController::class, 'detachBlock'])->name('api.product.detach.block');
+    Route::put('child/{product}', [ProductController::class, 'childProductEnable']);
+    Route::put('addComplimentary/{product}', [ProductController::class, 'addComplimentary']);
+    Route::put('removeComplimentary/{product}', [ProductController::class, 'removeComplimentary']);
+    Route::post('{product}/photo/update-order',
+        [ProductphotoController::class, 'updateOrder'])->name('api.product.update.order');
+    Route::get('{product}/attribute-value',
+        [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
+});
+
+Route::group(['prefix' => 'attribute'], function () {
+    Route::get('{attribute}/attribute-value', [
+        AttributevalueController::class, 'attributeAttributeValueIndex'
+    ])->name('web.attribute.attributevalue.index');#TODO:// add route
+
+});

@@ -6,10 +6,13 @@ use App\Classes\Search\ProductSearch;
 use App\Collection\ProductCollection;
 use App\Events\GetLiveConductor;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddComplimentaryProductRequest;
 use App\Http\Requests\EditProductRequest;
 use App\Http\Requests\InsertProductRequest;
+use App\Http\Requests\ProductConfigRequest;
 use App\Http\Requests\ProductContentCommentsRequest;
 use App\Http\Requests\ProductContentsRequest;
+use App\Http\Requests\UpdateProductAttributeValueRequest;
 use App\Http\Resources\Abrisham\AbrishamLessonResource;
 use App\Http\Resources\AbrishamContentResource;
 use App\Http\Resources\CommentWithContentResource;
@@ -26,13 +29,18 @@ use App\Http\Resources\ProductIndex;
 use App\Http\Resources\ProductSetLiteResource;
 use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\Soalaa\SoalaaResource;
+use App\Jobs\DanaProductTransferJob;
 use App\Jobs\UpdateDanaSessionOrder;
+use App\Models\Attributetype;
+use App\Models\Attributevalue;
+use App\Models\Block;
 use App\Models\Conductor;
 use App\Models\Content;
 use App\Models\Major;
 use App\Models\Product;
 use App\Models\User;
 use App\Repositories\ProductContentsRepository;
+use App\Services\DanaProductService;
 use App\Traits\APIRequestCommon;
 use App\Traits\CharacterCommon;
 use App\Traits\ProductCommon;
@@ -48,6 +56,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ProductController extends Controller
 {
@@ -857,4 +866,643 @@ class ProductController extends Controller
     {
         return ProductSetLiteResource::collection($product->sets);
     }
+
+    public function transferToDana(Request $request, Product $product)
+    {
+        if (!$product->enable) {
+            session()->flash('error', 'نمی توانید محصول غیرفعال را منتقل کنید');
+            return redirect()->back();
+
+        }
+        if (!is_null($product->redirectUrl)) {
+            session()->flash('error', 'نمی توانید محصول ریدایرکت شده را منتقل کنید');
+            return redirect()->back();
+
+        }
+
+        $danaProductId = DanaProductService::createCourse($product);
+        if ($danaProductId && $request->query('withSet')) {
+            foreach ($product->sets as $set) {
+                if (str_contains($set->name, 'مشاوره')) {
+                    continue;
+                }
+
+                DanaProductTransferJob::dispatch($danaProductId, $set, $set->getOriginal('pivot_order'), $product->id);
+            }
+        }
+
+        return response()->json(['success' => 'Transfer Successfully'], 200);
+    }
+
+    public function createConfiguration(Product $product)
+    {
+        $attributeCollection = collect();
+        $attributeGroups = $product->attributeset->attributeGroups;
+        foreach ($attributeGroups as $attributeGroup) {
+            $attributeType = Attributetype::where('name', 'main')
+                ->get()
+                ->first();
+            $attributes = $product->attributeset->attributes()
+                ->where('attributetype_id', $attributeType->id);
+            foreach ($attributes as $attribute) {
+                $attributeValues = $attribute->attributevalues;
+                $attributeValuesCollect = collect();
+                foreach ($attributeValues as $attributeValue) {
+                    $attributeValuesCollect->push($attributeValue);
+                    //                        array_push($attributeValuesArray , $attributeValue);
+                }
+                $attributeCollection->push([
+                    'attribute' => $attribute,
+                    'attributeControl' => $attribute->attributecontrol->name,
+                    'attributevalues' => $attributeValuesCollect,
+                ]);
+            }
+        }
+        return response()->json(compact('product', 'attributeCollection'));
+    }
+
+    public function updateProductsConfig(ProductConfigRequest $request)
+    {
+        $products = Product::query();
+        if (!in_array(0, $request->get('products'))) {
+            $products->whereIn('id', $request->get('products'));
+        }
+
+        $message = $products->update($request->only(['enable', 'display'])) ?
+            'محصولات اتخاب شده با موفقیت پیکربندی شدند' :
+            'پیکربندی محصولات با مشکل مواجه شد.';
+
+        return response()->json($message);
+    }
+
+    public function makeConfiguration(Request $request, $product)
+    {
+
+        $matrix = [];
+        $array = []; // checkbox attribute values
+
+        $attributeIds = $request->get('attributevalues');
+        $extraCosts = $request->get('extraCost');
+        $orders = $request->get('order');
+        $descriptions = $request->get('description');
+        $i = 0;
+        foreach ($attributeIds as $attributeId) {
+            $j = 0;
+            foreach ($attributeId as $attributevalueId) {
+                $extraCost = $extraCosts[$attributevalueId];
+                if (!isset($extraCost[0])) {
+                    $extraCost = 0;
+                }
+
+                $order = $orders[$attributevalueId];
+                if (!isset($order[0])) {
+                    $order = 0;
+                }
+
+                $description = $descriptions[$attributevalueId];
+                if (!isset($description[0])) {
+                    $description = null;
+                }
+
+                $attributevalue = Attributevalue::findOrFail($attributevalueId);
+                $product->attributevalues()
+                    ->attach($attributevalue, [
+                        'extraCost' => $extraCost,
+                        'order' => $order,
+                        'description' => $description,
+                    ]);
+                if (strcmp($attributevalue->attribute->attributecontrol->name, 'groupedCheckbox') == 0) {
+                    $array[] = $attributevalue->id;
+                } else {
+                    $matrix[$i][$j] = $attributevalue->id;
+                    $j++;
+                }
+            }
+            $i++;
+        }
+
+        if (count($matrix) == 0) {
+            return redirect()->back();
+        }
+        if (count($matrix) == 1) {
+            $productConfigurations = current($matrix);
+        } elseif (count($matrix) >= 2) {
+            $vertex = array_pop($matrix);
+            $productConfigurations = $this->cartesianProduct($matrix, $vertex)[0];
+        }
+
+        foreach ($array as $item) {
+            foreach ($productConfigurations as $productConfig) {
+                $newProductConfig = $productConfig.','.$item;
+                $productConfigurations[] = $newProductConfig;
+            }
+        }
+
+        foreach ($productConfigurations as $productConfig) {
+            $childProduct = $product->replicate();
+            $childProduct->order = 0;
+            $attributevalueIds = explode(',', $productConfig);
+            $productName = '';
+            $attributevalues = [];
+            foreach ($attributevalueIds as $attributevalueId) {
+                $attributevalue = Attributevalue::findOrFail($attributevalueId);
+                $attributevalues[] = $attributevalue;
+                $productName = $productName.'-'.$attributevalue->name;
+            }
+            $childProduct->name = $product->name.$productName;
+            $childProduct->producttype_id = 1;
+            if ($childProduct->save()) {
+                $childProduct->parents()
+                    ->attach($product);
+                foreach ($attributevalues as $attributevalue) {
+
+                    $extraCost = $extraCosts[$attributevalue->id];
+                    if (!isset($extraCost[0])) {
+                        $extraCost = 0;
+                    }
+
+                    $order = $orders[$attributevalue->id];
+                    if (!isset($order[0])) {
+                        $order = 0;
+                    }
+
+                    $description = $descriptions[$attributevalue->id];
+                    if (!isset($description[0])) {
+                        $description = null;
+                    }
+
+                    $childProduct->attributevalues()
+                        ->attach($attributevalue, [
+                            'extraCost' => $extraCost,
+                            'order' => $order,
+                            'description' => $description,
+                        ]);
+                }
+            } else {
+                session()->put('error', 'خطای پایگاه داده');
+            }
+        }
+        return response()->json(action($product));
+    }
+
+    public function editAttributevalues(Product $product)
+    {
+        $attributeValuesCollection = collect();
+
+        $attributeset = $product->attributeset;
+        $attributeGroups = $attributeset->attributegroups;
+        foreach ($attributeGroups as $attributeGroup) {
+            $attributes = $attributeGroup->attributes->sortBy('order');
+
+            // TODO: There is a bug here that seems from database data. That is, duplicate attributes are received
+            //  from the database. For this reason, duplicate attributevalues are also displayed in the panel. Duplicate
+            //  attributevalues eventually affect the updateAttributevalues method and generate bugs. During the
+            //  last decision that was made with Mr. Shahrokhi, bug fixes for this part have been postponed.
+            foreach ($attributes as $attribute) {
+                $type = Attributetype::FindOrFail($attribute->attributetype_id);
+                $productAttributeValues = $product->attributevalues->where('attribute_id', $attribute->id);
+
+                $productAttributeValuesClone = clone $productAttributeValues;
+                $attrributevalues = [];
+                foreach ($attribute->attributevalues as $attributevalue) {
+                    $attributevalue['isMember'] = in_array($attributevalue->id,
+                        $productAttributeValuesClone->pluck('id')->toArray());
+                    $attrributevalues[] = $attributevalue;
+                }
+
+                if (!isset($attributeValuesCollection[$type->id])) {
+                    $attributeValuesCollection->put($type->id, collect([
+                        'name' => $type->name,
+                        'displayName' => $type->description,
+                        'attributes' => [],
+                    ]));
+                }
+                $helperCollection = collect($attributeValuesCollection[$type->id]['attributes']);
+
+                $productAttributeValuesWithKey = [];
+                foreach ($productAttributeValues as $productAttributeValue) {
+                    $productAttributeValuesWithKey[$productAttributeValue->id] = $productAttributeValue;
+                }
+
+                $helperCollection->push([
+                    'name' => $attribute->displayName,
+                    'type' => $type,
+                    'values' => $attrributevalues,
+                    'productAttributevalues' => $productAttributeValues,
+                    'productAttributeValuesWithKey' => $productAttributeValuesWithKey,
+                ]);
+                $attributeValuesCollection[$type->id]->put('attributes', $helperCollection);
+            }
+        }
+        return response()->json(compact('product', 'attributeValuesCollection'));
+    }
+
+    public function updateAttributevalues(UpdateProductAttributeValueRequest $request, Product $product)
+    {
+        $product->attributevalues()->detach($product->attributevalues->pluck('id')->toArray());
+
+        $newExtraCost = $request->get('extraCost');
+        $newDescription = $request->get('description');
+
+        $attachedAttributeValues = [];
+        foreach ($request->attributevalues as $attributevalueId) {
+
+            $extraCost = $newExtraCost[$attributevalueId];
+            if (strlen($extraCost) == 0) {
+                $extraCost = null;
+            }
+
+            $description = $newDescription[$attributevalueId];
+            if (strlen($description) == 0) {
+                $description = null;
+            }
+
+            // TODO: This is a temporary solution to the problem of duplicate attributevalues displayed for the
+            //  "edit product attributevalues" panel. After solving that, you can delete this solution if you wish.
+            if (in_array($attributevalueId, $attachedAttributeValues)) {
+                continue;
+            }
+            if (!$product->attributevalues()->attach($attributevalueId,
+                ['extraCost' => $extraCost, 'description' => $description])) {
+                // Register attached attributeValues
+                $attachedAttributeValues[] = $attributevalueId;
+                continue;
+            }
+
+            $this->updateProductChildrenAttributeValueExistingPivot($product, $attributevalueId, $extraCost,
+                $description);
+
+        }
+
+        Cache::tags(['product_'.$product->id])->flush();
+
+        return response()->json(action($product));
+    }
+
+    public function attachAttributeValue(AttachProductAttributeValueRequest $request, Product $product)
+    {
+        $response = [];
+
+        $productAttributes = $product->attributeset->attributes();
+
+        if (!$productAttributes->pluck('id')->contains($request->attribute_id)) {
+            $response['error'] = 'Invalid product attribute ID!';
+            return response()->json($response, 400);
+        }
+
+        $productAttributeAttributeValues = $productAttributes->find($request->attribute_id)->attributevalues;
+
+        if (!$productAttributeAttributeValues->contains($request->attribute_value_id)) {
+            $response['error'] = 'Invalid product attribute value ID!';
+            return response()->json($response, 400);
+        }
+
+        try {
+            $product->attributevalues()->attach($request->attribute_value_id, [
+                'order' => $request->order,
+                'extraCost' => $request->extra_cost,
+                'description' => $request->description,
+            ]);
+
+            $this->updateProductChildrenAttributeValueExistingPivot($product, $request->attribute_value_id,
+                $request->extra_cost, $request->description, $request->order);
+            Cache::tags(['product_'.$product->id])->flush();
+
+            $response['success'] = 'افزودن مقدار صفت به محصول با موفقیت انجام شد';
+            return response()->json($response, 200);
+        } catch (Exception $e) {
+            $response['error'] = 'افزودن مقدار صفت به محصول با خطا مواجه شده است!';
+            return response()->json($response, 500);
+        }
+    }
+
+    public function detachAttributeValue(
+        Request $request,
+        Product $product,
+        Attributevalue $attributeValue
+    ): JsonResponse {
+        try {
+            $product->attributevalues()->detach($attributeValue);
+            Cache::tags(['product_'.$product->id])->flush();
+        } catch (Exception $e) {
+            return response()->json(['message', 'حذف مقدار صفت محصول با خطا مواجه شده است!', 'errorInfo' => $e],
+                ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
+        }
+        return response()->json([], ResponseAlias::HTTP_OK);
+    }
+
+    private function updateProductChildrenAttributeValueExistingPivot(
+        Product $product,
+        $attributeValue,
+        int $extraCost,
+        string $description = null,
+        int $order = 0
+    ): bool {
+        $attributeValue = $attributeValue instanceof Attributevalue ? $attributeValue : Attributevalue::find($attributeValue);
+        try {
+            $children = $product->children()
+                ->whereHas('attributevalues', function ($q) use ($attributeValue) {
+                    $q->where('id', $attributeValue->id);
+                })
+                ->get();
+
+            foreach ($children as $child) {
+                $child->attributevalues()
+                    ->where('id', $attributeValue->id)
+                    ->updateExistingPivot($attributeValue->id, [
+                        'order' => $order,
+                        'extraCost' => $extraCost,
+                        'description' => $description,
+                    ]);
+            }
+        } catch (Exception $exception) {
+            return false;
+        }
+        return true;
+    }
+
+    public function addGift(Request $request, Product $product)
+    {
+        $response = [];
+
+        $gift = Product::findOrFail($request->get('giftProducts'));
+
+        if ($product->gifts->contains($gift)) {
+            $response['error'] = 'این هدیه قبلا به این محصول اضافه شده است';
+            return response()->json($response, 400);
+        } else {
+            $product->gifts()->attach($gift, ['relationtype_id' => config('constants.PRODUCT_INTERRELATION_GIFT')]);
+            $response['success'] = 'هدیه با موفقیت به محصول اضافه شد';
+            return response()->json($response, 200);
+        }
+    }
+
+    public function removeGift(Request $request, Product $product)
+    {
+        $gift = Product::where('id', $request->get('giftId'))
+            ->get()
+            ->first();
+        if (!isset($gift)) {
+            return response()->json(['message' => 'خطا! چنین محصول هدیه ای وجود ندارد'],
+                Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        if ($product->gifts()
+            ->detach($gift->id)) {
+            return response()->json(['message' => 'هدیه با موفقیت حذف شد']);
+        }
+        return response()->json(['message' => 'خطا در حذف هدیه . لطفا دوباره اقدام نمایید'],
+            Response::HTTP_SERVICE_UNAVAILABLE);
+    }
+
+    public function copy(Product $product)
+    {
+        $newProduct = $product->replicate();
+        $correspondenceArray = [];
+        $done = true;
+        if (!$newProduct->save()) {
+            return response()->json(['message' => 'خطا در کپی از اطلاعات پایه ای محصول . لطفا دوباره اقدام نمایید'],
+                Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+        /**
+         * Copying children
+         */
+        if ($product->hasChildren()) {
+            foreach ($product->children as $child) {
+                $response = $this->copy($child);
+                if ($response->getStatusCode() == Response::HTTP_OK) {
+                    $response = json_decode($response->getContent());
+                    $newChildId = $response->newProductId;
+                    if (isset($newChildId)) {
+                        $correspondenceArray[$child->id] = $newChildId;
+                        $newProduct->children()
+                            ->attach($newChildId);
+                    } else {
+                        $done = false;
+                    }
+                } else {
+                    $done = false;
+                }
+            }
+        }
+
+        /**
+         * Copying attributeValues
+         */
+        foreach ($product->attributevalues as $attributevalue) {
+            $newProduct->attributevalues()
+                ->attach($attributevalue->id, [
+                    'extraCost' => $attributevalue->pivot->extraCost,
+                    'description' => $attributevalue->pivot->description,
+                ]);
+        }
+
+        /**
+         * Copying bons
+         */
+        foreach ($product->bons as $bon) {
+            $newProduct->bons()
+                ->attach($bon->id, [
+                    'discount' => $bon->pivot->discount,
+                    'bonPlus' => $bon->pivot->bonPlus,
+                ]);
+        }
+
+        /**
+         * Copying coupons
+         */
+        $newProduct->coupons()
+            ->attach($product->coupons->pluck('id')
+                ->toArray());
+
+        /**
+         * Copying complimentary
+         */
+        foreach ($product->complimentaryproducts as $complimentaryproduct) {
+            $flag = $this->haveSameFamily(collect([
+                $product,
+                $complimentaryproduct,
+            ]));
+            if (!$flag) {
+                $newProduct->complimentaryproducts()
+                    ->attach($complimentaryproduct->id);
+            }
+        }
+
+        /**
+         * Copying gifts
+         */
+        foreach ($product->gifts as $gift) {
+            $flag = $this->haveSameFamily(collect([
+                $product,
+                $gift,
+            ]));
+            if ($flag) {
+                continue;
+            }
+            $newProduct->gifts()
+                ->attach($gift->id, ['relationtype_id' => config('constants.PRODUCT_INTERRELATION_GIFT')]);
+
+        }
+
+        if ($product->hasChildren()) {
+            $children = $product->children;
+            foreach ($children as $child) {
+                $childComplementarities = $child->complimentaryproducts;
+                $intersects = $childComplementarities->intersect($children);
+                foreach ($intersects as $intersect) {
+                    $correspondingChild = Product::where('id', $correspondenceArray[$child->id])
+                        ->get()
+                        ->first();
+                    $correspondingComplimentary = $correspondenceArray[$intersect->id];
+                    $correspondingChild->complimentaryproducts()
+                        ->attach($correspondingComplimentary);
+                }
+            }
+        }
+
+        if ($done != false) {
+
+            return response()->json([
+                'message' => 'عملیات کپی با موفقیت انجام شد.',
+                'newProductId' => $newProduct->id,
+            ]);
+        }
+        foreach ($newProduct->children as $child) {
+            $child->forceDelete();
+        }
+        $newProduct->forceDelete();
+
+        return response()->json(['message' => 'خطا در کپی از الجاقی محصول . لطفا دوباره اقدام نمایید'],
+            ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
+    }
+
+    public function attachBlock(Request $request, Product $product)
+    {
+        $response = [];
+
+        $block = Block::find($request->get('block_id'));
+        if (is_null($block)) {
+            $response['error'] = 'Block not found';
+            return response()->json($response, 404);
+        }
+
+        $product->blocks()->attach($block->id);
+
+        $contentsIds = $this->getProductsSampleContentsFromBlock($block);
+        $productSampleContents = optional($product->sample_contents)->tags;
+        if (!is_null($productSampleContents)) {
+            $contentsIds = array_values(array_unique(array_merge($contentsIds, $productSampleContents), SORT_REGULAR));
+        }
+
+        if (!empty($contentsIds)) {
+            $product->sample_contents = $contentsIds;
+            $product->update();
+        }
+
+        Cache::tags(['product_'.$product->id])->flush();
+
+        $response['success'] = 'بلاک با موفقیت اضافه شد';
+        return response()->json($response, 200);
+    }
+
+    public function detachBlock(Request $request, Product $product)
+    {
+        $response = [];
+
+        $block = Block::find($request->get('block_id'));
+        if (is_null($block)) {
+            $response['error'] = 'Block not found';
+            return response()->json($response, 404);
+        }
+
+        $product->blocks()->detach($block->id);
+
+        $contentsIds = $this->getProductsSampleContentsFromBlock($block);
+        $productSampleContents = optional($product->sample_contents)->tags;
+        if (!is_null($productSampleContents)) {
+            $contentsIds = array_values(array_unique(array_diff($productSampleContents, $contentsIds), SORT_REGULAR));
+        }
+
+        $product->sample_contents = $contentsIds;
+        $product->update();
+
+        Cache::tags(['product_'.$product->id])->flush();
+
+        $response['success'] = 'Block successfully detached';
+        return response()->json($response, 200);
+    }
+
+    public function childProductEnable(Request $request, $product)
+    {
+        $response = [];
+
+        $parent = $product->parents->first();
+        if ($product->enable == 1) {
+            $product->enable = 0;
+            foreach ($product->attributevalues as $attributevalue) {
+                $flag = 0;
+                $children = $parent->children->where('id', '!=', $product->id)->where('enable', 1);
+                foreach ($children as $child) {
+                    if ($child->attributevalues->contains($attributevalue) == true) {
+                        $flag = 1;
+                        break;
+                    }
+                }
+                if ($flag == 0) {
+                    $parent->attributevalues()->detach($attributevalue);
+                }
+            }
+        } elseif ($product->enable == 0) {
+            $product->enable = 1;
+            foreach ($product->attributevalues as $attributevalue) {
+                if ($parent->attributevalues->contains($attributevalue) != false) {
+                    continue;
+                }
+                if (isset($attributevalue->pivot->extraCost) && $attributevalue->pivot->extraCost > 0) {
+                    $attributevalueDescription = '+'.number_format($attributevalue->pivot->extraCost).'تومان';
+                } else {
+                    $attributevalueDescription = null;
+                }
+
+                $parent->attributevalues()->attach($attributevalue->id,
+                    ['description' => $attributevalueDescription]);
+            }
+        }
+        if ($product->update()) {
+            Cache::tags(['product_'.$product->id, 'product_'.$parent->id])->flush();
+            $response['success'] = 'وضعیت فرزند محصول با موفقیت تغییر کرد';
+            return response()->json($response, 200);
+        }
+
+        $response['error'] = 'خطای پایگاه داده';
+        return response()->json($response, 500);
+    }
+
+    public function addComplimentary(AddComplimentaryProductRequest $request, Product $product)
+    {
+        $response = [];
+
+        $complimentary = Product::findOrFail($request->get('complimentaryproducts'));
+
+        if ($product->complimentaryproducts->contains($complimentary)) {
+            $response['error'] = 'این اشانتیون قبلا درج شده است';
+        } else {
+            $product->complimentaryproducts()->attach($complimentary);
+            $response['success'] = 'درج اشانتیون با موفقیت انجام شد';
+        }
+
+        return response()->json($response, 200);
+    }
+
+    public function removeComplimentary(Request $request, Product $complimentary)
+    {
+        $product = Product::findOrFail($request->get('productId'));
+        $product->complimentaryproducts()
+            ->detach($complimentary);
+        session()->put('success', 'حذف اشانتیون با موفقیت انجام شد');
+
+        return response()->json();
+    }
+
 }
