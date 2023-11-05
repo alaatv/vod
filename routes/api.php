@@ -35,6 +35,7 @@ use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\VoipController;
 use App\Http\Controllers\Api\Admin\VoucherManagementController;
 use App\Http\Controllers\Api\AppVersionController;
+use App\Http\Controllers\Api\AttributegroupController;
 use App\Http\Controllers\Api\AttributevalueController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\BatchContentInsertController;
