@@ -938,9 +938,10 @@ Route::group(['prefix' => 'product'], function () {
         [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
 });
 
+//attributes
 Route::group(['prefix' => 'attribute'], function () {
     Route::get('{attribute}/attribute-value', [
         AttributevalueController::class, 'attributeAttributeValueIndex'
-    ])->name('web.attribute.attributevalue.index');#TODO:// add route
+    ])->name('api.attribute.attributevalue.index');
 
 });
