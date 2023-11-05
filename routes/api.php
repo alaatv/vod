@@ -116,6 +116,7 @@ use App\Http\Controllers\Api\TicketPriorityController;
 use App\Http\Controllers\Api\TimepointController;
 use App\Http\Controllers\Api\UploadCenterController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UseruploadController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WatchHistoryController;
