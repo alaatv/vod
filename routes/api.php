@@ -89,6 +89,7 @@ use App\Http\Controllers\Api\PhoneNumberController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Product3aExamController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductfileController;
 use App\Http\Controllers\Api\ProductLandingController;
 use App\Http\Controllers\Api\ProductphotoController;
 use App\Http\Controllers\Api\RahAbrishamController;
