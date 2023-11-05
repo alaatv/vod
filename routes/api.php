@@ -83,6 +83,8 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderproductController;
 use App\Http\Controllers\Api\PaymentStatusController;
 use App\Http\Controllers\Api\PaymentVerifierController;
+use App\Http\Controllers\Api\PhoneController;
+use App\Http\Controllers\Api\PhoneNumberController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\Product3aExamController;
 use App\Http\Controllers\Api\ProductController;
@@ -96,6 +98,7 @@ use App\Http\Controllers\Api\SalesManController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\SetController;
+use App\Http\Controllers\Api\ShahrController;
 use App\Http\Controllers\Api\ShopPageController;
 use App\Http\Controllers\Api\SmsController;
 use App\Http\Controllers\Api\StudyEventController;
@@ -955,3 +958,47 @@ Route::group(['prefix' => 'websiteSetting'], function () {
     Route::delete('{Websitesetting}/deleteFaq/{faqId}',
         [WebsiteSettingController::class, 'destroyFaq'])->name('api.setting.faq.delete');
 });
+
+//Some Resources
+
+// shahr
+Route::resource('shahr', ShahrController::class)->only('index');
+
+// attributevalue
+Route::resource('attributevalue', AttributevalueController::class)->except(['create', 'show', 'index']);
+
+// attributegroup
+Route::resource('attributegroup', AttributegroupController::class)->except(['show', 'create']);
+
+// userupload
+Route::resource('userupload', UseruploadController::class)->except(['create', 'edit', 'destroy']);
+
+// phone
+Route::resource('phone', PhoneController::class)->only(['store', 'update', 'destroy']);
+
+// productfile
+Route::resource('productfile', ProductfileController::class)->except(['index', 'destroy', 'show']);
+
+// productphoto
+Route::resource('productphoto', ProductphotoController::class)->only(['store', 'destroy']);
+
+// city
+Route::resource('city', CityController::class)->only('index');
+
+// file
+Route::resource('file', FileController::class)->only(['store', 'destroy']);
+
+// section
+Route::resource('section', SectionController::class)->except('create');
+
+// periodDescription
+Route::resource('periodDescription', PeriodDescriptionController::class);
+
+// source
+Route::resource('source', SourceController::class)->except('create');
+
+// phonebook
+Route::resource('phonebook', PhoneBookController::class)->only(['index', 'store']);
+
+// phonenumber
+Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'store']);
