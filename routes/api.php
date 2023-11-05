@@ -48,6 +48,7 @@ use App\Http\Controllers\Api\BookmarkPageV2Controller;
 use App\Http\Controllers\Api\BotsController;
 use App\Http\Controllers\Api\CacheController;
 use App\Http\Controllers\Api\ChannelController as ApiChannelController;
+use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\ContentController;
