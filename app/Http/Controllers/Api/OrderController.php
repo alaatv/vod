@@ -11,6 +11,7 @@ use App\Collection\OrderproductCollection;
 use App\Events\SendOrderNotificationsEvent;
 use App\Events\UserPurchaseCompleted;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AddProductsRequest;
 use App\Http\Requests\CreateFreeOrderFor3aRequest;
 use App\Http\Requests\DonateRequest;
 use App\Http\Requests\order\InsertFreeOrderRequest;
@@ -27,9 +28,11 @@ use App\Models\Order;
 use App\Models\Orderproduct;
 use App\Models\Product;
 use App\Models\ReferralCode;
+use App\Models\Transaction;
 use App\Models\User;
 use App\PaymentModule\GtmEec;
 use App\Repositories\CouponRepo;
+use App\Repositories\Loging\ActivityLogRepo;
 use App\Repositories\OrderproductRepo;
 use App\Repositories\OrderRepo;
 use App\Repositories\ProductRepository;
@@ -48,6 +51,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -55,6 +59,12 @@ use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 
 class OrderController extends Controller
 {
+    protected $setting;
+    protected string $succsessMessage = '';
+    protected string $unSuccsessMessage = '';
+    protected array $addedGifts = [];
+    protected array $addedProducts = [];
+
     use ResponseFormatter;
     use OrderCommon;
     use OrderproductTrait;
@@ -1090,5 +1100,324 @@ class OrderController extends Controller
         return response()->json(['data' => $data, 'message' => 'Items exchanged successfully'], HTTPResponse::HTTP_OK);
     }
 
+    public function detachOrderproduct(Request $request)
+    {
+        $orderproductsId = $request->get('orderproducts');
+        $orderId = $request->get('order');
+
+        $orderproducts = Orderproduct::whereIn('id', $orderproductsId)
+            ->get();
+
+        $orderIds = $orderproducts->pluck('order_id')
+            ->unique();
+        $countOrderId = count($orderIds);
+        if ($countOrderId > 1 || $countOrderId == 0) {
+            return response()->json([
+                'message' => 'درخواست غیر مجاز',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        if ($orderId != $orderIds[0]) {
+            return response()->json([
+                'message' => 'درخواست غیر مجاز',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        $oldOrder = Order::FindOrFail($orderId);
+
+        if ($orderproducts->count() >= $oldOrder->orderproducts->where('orderproducttype_id', '<>',
+                config('constants.ORDER_PRODUCT_GIFT'))
+                ->count()) {
+            return response()->json([
+                'message' => 'شما نمی توانید سفارش را خالی کنید',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        $oldOrderBackup = $oldOrder->replicate();
+        $newOrder = $oldOrder->replicate();
+        if (!$newOrder->save()) {
+            return response()->json([
+                'message' => 'خطا درایجاد سفارش جدید',
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        foreach ($orderproducts as $orderproduct) {
+            $gifts = $orderproduct->children;
+            foreach ($gifts as $gift) {
+                $gift->order_id = $newOrder->id;
+                $gift->update();
+            }
+            $orderproduct->order_id = $newOrder->id;
+            $orderproduct->update();
+        }
+
+        /**
+         * Reobtaining old order cost
+         */
+        $oldOrder = Order::where('id', $oldOrder->id)
+            ->get()
+            ->first();
+        $orderCost = $oldOrder->obtainOrderCost(true, false, 'REOBTAIN');
+        $oldOrder->cost = $orderCost['rawCostWithDiscount'];
+        $oldOrder->costwithoutcoupon = $orderCost['rawCostWithoutDiscount'];
+        $oldOrderDone = $oldOrder->updateWithoutTimestamp();
+        if (!$oldOrderDone) {
+            return response()->json([
+                'message' => 'خطا در آپدیت اطلاعات سفارش قدیم',
+            ], HTTPResponse::HTTP_SERVICE_UNAVAILABLE);
+        }
+        /**
+         * obtaining new order cost
+         */
+        $newOrder = Order::where('id', $newOrder->id)
+            ->get()
+            ->first();
+        $newOrder->created_at = Carbon::now();
+        $newOrder->updated_at = Carbon::now();
+        $newOrder->completed_at = Carbon::now();
+        $newOrder->discount = 0;
+        $orderCost = $newOrder->obtainOrderCost(true, false, 'REOBTAIN');
+        $newOrder->cost = $orderCost['rawCostWithDiscount'];
+        $newOrder->costwithoutcoupon = $orderCost['rawCostWithoutDiscount'];
+        $newOrderDone = $newOrder->update();
+        if ($newOrderDone) {
+            /**
+             * Transactions
+             */
+            $newCost = $newOrder->totalCost(); //$newOrder->totalCost() ;
+            //                  if(($newOrder->totalCost() + $oldOrder->totalCost()) != $oldOrder->successfulTransactions->sum("cost") ) abort("403") ;
+            $transactions = $oldOrder->successfulTransactions->where('cost', '>', 0)
+                ->sortBy('cost');
+            /** @var Transaction $transaction */
+            foreach ($transactions as $transaction) {
+                if ($newCost <= 0) {
+                    break;
+                }
+                if ($transaction->cost > $newCost) {
+                    $newTransaction = new Transaction();
+                    $newTransaction->destinationBankAccount_id = $transaction->destinationBankAccount_id;
+                    $newTransaction->paymentmethod_id = $transaction->paymentmethod_id;
+                    $newTransaction->transactiongateway_id = $transaction->transactiongateway_id;
+                    $newTransaction->completed_at = $transaction->completed_at;
+                    $newTransaction->transactionstatus_id = config('constants.TRANSACTION_STATUS_SUCCESSFUL');
+                    $newTransaction->cost = $newCost;
+                    $newTransaction->order_id = $newOrder->id;
+                    $newTransaction->save();
+
+                    $newTransaction2 = new Transaction();
+                    $newTransaction2->cost = $transaction->cost - $newCost;
+                    $newTransaction2->destinationBankAccount_id = $transaction->destinationBankAccount_id;
+                    $newTransaction2->paymentmethod_id = $transaction->paymentmethod_id;
+                    $newTransaction2->transactiongateway_id = $transaction->transactiongateway_id;
+                    $newTransaction2->completed_at = $transaction->completed_at;
+                    $newTransaction2->transactionstatus_id = config('constants.TRANSACTION_STATUS_SUCCESSFUL');
+                    $newTransaction2->order_id = $oldOrder->id;
+                    $newTransaction2->save();
+
+                    if ($transaction->getGrandParent() !== false) {
+                        $grandTransaction = $transaction->getGrandParent();
+                        $newTransaction->parents()
+                            ->attach($grandTransaction->id,
+                                ['relationtype_id' => config('constants.TRANSACTION_INTERRELATION_PARENT_CHILD')]);
+                        $newTransaction2->parents()
+                            ->attach($grandTransaction->id,
+                                ['relationtype_id' => config('constants.TRANSACTION_INTERRELATION_PARENT_CHILD')]);
+                        $grandTransaction->children()
+                            ->detach($transaction->id);
+                        $transaction->delete();
+                    } else {
+                        $newTransaction->parents()
+                            ->attach($transaction->id,
+                                ['relationtype_id' => config('constants.TRANSACTION_INTERRELATION_PARENT_CHILD')]);
+                        $newTransaction2->parents()
+                            ->attach($transaction->id,
+                                ['relationtype_id' => config('constants.TRANSACTION_INTERRELATION_PARENT_CHILD')]);
+                        $transaction->transactionstatus_id =
+                            config('constants.TRANSACTION_STATUS_ARCHIVED_SUCCESSFUL');
+                        $transaction->update();
+                    }
+
+                    $newCost = 0;
+                } else {
+                    $transaction->order_id = $newOrder->id;
+                    $transaction->update();
+                    $newCost -= $transaction->cost;
+                }
+            }
+            /**
+             * End
+             */
+
+            if ($newOrder->totalPaidCost() >= $newOrder->totalCost()) {
+                $newOrder->paymentstatus_id = config('constants.PAYMENT_STATUS_PAID');
+                $newOrder->update();
+            }
+
+            session()->put('success',
+                'سفارش با موفقیت تفکیک شد . رفتن به سفارش جدید : '."<a target='_blank' href='".action('Web\OrderController@edit',
+                    $newOrder)."'>".$newOrder->id.'</a>');
+
+            return response()->json([
+                'orderId' => $newOrder->id,
+            ]);
+        }
+
+        $oldOrder->fill($oldOrderBackup->toArray());
+        foreach ($orderproducts as $orderproduct) {
+            $orderproduct->order_id = $oldOrder->id;
+            $orderproduct->update();
+        }
+        if ($oldOrder->update()) {
+            return response()->json([
+                'message' => 'آیتم با موفقیت حذف شد.',
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'خطا در آپدیت سفارش جدید ایجاد شده . سفارش قدیم دچار تغییرات شد.',
+        ], HTTPResponse::HTTP_SERVICE_UNAVAILABLE);
+    }
+
+    public function addOrderproduct(Request $request, Product $product)
+    {
+        try {
+            /** @var User $user */
+            $user = $request->user();
+            $openOrder = $user->getOpenOrderOrCreate();
+            Cache::tags(['order_'.$openOrder->id,])->flush();
+
+            $donate_5_hezar = Product::DONATE_PRODUCT_5_HEZAR;
+            $createFlag = true;
+            $resultCode = HTTPResponse::HTTP_NO_CONTENT;
+            if ($product->id == $donate_5_hezar) {
+                /** @var OrderproductCollection $oldOrderproduct */
+                $oldOrderproduct = $openOrder->orderproducts(config('constants.ORDER_PRODUCT_TYPE_DEFAULT'))
+                    ->where('product_id', $donate_5_hezar)
+                    ->onlyTrashed()
+                    ->get();
+                if ($oldOrderproduct->isNotEmpty()) {
+                    $deletedOrderproduct = $oldOrderproduct->first();
+                    $deletedOrderproduct->restore();
+                    $resultCode = Response::HTTP_OK;
+                    $resultText = 'An old Orderproduct with the same data restored successfully';
+                    $createFlag = false;
+                }
+            }
+
+            if ($createFlag) {
+                $data = [];
+                $data['product_id'] = $product->id;
+                $data['order_id'] = $openOrder->id;
+                $data['withoutBon'] = true;
+                $result = $this->new($data);
+                if (!$result['status']) {
+                    return myAbort(HTTPResponse::HTTP_LOCKED, 'Could not add donate to order.');
+                }
+
+                /** @var OrderproductCollection $storedOrderproducts */
+                $storedOrderproducts = $result['data']['storedOrderproducts'];
+                $newPrice = $storedOrderproducts->calculateGroupPrice();
+                $storedOrderproducts->setNewPrices($newPrice['newPrices']);
+                $storedOrderproducts->updateCostValues();
+                $resultCode = HTTPResponse::HTTP_OK;
+                $resultText = 'Orderproduct added successfully';
+            }
+
+            if ($resultCode == HTTPResponse::HTTP_OK) {
+                $response = [];
+            } else {
+                $response = [
+                    'error' => [
+                        'code' => $resultCode,
+                        'message' => $resultText ?? null,
+                    ],
+                ];
+            }
+
+            return response($response);
+        } catch (Exception    $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ], HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function addProducts(AddProductsRequest $request, Order $order)
+    {
+        $successMessage = '';
+        $unSuccessMessage = '';
+
+        foreach ($request->input('productDetails') as $productId => $details) {
+            $hasInstalment = isset($details['instalment']) ? 1 : 0;
+            match ((int) $details['type']) {
+                config('constants.ORDER_PRODUCT_TYPE_DEFAULT') => $this->addBasicOrderProduct($order->id, $productId,
+                    $details['name'], $details['cost'], $details['discount'], $hasInstalment),
+                config('constants.ORDER_PRODUCT_GIFT') => $this->addGiftOrderProduct($order->id, $productId,
+                    $details['name'], $details['cost']),
+                config('constants.ORDER_PRODUCT_HIDDEN') => $this->addHiddenOrderProduct($order->id, $productId,
+                    $details['name'], $details['cost'], $details['discount'], $hasInstalment),
+                config('constants.ORDER_PRODUCT_LOCKED') => $this->addLockedOrderProduct($order->id, $productId,
+                    $details['name'], $details['cost'], $details['discount'], $hasInstalment),
+                config('constants.ORDER_PRODUCT_CHANGE') => $this->addChangeOrderProduct($order->id, $productId,
+                    $details['name'], $details['cost'], $details['discount'], $hasInstalment),
+                default => $this->unSuccsessMessage .= $details['name'].'<br>'
+            };
+        }
+        foreach ($order->orderproducts()->get() as $orderProduct) {
+            $orderProduct->updateOrderCost();
+        }
+
+        ActivityLogRepo::LogItemsAddedToOrder(Auth::user(), $order, $order->user, $this->addedGifts,
+            $this->addedProducts);
+        $order->updateOrderproductsTmpcost();
+        $order->updateOrderproductsSharecost();
+
+        $this->succsessMessage ? session()->put('success', 'محصولات افزوده شده: <br>'.$this->succsessMessage) : null;
+        $this->unSuccsessMessage ? session()->put('unsuccess',
+            'افزودن محصولات زیر با خطا مواجه شد: <br>'.$this->unSuccsessMessage) : null;
+        $response = [
+            'success' => $successMessage,
+            'unsuccess' => $unSuccessMessage
+        ];
+
+        return response()->json($response);
+    }
+
+    public function add4kToArashOrder(Request $request, Product $product)
+    {
+        $user = $request->user();
+        if ($this->searchProductInUserAssetsCollection($product, $user)) {
+            return response()->json(['message' => 'شما قبلا آزمون را خریداری کرده اید'], 200);
+        }
+
+        if (!($order = OrderRepo::generalOrderSelectionWithUser(Product::ARASH_PRODUCTS_ARRAY, [$user->id])->first())) {
+            return response()->json(['message' => 'شما آرش خریداری نکرده اید'], 200);
+        }
+
+        $price = $product->price;
+
+        OrderproductRepo::createGiftOrderproduct($order->getKey(), $product->getKey(), $price['base']);
+
+        CacheFlush::flushAssetCache($user);
+
+        return response()->json(['successMessage' => 'آزمون مورد نظر به شما اهدا شد'], 200);
+    }
+
+    public function upgrade(Request $request)
+    {
+        $orders = $request->user()->orders()->paidAndClosed()->with('orderproducts.product.upgrade')->whereHas('orderproducts.product.upgrade')->get();
+        $transformProducts = $orders->pluck('orderproducts')->flatten()->pluck('product')->flatten()->pluck('upgrade')->flatten();
+        $newOrder = $request->user()->getOpenOrderOrCreate()->load('orderproducts');
+        $existProductInOrder = $newOrder->orderproducts()->with('product')->get();
+        foreach ($transformProducts as $transformProduct) {
+            if (!$existProductInOrder->contains('product.id', $transformProduct->id)) {
+                OrderproductRepo::createBasicOrderproduct($newOrder->id, $transformProduct->id,
+                    $transformProduct->basePrice);
+            }
+        }
+        return response()->json(['message' => 'Upgrade successful'], 200);
+    }
 }
 

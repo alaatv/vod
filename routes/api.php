@@ -896,4 +896,12 @@ Route::get('orders', [UserController::class, 'userOrders'])->name('api.user.orde
 Route::post('update/partialInfo',
     [UserController::class, 'partialUpdate'])->name('api.user.update.partial');
 
+//Order
+Route::group(['prefix' => 'order'], function () {
+    Route::post('detachorderproduct', [OrderController::class, 'detachOrderproduct']);
+    Route::post('addOrderproduct/{product}', [OrderController::class, 'addOrderproduct']);
+    Route::post('addProducts/{order}', [OrderController::class, 'addProducts'])->name('api.order.add.products');
+    Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
+    Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
+});
 
