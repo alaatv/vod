@@ -66,6 +66,7 @@ use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\FaqPageController;
 use App\Http\Controllers\Api\FavorableController;
 use App\Http\Controllers\Api\FavorableListController;
+use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\FirebasetokenController;
 use App\Http\Controllers\Api\FormBuilder;
 use App\Http\Controllers\Api\ForrestController;
