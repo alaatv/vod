@@ -943,5 +943,15 @@ Route::group(['prefix' => 'attribute'], function () {
     Route::get('{attribute}/attribute-value', [
         AttributevalueController::class, 'attributeAttributeValueIndex'
     ])->name('api.attribute.attributevalue.index');
+});
 
+//Website Setting
+Route::group(['prefix' => 'websiteSetting'], function () {
+    Route::get('{Websitesetting}/showFaq', [WebsiteSettingController::class, 'showFaq'])->name('api.setting.faq.show');
+    Route::post('{Websitesetting}/updateFaq',
+        [WebsiteSettingController::class, 'updateFaq'])->name('api.setting.faq.update');
+    Route::get('{Websitesetting}/editFaq/{faqId}',
+        [WebsiteSettingController::class, 'editFaq'])->name('api.setting.faq.edit');
+    Route::delete('{Websitesetting}/deleteFaq/{faqId}',
+        [WebsiteSettingController::class, 'destroyFaq'])->name('api.setting.faq.delete');
 });
