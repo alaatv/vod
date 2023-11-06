@@ -86,6 +86,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderproductController;
 use App\Http\Controllers\Api\PaymentStatusController;
 use App\Http\Controllers\Api\PaymentVerifierController;
+use App\Http\Controllers\Api\PeriodDescriptionController;
 use App\Http\Controllers\Api\PhoneController;
 use App\Http\Controllers\Api\PhoneNumberController;
 use App\Http\Controllers\Api\PlanController;
