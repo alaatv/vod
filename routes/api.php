@@ -1011,3 +1011,7 @@ Route::resource('phonebook', PhoneBookController::class)->only(['index', 'store'
 
 // phonenumber
 Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'store']);
+
+//List Pending Description
+Route::get('listPendingDescriptionContents',
+    [ContentController::class, 'indexPendingDescriptionContent'])->name('web.c.list.pending.description.content');

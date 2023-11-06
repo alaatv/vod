@@ -327,4 +327,11 @@ class ContentController extends Controller
 
         return $this->makeThumbnailFile($fileName);
     }
+
+    public function indexPendingDescriptionContent(Request $request): JsonResponse
+    {
+        $contents = Content::whereNotNull('tmp_description')->paginate(10, ['*']);
+
+        return response()->json(['contents' => $contents]);
+    }
 }
