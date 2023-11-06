@@ -100,6 +100,7 @@ use App\Http\Controllers\Api\ReferralCodesController;
 use App\Http\Controllers\Api\RulesPageController;
 use App\Http\Controllers\Api\SalesManController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\SetController;
 use App\Http\Controllers\Api\ShahrController;
