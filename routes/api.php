@@ -76,6 +76,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\IndexPageController;
 use App\Http\Controllers\Api\LandingPageController;
 use App\Http\Controllers\Api\LiveConductorController;
+use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\LiveDescriptionController;
 use App\Http\Controllers\Api\MapDetailController;
 use App\Http\Controllers\Api\MobileVerificationController;
@@ -1014,4 +1015,8 @@ Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'st
 
 //List Pending Description
 Route::get('listPendingDescriptionContents',
-    [ContentController::class, 'indexPendingDescriptionContent'])->name('web.c.list.pending.description.content');
+    [ContentController::class, 'indexPendingDescriptionContent'])->name('api.c.list.pending.description.content');
+
+//Live
+Route::post('startlive', [LiveController::class, 'startLive'])->name('api.start.live');
+Route::post('endlive', [LiveController::class, 'endLive'])->name('api.end.live');
