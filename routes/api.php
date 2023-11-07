@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\Admin\TransactionController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\VoipController;
 use App\Http\Controllers\Api\Admin\VoucherManagementController;
+use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AppVersionController;
 use App\Http\Controllers\Api\AttributegroupController;
 use App\Http\Controllers\Api\AttributevalueController;
@@ -1060,5 +1061,9 @@ Route::group(['prefix' => '/ajax'], routes: function () {
             OrderproductController::class, 'batchExtend'
         ])->name('api.ajax.orderproduct.batchExtend');
     });
+});
 
+//Analytics
+Route::group(['prefix' => 'analytics'], function () {
+    Route::get('/abrisham', [AnalyticsController::class, 'abrisham'])->name('api.analytics.abrisham');
 });
