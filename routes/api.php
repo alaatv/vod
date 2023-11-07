@@ -1039,9 +1039,26 @@ Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.s
 
 //Vast
 Route::resource('vast', '\\'.VastController::class)->except('index');
-Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'web.vasts'])->only([
+Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'api.vasts'])->only([
     'index', 'destroy', 'store'
 ]);
-Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'web.vasts'])->only([
+Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'api.vasts'])->only([
     'index', 'store', 'destroy'
 ]);
+
+//News Letter
+Route::resource('newsletter', '\\'.NewsletterController::class)->only(['store']);
+
+//Ajax
+Route::group(['prefix' => '/ajax'], routes: function () {
+
+    Route::group(['prefix' => 'orderproduct'], function () {
+        Route::post('batchExtensionRequest', [
+            OrderproductController::class, 'batchExtensionRequest'
+        ])->name('api.ajax.orderproduct.batchExtensionRequest');
+        Route::post('batchExtend', [
+            OrderproductController::class, 'batchExtend'
+        ])->name('api.ajax.orderproduct.batchExtend');
+    });
+
+});
