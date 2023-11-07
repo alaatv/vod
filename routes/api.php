@@ -126,6 +126,8 @@ use App\Http\Controllers\Api\TimepointController;
 use App\Http\Controllers\Api\UploadCenterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UseruploadController;
+use App\Http\Controllers\Api\VastContentController;
+use App\Http\Controllers\Api\VastController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WatchHistoryController;
@@ -1034,3 +1036,12 @@ Route::get('sms/{sms}/resend-bulk-sms',
 Route::post('adminSendSMS', [SmsController::class, 'sendSMS'])->name('api.sendSmsendSms');
 Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
 Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
+
+//Vast
+Route::resource('vast', '\\'.VastController::class)->except('index');
+Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'web.vasts'])->only([
+    'index', 'destroy', 'store'
+]);
+Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'web.vasts'])->only([
+    'index', 'store', 'destroy'
+]);
