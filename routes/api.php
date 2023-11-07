@@ -920,10 +920,10 @@ Route::group(['prefix' => 'order'], function () {
     Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
     Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
 });
-Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');#TODO:// add route
+Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');
 Route::post('/free', [
     OrderController::class, 'storeFree'
-])->name('api.ajax.order.store.free');#TODO:// add route
+])->name('api.ajax.order.store.free');
 
 
 //Product

@@ -43,9 +43,11 @@ use App\Models\Product;
 use App\Models\Region;
 use App\Models\Relative;
 use App\Models\Shahr;
+use App\Models\SmsUser;
 use App\Models\User;
 use App\Repositories\GradeRepo;
 use App\Repositories\MajorRepo;
+use App\Repositories\OrderproductRepo;
 use App\Repositories\OrderRepo;
 use App\Repositories\ProductRepository;
 use App\Services\OrderService;
@@ -1031,4 +1033,40 @@ class UserController extends Controller
         ]);
     }
 
+    public function smsIndex(Request $request, User $user)
+    {
+        return SmsUser::with(['user', 'sms'])
+            ->whereHas('sms', function ($q) use ($user) {
+                $q->where('from_user_id', $user->id);
+            })
+            ->orWhere('user_id', $user->id)
+            ->get();
+    }
+
+    public function couponOrder(Request $request)
+    {
+        $user = $request->user();
+        $couponProduct = Product::find(Product::COUPON_PRODUCT);
+
+        $couponOrder = OrderRepo::findCouponOrder($user->id, $couponProduct->id);
+
+        $cost = $couponProduct->price;
+        $cost = $cost['final'];
+        if (isset($couponOrder)) {
+            return response()->json([
+                'message' => 'Coupon order found',
+                'data' => $couponOrder
+            ]);
+        }
+        $couponOrder = OrderRepo::createBasicCompletedOrder($user->id, config('constants.PAYMENT_STATUS_UNPAID'),
+            $cost);
+        if (isset($couponOrder)) {
+            OrderproductRepo::createBasicOrderproduct($couponOrder->id, Product::COUPON_PRODUCT, $cost, $cost);
+        }
+
+        return response()->json([
+            'message' => 'Coupon order created successfully',
+            'data' => $couponOrder
+        ]);
+    }
 }
