@@ -7,6 +7,7 @@ use App\Http\Resources\User as UserResource;
 use App\Models\Content;
 use App\Models\Product;
 use App\Models\User;
+use App\Notifications\sendLink;
 use App\Repositories\SubscriptionRepo;
 use App\Traits\CharacterCommon;
 use App\Traits\DateTrait;
@@ -14,6 +15,7 @@ use App\Traits\Helper;
 use App\Traits\User\AssetTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
@@ -108,5 +110,32 @@ class HomeController extends Controller
     public function phpPing(Request $request)
     {
         echo 'PONG!';
+    }
+
+    public function smsLink(Request $request)
+    {
+        $user = User::Find($request->get('employee_id'));
+        if (is_null($user)) {
+            return response()->json([
+                'error' => [
+                    'message' => 'کاربر مورد نظر یافت نشد',
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $link = $request->get('link');
+        if (is_null($link)) {
+            return response()->json([
+                'error' => [
+                    'message' => 'ارسال لینک الزامی است',
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $user->notify(new sendLink($link));
+
+        return response()->json([
+            'message' => 'پیامک با موفقیت ارسال شد',
+        ]);
     }
 }

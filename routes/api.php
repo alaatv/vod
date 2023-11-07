@@ -109,6 +109,7 @@ use App\Http\Controllers\Api\SetController;
 use App\Http\Controllers\Api\ShahrController;
 use App\Http\Controllers\Api\ShopPageController;
 use App\Http\Controllers\Api\SmsController;
+use App\Http\Controllers\Api\SmsUserController;
 use App\Http\Controllers\Api\SourceController;
 use App\Http\Controllers\Api\StudyEventController;
 use App\Http\Controllers\Api\StudyEventReportController;
@@ -919,6 +920,11 @@ Route::group(['prefix' => 'order'], function () {
     Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
     Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
 });
+Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');#TODO:// add route
+Route::post('/free', [
+    OrderController::class, 'storeFree'
+])->name('api.ajax.order.store.free');#TODO:// add route
+
 
 //Product
 Route::group(['prefix' => 'product'], function () {
@@ -1020,3 +1026,11 @@ Route::get('listPendingDescriptionContents',
 //Live
 Route::post('startlive', [LiveController::class, 'startLive'])->name('api.start.live');
 Route::post('endlive', [LiveController::class, 'endLive'])->name('api.end.live');
+
+//SMS
+Route::post('smsLink', [HomeController::class, 'smsLink'])->name('api.sms.link');
+Route::get('sms/{sms}/resend-bulk-sms',
+    [SmsController::class, 'resendUnsuccessfulBulkSms'])->name('resend.unsuccessful.bulk.sms');
+Route::post('adminSendSMS', [SmsController::class, 'sendSMS'])->name('api.sendSmsendSms');
+Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
+Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
