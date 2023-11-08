@@ -54,6 +54,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\ContentStatusController;
+use App\Http\Controllers\Api\DanaController;
 use App\Http\Controllers\Api\DashboardPageController;
 use App\Http\Controllers\Api\DashboardPageV2Controller;
 use App\Http\Controllers\Api\DonateController;
@@ -1067,3 +1068,6 @@ Route::group(['prefix' => '/ajax'], routes: function () {
 Route::group(['prefix' => 'analytics'], function () {
     Route::get('/abrisham', [AnalyticsController::class, 'abrisham'])->name('api.analytics.abrisham');
 });
+
+//Dana Check Token
+Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('web.checkDanaToken');
