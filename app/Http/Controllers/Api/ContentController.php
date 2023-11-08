@@ -4,23 +4,34 @@ namespace App\Http\Controllers\Api;
 
 use App\Classes\Updater\TextBuilderUpdater;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CopyTimepointsRequest;
 use App\Http\Requests\ContentBulkEditStatusesRequest;
 use App\Http\Requests\ContentBulkEditTagsRequest;
 use App\Http\Requests\ContentBulkEditTextRequest;
+use App\Http\Requests\UpdateContentSetRequest;
 use App\Http\Resources\Content as ContentResource;
 use App\Http\Resources\ProductIndex;
 use App\Models\Content;
+use App\Models\Contentset;
+use App\Models\Contenttype;
+use App\Models\DanaContentTransfer;
+use App\Models\DanaProductContentTransfer;
+use App\Models\DanaProductTransfer;
+use App\Models\Product;
+use App\Models\Timepoint;
+use App\Models\User;
 use App\Traits\Content\ContentControllerResponseTrait;
 use App\Traits\RequestCommon;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use Validator;
 
 class ContentController extends Controller
 {
@@ -333,5 +344,170 @@ class ContentController extends Controller
         $contents = Content::whereNotNull('tmp_description')->paginate(10, ['*']);
 
         return response()->json(['contents' => $contents]);
+    }
+
+    public function transferToDanaInfo($contentId)
+    {
+        $danaContents = DanaProductContentTransfer::where('educationalcontent_id', $contentId)->get();
+        $insertType = 2;
+
+        if ($danaContents->isEmpty()) {
+            $danaContents = DanaContentTransfer::where('educationalcontent_id', $contentId)->get();
+            $insertType = 1;
+        }
+
+        if ($danaContents->isEmpty()) {
+            return response()->json(['error' => 'محتوا یافت نشد'], 404);
+        }
+
+        return response()->json(['danaContents' => $danaContents, 'insertType' => $insertType]);
+    }
+
+    public function copyTimepoints(CopyTimepointsRequest $request, Content $destinationContent)
+    {
+        $contentId = $request->input('content_id');
+        $sourceContent = Content::find($contentId);
+        $insertorId = $request->user()?->id;
+
+        try {
+            foreach ($sourceContent->timepoints as $timepoint) {
+                $title = $timepoint->title;
+                $time = $timepoint->time;
+                $photo = $timepoint->photo;
+
+                Timepoint::withTrashed()->updateOrCreate(
+                    [
+                        'insertor_id' => $insertorId,
+                        'content_id' => $destinationContent->id,
+                        'title' => $title,
+                    ],
+                    ['time' => $time, 'photo' => $photo]
+                )->restore();
+            }
+        } catch (QueryException $e) {
+            return response()->json(['error' => 'کپی زمانکوب ها با خطا مواجه شد'], 500);
+        }
+
+        Cache::tags(['content_'.$destinationContent->id, 'content_'.$destinationContent->id.'_timepoints'])->flush();
+        return response()->json(['success' => 'کپی زمانکوب ها با موفقیت انجام شد']);
+    }
+
+    public function updateSet(UpdateContentSetRequest $request, Content $content)
+    {
+        $newContetnsetId = $request->get('newContetnsetId');
+        $newFileFullName = $request->get('newFileFullName');
+        $contentTypeId = $content->contenttype_id;
+        $contentsetId = $content->contentset_id;
+
+        if ($newContetnsetId != $content->contentset_id) {
+            $contentsetId = $newContetnsetId;
+        }
+
+        if (!isset($newFileFullName)) {
+            $newFileFullName = basename(optional(optional($content->file_for_admin[$content->contenttype->name])->first())->fileName);
+        }
+
+        // Get the video qualities from the content
+        $qualities = [];
+        foreach ($content->getVideos() as $video) {
+            $qualities[$video->res] = '1';
+        }
+        // Setting default qualities, considering 720p, 480p, and 240p
+        $qualities = ['720p' => '1', '480p' => '1', '240p' => '1'];
+
+        // Make the files array
+        $files = $this->makeContentFilesArray($contentTypeId, $contentsetId, $newFileFullName, $content->isFree,
+            $qualities);
+
+        if ($content->contenttype_id !== Content::CONTENT_TYPE_PAMPHLET) {
+            $thumbnailFileName = pathinfo(parse_url($newFileFullName)['path'], PATHINFO_FILENAME).'.jpg';
+            $thumbnail = $this->makeContentThumbnailStd($contentsetId, $thumbnailFileName);
+            if (isset($thumbnail)) {
+                $content->thumbnail = $thumbnail;
+            }
+        }
+
+        if (!empty($files)) {
+            $content->file = $this->makeFilesCollection($files);
+        }
+
+        // Flush the cache for the relevant tags
+        Cache::tags([
+            'content_'.$content->id,
+            'set_'.$newContetnsetId,
+            'set_'.$content->contentset_id,
+        ])->flush();
+
+        $content->contentset_id = $contentsetId;
+
+        if ($content->update()) {
+            return response()->json(['success' => 'تغییر نام با موفقیت انجام شد']);
+        } else {
+            return response()->json(['error' => 'خطا در اصلاح ست'], 500);
+        }
+    }
+
+    public function uploadContent(Request $request)
+    {
+        $rootContentTypes = Contenttype::getRootContentType();
+        $contentsets = Contentset::latest()->pluck('name', 'id');
+        $authors = User::getTeachers()->pluck('full_name', 'id');
+
+        return response()->json([
+            'rootContentTypes' => $rootContentTypes,
+            'contentsets' => $contentsets,
+            'authors' => $authors
+        ], 200);
+    }
+
+    public function createArticle(Request $request)
+    {
+        $contenttypes = [8 => 'فیلم', 1 => 'جزوه'];
+
+        $setId = $request->get('set');
+        $set = Contentset::find($setId);
+        $lastContent = null;
+
+        if (isset($set)) {
+            $lastContent = $set->getLastContent();
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'lastContent' => $lastContent,
+                    'set' => $set,
+                ], 200);
+            }
+        } elseif (isset($setId)) {
+            return response()->json(['error' => 'ست مورد نظر شما یافت نشد'], 404);
+        }
+
+        return response()->json([
+            'contenttypes' => $contenttypes,
+            'lastContent' => $lastContent
+        ], 200);
+    }
+
+    public function transferToDana(Request $request, Content $content)
+    {
+        if (!$content->isActive()) {
+            return response()->json(['error' => 'نمی توانید کانتنت غیرفعال را منتقل کنید'], 400);
+        }
+
+        if (!is_null($content->redirectUrl)) {
+            return response()->json(['error' => 'نمی توانید کانتنت ریدایرکت شده را منتقل کنید'], 400);
+        }
+
+        $setProductIds = $content?->set->products->pluck('id');
+        $foriatIds = array_merge(Product::ALL_FORIYAT_110_PRODUCTS, [Product::ARASH_TETA_SHIMI, Product::TETA_ADABIAT]);
+        $productIntersect = $setProductIds->intersect($foriatIds)->all();
+
+        if (!empty($productIntersect)) {
+            return $this->transferToDanaTypeOne($content);
+        } else {
+            if (!DanaProductTransfer::whereIn('product_id', $setProductIds->toArray())->where('insert_type',
+                2)->exists()) {
+                return response()->json(['error' => 'برای ست این محتوا دوره ای ایجاد نشده است'], 404);
+            }
+            return $this->transferToDanaTypeTwo($content);
+        }
     }
 }

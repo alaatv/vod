@@ -1094,3 +1094,16 @@ Route::group(['prefix' => 'set'], function () {
         [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
 });
 Route::post('set/bulk-activate', [SetController::class, 'bulkActivate'])->name('set.bulk-activate');
+
+//Content
+Route::group(['prefix' => 'c'], function () {
+    Route::get('uploadContent', [ContentController::class, 'uploadContent'])->name('c.upload.content');
+    Route::get('createArticle', [ContentController::class, 'createArticle'])->name('c.create.article');
+    Route::post('updateTmpDescription',
+        [ContentController::class, 'createArticle'])->name('c.update.pending.description');
+    Route::post('{c}/updateSet', [ContentController::class, 'updateSet'])->name('c.updateSet');
+    Route::post('{c}/copyTmp', [ContentController::class, 'copyTimepoints'])->name('c.copyTmp');
+    Route::get('{c}/transferToDana', [ContentController::class, 'transferToDana'])->name('c.transferToDana');
+    Route::get('{contentId}/transfer-to-dana-info',
+        [ContentController::class, 'transferToDanaInfo'])->name('c.transferToDanaInfo');
+});
