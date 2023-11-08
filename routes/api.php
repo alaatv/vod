@@ -1083,3 +1083,14 @@ Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name(
 
 //map
 Route::get('map', '\\'.MapPageController::class)->name('api.map');
+
+//Set
+Route::group(['prefix' => 'set'], function () {
+    Route::get('{set}/list/links', [SetController::class, 'indexContentLinks'])->name('api.set.list.links');
+    Route::get('{set}/list', [SetController::class, 'indexContent'])->name('api.set.list.contents');
+    Route::get('{set}/transferToDana', [SetController::class, 'transferToDana'])->name('api.set.transferToDana');
+    Route::post('{set}/products', [SetController::class, 'toggleProductForSet'])->name('api.set.toggleProductForSet');
+    Route::get('{setId}/transfer-to-dana-info',
+        [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
+});
+Route::post('set/bulk-activate', [SetController::class, 'bulkActivate'])->name('set.bulk-activate');
