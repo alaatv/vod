@@ -81,6 +81,7 @@ use App\Http\Controllers\Api\LiveConductorController;
 use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\LiveDescriptionController;
 use App\Http\Controllers\Api\MapDetailController;
+use App\Http\Controllers\Api\MapPageController;
 use App\Http\Controllers\Api\MobileVerificationController;
 use App\Http\Controllers\Api\NetworkMarketingController;
 use App\Http\Controllers\Api\NewsletterController;
@@ -1062,6 +1063,14 @@ Route::group(['prefix' => '/ajax'], routes: function () {
             OrderproductController::class, 'batchExtend'
         ])->name('api.ajax.orderproduct.batchExtend');
     });
+    Route::group(['prefix' => 'product'], function () {
+        Route::post('{product}/attachRelation', [
+            AdminProductController::class, 'attachRelation'
+        ])->name('web.ajax.product.attach.relation');
+        Route::delete('{product}/detachRelation', [
+            AdminProductController::class, 'detachRelation'
+        ])->name('web.ajax.product.detach.relation');
+    });
 });
 
 //Analytics
@@ -1070,4 +1079,7 @@ Route::group(['prefix' => 'analytics'], function () {
 });
 
 //Dana Check Token
-Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('web.checkDanaToken');
+Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('api.checkDanaToken');
+
+//map
+Route::get('map', '\\'.MapPageController::class)->name('api.map');
