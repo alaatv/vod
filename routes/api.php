@@ -58,6 +58,7 @@ use App\Http\Controllers\Api\DanaController;
 use App\Http\Controllers\Api\DashboardPageController;
 use App\Http\Controllers\Api\DashboardPageV2Controller;
 use App\Http\Controllers\Api\DonateController;
+use App\Http\Controllers\Api\DraftController;
 use App\Http\Controllers\Api\EmployeetimesheetController;
 use App\Http\Controllers\Api\EntekhabReshteController;
 use App\Http\Controllers\Api\EventController;
@@ -837,7 +838,12 @@ Route::post('marketing-report', [UserController::class, 'marketingReport'])->nam
 Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
 Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
 Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('api.groupRegistration');
-
+Route::resource('draft', '\\'.DraftController::class);
+Route::any('goToPaymentRoute/{paymentMethod}/{device}/',
+    '\\'.RedirectAPIUserToPaymentRoute::class)->name('redirectToPaymentRoute');#TODO:// add route
+Route::any('user/editProfile/android/{data}',
+    [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');#TODO:// add route
+Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');#TODO:// add route
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
 Route::get('studyevent/{studyevent}/plansOfDate',
@@ -1107,3 +1113,4 @@ Route::group(['prefix' => 'c'], function () {
     Route::get('{contentId}/transfer-to-dana-info',
         [ContentController::class, 'transferToDanaInfo'])->name('c.transferToDanaInfo');
 });
+
