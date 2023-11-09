@@ -6,6 +6,7 @@ use App\Classes\Search\UserUpdateProvinceCitySearch;
 use App\Classes\SEO\SeoDummyTags;
 use App\Classes\Uploader\Uploader;
 use App\Classes\UserFavored;
+use App\Events\Authenticated;
 use App\Exports\DefaultClassExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditOrderRequest;
@@ -64,6 +65,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -1068,5 +1070,30 @@ class UserController extends Controller
             'message' => 'Coupon order created successfully',
             'data' => $couponOrder
         ]);
+    }
+
+    public function redirectToProfile(Request $request, $data)
+    {
+        $decryptedData = (array) decrypt($data);
+
+        $userId = Arr::get($decryptedData, 'user_id');
+
+        $user = $this->getUser($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 400);
+        }
+
+        Auth::login($user);
+        event(new Authenticated($user));
+
+        $redirectUrl = route('web.user.profile');
+
+        $data = [
+            'message' => 'Redirecting to user profile',
+            'redirectUrl' => $redirectUrl,
+        ];
+
+        return response()->json($data, 200);
     }
 }

@@ -842,10 +842,10 @@ Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOr
 Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('api.groupRegistration');
 Route::resource('draft', '\\'.DraftController::class);
 Route::any('goToPaymentRoute/{paymentMethod}/{device}/',
-    '\\'.RedirectAPIUserToPaymentRoute::class)->name('redirectToPaymentRoute');#TODO:// add route
+    '\\'.RedirectAPIUserToPaymentRoute::class)->name('redirectToPaymentRoute');
 Route::any('user/editProfile/android/{data}',
-    [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');#TODO:// add route
-Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');#TODO:// add route
+    [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');
+Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');
 //Study Event
 Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
 Route::get('studyevent/{studyevent}/plansOfDate',
