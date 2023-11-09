@@ -133,12 +133,14 @@ use App\Http\Controllers\Api\UseruploadController;
 use App\Http\Controllers\Api\VastContentController;
 use App\Http\Controllers\Api\VastController;
 use App\Http\Controllers\Api\VoucherController;
+use App\Http\Controllers\Api\VoucherPageController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WatchHistoryController;
 use App\Http\Controllers\Api\WebsiteSettingController;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RolePermissionController;
+use App\PaymentModule\Controllers\RedirectAPIUserToPaymentRoute;
 use App\PaymentModule\Controllers\RedirectUserToPaymentPage;
 use Illuminate\Support\Facades\Route;
 
