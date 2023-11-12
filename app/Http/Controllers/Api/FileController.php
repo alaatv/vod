@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InsertFileRequest;
 use App\Models\File;
+use Illuminate\Http\Response;
 
 class FileController extends Controller
 {

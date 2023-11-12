@@ -132,6 +132,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UseruploadController;
 use App\Http\Controllers\Api\VastContentController;
 use App\Http\Controllers\Api\VastController;
+use App\Http\Controllers\Api\VastSetController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\VoucherPageController;
 use App\Http\Controllers\Api\WalletController;

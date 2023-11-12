@@ -83,7 +83,7 @@ class Eventresult extends BaseModel
         }
 
         return Uploader::url(config('disks.EVENT_RESULT_MINIO_TEMP'), $this->reportFile);
-        return Uploader::privateUrl(config('disks.EVENT_RESULT_MINIO'), 600, $this, $this->reportFile);
+//        return Uploader::privateUrl(config('disks.EVENT_RESULT_MINIO'), 600, $this, $this->reportFile);
 //        return Uploader::privateUrl(config('disks.EVENT_RESULT_MINIO'), 600, $this, $this->reportFile);
     }
 }

@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Traits\CharacterCommon;
 use App\Traits\RedirectTrait;
 use App\Traits\UserCommon;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,7 +20,6 @@ class LoginController extends Controller
     use CharacterCommon;
     use RedirectTrait;
     use UserCommon;
-    use AuthenticatesUsers;
 
     public function __construct()
     {

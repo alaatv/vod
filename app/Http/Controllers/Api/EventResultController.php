@@ -98,9 +98,9 @@ class EventResultController extends Controller
         return $userDetails;
     }
 
-    public function show(Eventresult $eventResult): EventResultResource
+    public function show(Eventresult $eventresult): EventResultResource
     {
-        return new EventResultResource($eventResult);
+        return new EventResultResource($eventresult);
     }
 
     public function getInfoByEvent(Request $request, Event $event)
