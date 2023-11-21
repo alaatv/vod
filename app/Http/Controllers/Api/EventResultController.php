@@ -106,6 +106,7 @@ class EventResultController extends Controller
     public function getInfoByEvent(Request $request, Event $event)
     {
         $authUser = $request->user();
+//        return $authUser;
         if ($request->has('user_id')) {
             if ($authUser?->isAbleTo(config('constants.GET_EVENTRESULT_ACCESS'))) {
                 $userId = $request->input('user_id');

@@ -1189,7 +1189,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         if (!is_null($this->is_favored_cache)) {
             return $this->is_favored_cache;
         }
-        $authUser = auth('alaatv')->user();
+        $authUser = auth()->user();
         if (!isset($authUser)) {
             return false;
         }
@@ -1806,7 +1806,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getCanUserUseTimepointAttribute()
     {
-        $user = auth('alaatv')->check() ? auth('alaatv')->user() : null;
+        $user = auth()->check() ? auth()->user() : null;
         $canUseTimePoint = false;
         if (!$this->isFree) {
             $canUseTimePoint = true;

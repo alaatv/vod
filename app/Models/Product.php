@@ -3220,7 +3220,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getIsFavoredAttribute()
     {
-        $authUser = auth('alaatv')->user();
+        $authUser = auth()->user();
         if (!isset($authUser)) {
             return false;
         }
@@ -3322,7 +3322,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getIsPurchasedAttribute(): bool
     {
-        $authUser = auth('alaatv')->user();
+        $authUser = auth()->user();
         if (!isset($authUser)) {
             return false;
         }
@@ -3336,7 +3336,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getIsOrderedAttribute(): bool
     {
-        $authUser = auth('alaatv')->user();
+        $authUser = auth()->user();
         if (!isset($authUser)) {
             return false;
         }

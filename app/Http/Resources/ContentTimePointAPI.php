@@ -23,7 +23,7 @@ class ContentTimePointAPI extends AlaaJsonResource
     {
         $isFavored = $this->isFavored;
         if (is_null($isFavored)) {
-            $isFavored = auth('alaatv')->check() ? auth('alaatv')->user()->hasFavoredTimepoint($this->resource) : false;
+            $isFavored = auth()->check() ? auth()->user()->hasFavoredTimepoint($this->resource) : false;
         }
 
         return [

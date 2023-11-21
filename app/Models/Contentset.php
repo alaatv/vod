@@ -705,7 +705,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
 
     public function getIsFavoredAttribute()
     {
-        $authUser = auth('alaatv')->user();
+        $authUser = auth()->user();
         if (!isset($authUser)) {
             return false;
         }
