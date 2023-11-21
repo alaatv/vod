@@ -142,7 +142,6 @@ class Order extends BaseModel implements GiveGift
         'jalaliCompletedAt',
         'postingInfo',
         'managerComment',
-        'cacheClearUrl',
     ];
     protected $hidden = [
         'id',
@@ -1428,7 +1427,6 @@ class Order extends BaseModel implements GiveGift
                     'school',
                     'info',
                     'userstatus',
-                    'cacheClearUrl'
                 ];
 
                 if (hasAuthenticatedUserPermission(config('constants.SHOW_USER_MOBILE'))) {

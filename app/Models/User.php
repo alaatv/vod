@@ -107,7 +107,6 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 //        'totalBonNumber',
         'jalaliCreatedAt',
         'jalaliUpdatedAt',
-        'cacheClearUrl',
         'fatherMobile',
         'motherMobile',
     ];

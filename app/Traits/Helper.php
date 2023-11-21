@@ -14,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use ReflectionClass;
 
 
 trait Helper
@@ -60,17 +59,6 @@ trait Helper
         $this->timestamps = true;
 
         return $flag;
-    }
-
-    public function getCacheClearUrlAttribute(): ?string
-    {
-        if (!auth()->check() || !auth()->user()->isAbleTo(config('constants.ENTITY_CACHE_CLEAR_ACCESS'))) {
-            return null;
-        }
-
-        $className = (new ReflectionClass($this))->getShortName();
-        $className = strtolower($className);
-        return route('web.admin.cacheclear', ["$className" => 1, 'id' => $this->id]);
     }
 
     public function medianaHumanReadableResponse($response): JsonResponse
