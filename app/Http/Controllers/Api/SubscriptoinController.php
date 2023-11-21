@@ -26,7 +26,7 @@ class SubscriptoinController extends Controller
     {
         return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'مهلت ثبت نام تمام شده است');
 
-        $user = $request->user('alaatv');
+        $user = $request->user();
         try {
             $subscription = SubscriptionRepo::createSubscription($user->id, Event::ARASH_PUBLISH_EVENT_ID);
         } catch (QueryException $e) {

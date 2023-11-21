@@ -43,7 +43,7 @@ class FavorableController extends Controller
         MarkFavorableFavoriteRequest $request,
         FavorableInterface $favorable
     ): JsonResponse {
-        $user = $request->user('alaatv');
+        $user = $request->user();
         if ($request->has('favorable_list_id')) {
             $favorableList = FavorableList::find($request->input('favorable_list_id'));
             if (!Gate::allows('show-update-delete-favorable-list', $favorableList)) {
@@ -65,7 +65,7 @@ class FavorableController extends Controller
 
     public function markUnFavorableFavorite(Request $request, FavorableInterface $favorable): JsonResponse
     {
-        $user = $request->user('alaatv');
+        $user = $request->user();
         $favorable->unfavoring($user);
         if ($favorable instanceof Content) {
             UnFavoredContent::dispatch($user, $favorable->times);

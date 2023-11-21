@@ -68,7 +68,7 @@ class OrderproductController extends Controller
         }
         Cache::tags(['order_'.$request->get('order_id')])->flush();
 
-        $user = $request->user('alaatv');
+        $user = $request->user();
         if (!($request->has('extraAttribute') && !$user->isAbleTo(config('constants.ATTACH_EXTRA_ATTRIBUTE_ACCESS')))) {
             $this->new($request->all());
 
@@ -100,7 +100,7 @@ class OrderproductController extends Controller
      */
     public function destroyV2(Request $request, Orderproduct $orderproduct)
     {
-        $authenticatedUser = $request->user('alaatv');
+        $authenticatedUser = $request->user();
         $orderUser = optional(optional($orderproduct)->order)->user;
 
         if ($authenticatedUser->id != $orderUser->id) {

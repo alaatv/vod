@@ -29,7 +29,7 @@ class ContentWithFavoredTimePoints extends AlaaJsonResource
         }
         $this->loadMissing('contenttype', 'section', 'user', 'set');
         $redirectUrl = $this->redirectUrl;
-        $authUser = $request->user('alaatv');
+        $authUser = $request->user();
         if (is_null($authUser)) {
             $authUser = $request->user('api');
         }

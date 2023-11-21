@@ -553,7 +553,7 @@ class OrderController extends Controller
      */
     public function donateOrder(DonateRequest $request)
     {
-        $user = $request->user('alaatv');
+        $user = $request->user();
         $amount = $request->get('amount');
         /** @var OrderCollections $donateOrders */
         $donateOrders = $user->orders->where('orderstatus_id', config('constants.ORDER_STATUS_OPEN_DONATE'));
@@ -606,7 +606,7 @@ class OrderController extends Controller
      */
     public function donateOrderV2(DonateRequest $request)
     {
-        $user = $request->user('alaatv');
+        $user = $request->user();
         if ($user === null) {
             abort(Response::HTTP_FORBIDDEN, 'Not authorized.');
         }

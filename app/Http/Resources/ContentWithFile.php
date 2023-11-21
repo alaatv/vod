@@ -30,7 +30,7 @@ class ContentWithFile extends AlaaJsonResource
 
         $this->loadMissing('contenttype', 'section', 'user', 'set');
         $redirectUrl = $this->redirectUrl;
-        $authUser = $request->user('alaatv');
+        $authUser = $request->user();
         return [
             'id' => $this->id,
             'redirect_url' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'url')),

@@ -126,7 +126,7 @@ class BotsController extends Controller
 
     public function queueExcelInsertion(Request $request)
     {
-        dispatch(new InsertExcel($request->get('data'), $request->user('alaatv')));
+        dispatch(new InsertExcel($request->get('data'), $request->user()));
         return response()->json(['message' => 'درخواست عملیات با موفقیت در صف قرار گرفت']);
     }
 

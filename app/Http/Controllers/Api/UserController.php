@@ -117,7 +117,7 @@ class UserController extends Controller
             $request->offsetUnset('province');
         }
 
-        $authenticatedUser = $request->user('alaatv');
+        $authenticatedUser = $request->user();
         if ($user === null) {
             $user = $authenticatedUser;
         }

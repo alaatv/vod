@@ -228,7 +228,7 @@ class ProductController extends Controller
         $selectedSubProductIds = $request->products;
         $extraAttributeValues = $request->extraAttributeValues;
 
-        $user = $request->user('alaatv');
+        $user = $request->user();
 
         $key =
             'product:refreshPrice::'.$grandProduct->cacheKey()."-user\\".(isset($user) && !is_null($user) ? $user->cacheKey() : '')."-mainAttributeValues\\".(isset($mainAttributeValues) ? implode('',
@@ -340,7 +340,7 @@ class ProductController extends Controller
         $selectedSubProductIds = $request->products;
         $extraAttributeValues = $request->extraAttributeValues;
 
-        $user = $request->user('alaatv');
+        $user = $request->user();
 
         $key =
             'product:refreshPricev2:'.$grandProduct->cacheKey()."-user\\".(isset($user) && !is_null($user) ? $user->cacheKey() : '')."-mainAttributeValues\\".(isset($mainAttributeValues) ? implode('',

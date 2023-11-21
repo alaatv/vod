@@ -254,7 +254,7 @@ class ProductController extends Controller
         $selectedSubProductIds = $request->get('products');
         $extraAttributeValues = $request->get('extraAttributeValues');
 
-        $user = $request->user('alaatv');
+        $user = $request->user();
 
         $key =
             'product:refreshPricev2:'.$grandProduct->cacheKey()."-user\\".(isset($user) && !is_null($user) ? $user->cacheKey() : '')."-mainAttributeValues\\".(isset($mainAttributeValues) ? implode('',

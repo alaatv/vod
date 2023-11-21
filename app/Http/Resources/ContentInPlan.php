@@ -34,7 +34,7 @@ class ContentInPlan extends AlaaJsonResource
             return [];
         }
 
-        $authUser = $request->user('alaatv');
+        $authUser = $request->user();
 
         return [
             'id' => $this->id,
