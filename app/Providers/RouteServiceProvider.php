@@ -77,11 +77,17 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(1000)
                 ->by($request->user()?->id ?: $request->ip());
         });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/crm.php'));
         });
     }
 
