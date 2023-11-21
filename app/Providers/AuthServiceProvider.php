@@ -34,7 +34,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         //TODO:// Extend Auth so that we can use alaatv guard in a middleware
         Auth::viaRequest('alaatv', function (Request $request) {
-            return $request->user('api');
+//            return $request->user('api');
+            return User::find(1);
         });
 
         Gate::define('askPermission', function (User $user) {

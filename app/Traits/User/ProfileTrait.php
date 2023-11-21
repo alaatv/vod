@@ -10,6 +10,10 @@ namespace App\Traits\User;
 
 use App\Models\Afterloginformcontrol;
 use App\Models\Bloodtype;
+use App\Models\Gender;
+use App\Models\Grade;
+use App\Models\Major;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -313,20 +317,6 @@ trait ProfileTrait
         return $value;
     }
 
-    public function getRolesAttribute($value)
-    {
-        $user = $this;
-        $key = 'user:role'.$user->cacheKey();
-        return Cache::tags(['user', 'role', 'user_'.$user->id, 'user_'.$user->id.'_role'])
-            ->remember($key, config('constants.CACHE_600'), function () use ($user) {
-                if (hasAuthenticatedUserPermission(config('constants.SHOW_USER_ROLE'))) {
-                    return $this->roles()->get();
-                }
-
-                return null;
-            });
-    }
-
     public function getTotalBonNumberAttribute($value)
     {
         $user = $this;
@@ -371,32 +361,5 @@ trait ProfileTrait
                 return null;
             });
 
-    }
-
-    public function getEditLinkAttribute()
-    {
-        if (hasAuthenticatedUserPermission(config('constants.EDIT_USER_ACCESS'))) {
-            return action('Web\UserController@edit', $this->id);
-        }
-
-        return null;
-    }
-
-    public function getRemoveLinkAttribute()
-    {
-        if (hasAuthenticatedUserPermission(config('constants.REMOVE_USER_ACCESS'))) {
-            return action('Web\UserController@destroy', $this->id);
-        }
-
-        return null;
-    }
-
-    public function getLogoutUserLinkAttribute()
-    {
-        if (hasAuthenticatedUserRole(config('constants.ROLE_ADMIN'))) {
-            return route('web.bot.logout.user', ['user_id' => $this->id]);
-        }
-
-        return null;
     }
 }

@@ -32,7 +32,6 @@ class SlideshowResource extends AlaaJsonResource
             'url' => $this->when(isset($this->photo), $this->url),
             'allowEdit' => auth()->user()->isAbleTo(config('constants.EDIT_SLIDESHOW_ACCESS')),
             'allowRemove' => auth()->user()->isAbleTo(config('constants.REMOVE_SLIDESHOW_ACCESS')),
-            'edit_link' => route('slideshow.edit', $this->id),
         ];
     }
 }

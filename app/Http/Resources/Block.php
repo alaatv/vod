@@ -56,7 +56,6 @@ class Block extends AlaaJsonResource
             'created_at' => $this->when(isset($this->created_at), function () {
                 return optional($this->created_at)->toDateTimeString();
             }),
-            'edit_link' => route('block.edit', $this->id),
             'channels' => $this->resource->channels()?->without(['blocks'])->get(),
         ];
     }

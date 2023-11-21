@@ -49,16 +49,4 @@ trait Accessors
 
         return $activeSlideshows;
     }
-
-    public function getEditLinkAttribute()
-    {
-//        if (hasAuthenticatedUserPermission(config('constants.EDIT_BLOCK_ACCESS')))
-        return action('Web\BlockController@edit', $this->id);
-    }
-
-    public function getRemoveLinkAttribute()
-    {
-//        if (hasAuthenticatedUserPermission(config('constants.REMOVE_BLOCK_ACCESS')))
-        return action('Web\BlockController@destroy', $this->id);
-    }
 }

@@ -607,12 +607,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
 
     }
 
-    public function getEditLinkAttribute()
-    {
-//        if (hasAuthenticatedUserPermission(config('constants.EDIT_BLOCK_ACCESS')))
-        return action('Web\SetController@edit', $this->id);
-    }
-
     public function getRemoveLinkAttribute()
     {
 //        if (hasAuthenticatedUserPermission(config('constants.REMOVE_BLOCK_ACCESS')))

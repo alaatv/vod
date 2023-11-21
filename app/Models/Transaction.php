@@ -44,8 +44,6 @@ class Transaction extends BaseModel
         'transactiongateway',
         'jalaliCompletedAt',
         'jalaliDeadlineAt',
-        'editLink',
-        'removeLink',
     ];
 
     protected $hidden = [
@@ -327,23 +325,6 @@ class Transaction extends BaseModel
 
                 return null;
             });
-    }
-
-    public function getEditLinkAttribute()
-    {
-        if ($this->id && hasAuthenticatedUserPermission(config('constants.EDIT_TRANSACTION_ACCESS'))) {
-            return action('Web\TransactionController@edit', $this->id);
-        }
-        return null;
-    }
-
-    public function getRemoveLinkAttribute()
-    {
-        if (hasAuthenticatedUserPermission(config('constants.REMOVE_TRANSACTION_ACCESS'))) {
-            return action('Web\TransactionController@destroy', $this->id);
-        }
-
-        return null;
     }
 
     public function getOwnerFullNameAttribute()

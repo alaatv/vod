@@ -3110,22 +3110,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return null;
     }
 
-    /**
-     * @return string
-     */
-    public function getEditLinkAttribute(): string
-    {
-        return route('product.edit', $this->id);
-    }
-
-    public function getRemoveLinkAttribute()
-    {
-        if (hasAuthenticatedUserPermission(config('constants.REMOVE_PRODUCT_ACCESS'))) {
-            return action('Web\ProductController@destroy', $this->id);
-        }
-
-        return null;
-    }
 
     public function getChildrenAttribute()
     {

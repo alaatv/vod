@@ -1601,19 +1601,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     }
 
     /**
-     * @return string
-     */
-    public function getEditLinkAttribute(): string
-    {
-        return route('c.edit', $this->id);
-    }
-
-    public function getRemoveLinkAttribute()
-    {
-        return action('Web\ContentController@destroy', $this->id);
-    }
-
-    /**
      * @return ProductCollection
      */
     public function getRelatedProductsAttribute(): ProductCollection

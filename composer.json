@@ -22,7 +22,6 @@
     "laravel/framework": "^10.10",
     "laravel/horizon": "*",
     "laravel/octane": "*",
-    "laravel/passport": "*",
     "laravel/tinker": "^2.8",
     "league/flysystem-aws-s3-v3": "*",
     "league/flysystem-sftp-v3": "*",

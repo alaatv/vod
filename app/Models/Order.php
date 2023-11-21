@@ -142,8 +142,6 @@ class Order extends BaseModel implements GiveGift
         'jalaliCompletedAt',
         'postingInfo',
         'managerComment',
-        'editLink',
-        'removeLink',
         'cacheClearUrl',
     ];
     protected $hidden = [
@@ -1225,7 +1223,6 @@ class Order extends BaseModel implements GiveGift
                     'transactiongateway',
                     'managerComment',
                     'jalaliCompletedAt',
-                    'editLink',
                 ]);
 
                 return $successfulTransactions;
@@ -1265,7 +1262,6 @@ class Order extends BaseModel implements GiveGift
                     'transactiongateway',
                     'managerComment',
                     'jalaliCompletedAt',
-                    'editLink',
                 ]);
 
                 return $pendingTransaction;
@@ -1303,7 +1299,6 @@ class Order extends BaseModel implements GiveGift
                     'managerComment',
                     'jalaliCompletedAt',
                     'jalaliDeadlineAt',
-                    'editLink',
                 ]);
 
                 return $unpaidTransaction;
@@ -1444,10 +1439,6 @@ class Order extends BaseModel implements GiveGift
                     $visibleColumns = array_merge($visibleColumns, ['email']);
                 }
 
-                if (hasAuthenticatedUserPermission(config('constants.EDIT_USER_ACCESS'))) {
-                    $visibleColumns = array_merge($visibleColumns, ['editLink']);
-                }
-
                 return $order->user()
                     ->first()
                     ->setVisible($visibleColumns);
@@ -1542,13 +1533,6 @@ class Order extends BaseModel implements GiveGift
         return $this->hasMany(Ordermanagercomment::class);
     }
 
-    /**
-     * @return string
-     */
-    public function getEditLinkAttribute(): string
-    {
-        return route('order.edit', $this->id);
-    }
 
     public function getRemoveLinkAttribute()
     {

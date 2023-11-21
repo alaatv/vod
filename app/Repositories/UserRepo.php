@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class UserRepo
 {
     protected const HIDE_APPENDS = [
-        'info', 'full_name', 'userstatus', 'roles', 'jalaliCreatedAt', 'jalaliUpdatedAt', 'editLink', 'removeLink',
-        'cacheClearUrl', 'logoutUserLink'
+        'info', 'full_name', 'userstatus', 'roles', 'jalaliCreatedAt', 'jalaliUpdatedAt', 'removeLink',
+        'cacheClearUrl'
     ];
 
     public static function getSupportEmployees(): Builder

@@ -29,9 +29,4 @@ class Tag extends Model
     {
         $query->where('enable', 1);
     }
-
-    public function getEditLinkAttribute()
-    {
-        return route('tag.edit', $this->id);
-    }
 }

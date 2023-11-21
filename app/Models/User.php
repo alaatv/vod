@@ -17,7 +17,8 @@ use App\Traits\Helper;
 use App\Traits\MinioPhotoHandler;
 use App\Traits\MustVerifyMobileNumberTrait;
 use App\Traits\OrderCommon;
-use App\Traits\User\{BonTrait,
+use App\Traits\User\{AuthTrait,
+    BonTrait,
     DashboardTrait,
     EmployeeTrait,
     FCMTrait,
@@ -46,18 +47,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Passport\HasApiTokens;
 
 class User extends BaseModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, Taggable, MustVerifyMobileNumber, MustVerifyEmail
 {
 
+    use AuthTrait;
     use HasFactory;
     use Authenticatable;
     use Authorizable;
     use CanResetPassword;
     use \Illuminate\Auth\MustVerifyEmail;
     use Yalda1400;
-    use HasApiTokens;
     use MustVerifyMobileNumberTrait;
     use Helper;
     use DateTrait;
@@ -107,10 +107,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 //        'totalBonNumber',
         'jalaliCreatedAt',
         'jalaliUpdatedAt',
-        'editLink',
-        'removeLink',
         'cacheClearUrl',
-        'logoutUserLink',
         'fatherMobile',
         'motherMobile',
     ];

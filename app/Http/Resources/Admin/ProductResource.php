@@ -88,14 +88,6 @@ class ProductResource extends AlaaJsonResource
             'jalaliValidUntil' => $this->when(isset($this->validUntil), $this->jalaliValidUntil),
             'jalaliValidCreatedAt' => $this->when(isset($this->created_at), $this->jalaliCreatedAt),
             'jalaliValidUpdatesAt' => $this->when(isset($this->updated_at), $this->jalaliUpdatedAt),
-            'editLink' => $this->when(hasAuthenticatedUserPermission(config('constants.EDIT_PRODUCT_ACCESS')),
-                function () {
-                    return action('Web\ProductController@edit', $this->id);
-                }),
-            'removeLink' => $this->when(hasAuthenticatedUserPermission(config('constants.REMOVE_PRODUCT_ACCESS')),
-                function () {
-                    return action('Web\ProductController@destroy', $this->id);
-                }),
             'page_view' => $this->when(isset($this->page_view), $this->page_view),
             'product_type' => $this->when(isset($this->producttype_id), function () {
                 return new ProductTypeResource($this->producttype);

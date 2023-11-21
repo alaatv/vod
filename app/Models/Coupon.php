@@ -379,14 +379,6 @@ class Coupon extends BaseModel
         return $this->belongsTo(Discounttype::class);
     }
 
-    /**
-     * @return string
-     */
-    public function getEditLinkAttribute(): string
-    {
-        return route('coupon.edit', $this->id);
-    }
-
     public function getRemoveLinkAttribute(): string
     {
         return action('Web\CouponController@destroy', $this->id);

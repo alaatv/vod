@@ -122,9 +122,4 @@ class TicketDepartment extends BaseModel
 
         return json_decode($value);
     }
-
-    public function getEditLinkAttribute()
-    {
-        return route('ticketDepartment.edit', $this->id);
-    }
 }
