@@ -50,7 +50,6 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read int|null $transactions_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PaymentModule\Wallet\Wallet
  *         wherePendingToReduce($value)
- * @property-read string|null $cache_clear_url
  * @property-read mixed $date_time
  */
 class Wallet extends BaseModel

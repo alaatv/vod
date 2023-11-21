@@ -19,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read string|null $cache_clear_url
  * @property-read mixed $date_time
  * @method static Builder|Afterloginformcontrol newModelQuery()
  * @method static Builder|Afterloginformcontrol newQuery()

@@ -289,7 +289,7 @@ Route::prefix('v2')->group(function () {
         Route::get('majors', [ProductController::class, 'chatrNejatMajors'])->name('majors');
     });
 
-// Set routes
+    // Set routes
     Route::prefix('set')->name('api.v2.set.')->group(function () {
         Route::get('', [SetController::class, 'index'])->name('index');
         Route::get('{set}', [SetController::class, 'showV2'])->name('show');
@@ -350,23 +350,24 @@ Route::prefix('v2')->group(function () {
     });
 
 //=================================== Admin Routes ============================================
-    Route::group(['middleware' => 'auth:api'], function () {
+
+    Route::group(['middleware' => 'auth:api', 'prefix' => 'admin'], function () {
 
         // Admin-Clear Cache
-        Route::get('/admin/cache-clear', '\\'.CacheController::class)
+        Route::get('cache-clear', '\\'.CacheController::class)
             ->name('admin.cache-clear');
 
         // Admin-Manage Transactions
-        Route::resource('admin/transaction', '\\'.TransactionController::class);
+        Route::resource('transaction', '\\'.TransactionController::class);
 
         // Admin-Manage Attributes
-        Route::resource('admin/attribute', '\\'.AttributeController::class);
+        Route::resource('attribute', '\\'.AttributeController::class);
 
         // Admin-Manage Attribute Sets
-        Route::resource('admin/attribute-set', '\\'.AttributeSetController::class);
+        Route::resource('attribute-set', '\\'.AttributeSetController::class);
 
         // Admin-FAQs
-        Route::group(['prefix' => 'admin/faq', 'as' => 'admin.faq.'], function () {
+        Route::group(['prefix' => 'faq', 'as' => 'admin.faq.'], function () {
             Route::get('/', [AdminFaqController::class, 'index'])
                 ->name('index');
             Route::post('/', [AdminFaqController::class, 'store'])
@@ -376,61 +377,70 @@ Route::prefix('v2')->group(function () {
             Route::delete('/{faq}', [AdminFaqController::class, 'delete'])
                 ->name('delete');
         });
-    });
 
-// Admin-Block Routes
-    Route::resource('block', '\\'.AdminBlockController::class)->except(['create', 'edit']);
-    Route::patch('/block/{block}/syncProducts', [AdminBlockController::class, 'syncProducts'])->name('syncProducts');
-    Route::patch('/block/{block}/syncSets', [AdminBlockController::class, 'syncSets'])->name('syncSets');
-    Route::patch('/block/{block}/syncBanners', [AdminBlockController::class, 'syncBanners'])->name('syncBanners');
-    Route::patch('/block/{block}/syncContents', [AdminBlockController::class, 'syncContents'])->name('syncContents');
+        // Admin-Block Routes
+        Route::resource('block', '\\'.AdminBlockController::class)->except(['create', 'edit']);
+        Route::patch('/block/{block}/syncProducts',
+            [AdminBlockController::class, 'syncProducts'])->name('syncProducts');
+        Route::patch('/block/{block}/syncSets', [AdminBlockController::class, 'syncSets'])->name('syncSets');
+        Route::patch('/block/{block}/syncBanners', [AdminBlockController::class, 'syncBanners'])->name('syncBanners');
+        Route::patch('/block/{block}/syncContents',
+            [AdminBlockController::class, 'syncContents'])->name('syncContents');
 
 // Admin-Content Routes
-    Route::resource('contents', '\\'.AdminContentController::class, ['as' => 'api'])->only(['index', 'show', 'update']);
-    Route::get('c', [AdminContentController::class, 'index'])->name('c.index');
-    Route::post('contents/destroy', [AdminContentController::class, 'destroy'])->name('content.bulk.destroy');
-    Route::post('content/{content}/copy', [AdminContentController::class, 'copy'])->name('content.copy');
+        Route::resource('contents', '\\'.AdminContentController::class, ['as' => 'api'])->only([
+            'index', 'show', 'update'
+        ]);
+        Route::get('c', [AdminContentController::class, 'index'])->name('c.index');
+        Route::post('contents/destroy', [AdminContentController::class, 'destroy'])->name('content.bulk.destroy');
+        Route::post('content/{content}/copy', [AdminContentController::class, 'copy'])->name('content.copy');
 
 // Admin-Set Routes
-    Route::resource('set', '\\'.AdminSetController::class, ['as' => 'api']);
-    Route::post('set/{set}/c/attach', [AdminSetController::class, 'attachContents'])->name('set.attachContents');
-    Route::get('set/{set}/contents', [AdminSetController::class, 'contents'])->name('set.contents');
+        Route::resource('set', '\\'.AdminSetController::class, ['as' => 'api']);
+        Route::post('set/{set}/c/attach', [AdminSetController::class, 'attachContents'])->name('set.attachContents');
+        Route::get('set/{set}/contents', [AdminSetController::class, 'contents'])->name('set.contents');
 
 // Admin-Product Routes
-    Route::post('product/set-discount', [AdminProductController::class, 'setDiscount'])->name('product.set-discount');
-    Route::put('product/bulk-update-statuses',
-        [AdminProductController::class, 'bulkUpdateStatuses'])->name('product.bulk-update-statuses');
-    Route::resource('product', '\\'.AdminProductController::class, ['as' => 'api'])->except(['create', 'edit']);
-    Route::get('product/{product}/sets', [AdminProductController::class, 'sets'])->name('product.sets');
-    Route::post('product/{product}/copy', [AdminProductController::class, 'copy'])->name('product.copy');
+        Route::post('product/set-discount',
+            [AdminProductController::class, 'setDiscount'])->name('product.set-discount');
+        Route::put('product/bulk-update-statuses',
+            [AdminProductController::class, 'bulkUpdateStatuses'])->name('product.bulk-update-statuses');
+        Route::resource('product', '\\'.AdminProductController::class, ['as' => 'api'])->except(['create', 'edit']);
+        Route::get('product/{product}/sets', [AdminProductController::class, 'sets'])->name('product.sets');
+        Route::post('product/{product}/copy', [AdminProductController::class, 'copy'])->name('product.copy');
 
 // Admin-User Routes
-    Route::resource('user', '\\'.AdminUserController::class, ['as' => 'api'])->except(['create', 'edit']);
+        Route::resource('user', '\\'.AdminUserController::class, ['as' => 'api'])->except(['create', 'edit']);
 
 // Admin-Permission Routes
-    Route::resource('permission', '\\'.AdminPermissionController::class, ['as' => 'api'])->except(['create', 'edit']);
+        Route::resource('permission', '\\'.AdminPermissionController::class, ['as' => 'api'])->except([
+            'create', 'edit'
+        ]);
 
 // Admin-Role Routes
-    Route::resource('role', '\\'.AdminRoleController::class, ['as' => 'api'])->except(['create', 'edit']);
+        Route::resource('role', '\\'.AdminRoleController::class, ['as' => 'api'])->except(['create', 'edit']);
 
 // Admin-Order Routes
-    Route::post('orderBatchTransfer', [AdminOrderController::class, 'orderBatchTransfer'])->name('order.batchTransfer');
-    Route::resource('order', '\\'.AdminOrderController::class)->except(['create', 'edit']);
+        Route::post('orderBatchTransfer',
+            [AdminOrderController::class, 'orderBatchTransfer'])->name('order.batchTransfer');
+        Route::resource('order', '\\'.AdminOrderController::class)->except(['create', 'edit']);
 
 // Admin-Employee Schedule Routes
-    Route::post('employeeSchedule/batchUpdate',
-        [AdminEmployeeScheduleController::class, 'batchUpdate'])->name('employeeSchedule.batchUpdate');
-    Route::resource('employeeSchedules', '\\'.AdminEmployeeScheduleController::class)->only(['index', 'store']);
+        Route::post('employeeSchedule/batchUpdate',
+            [AdminEmployeeScheduleController::class, 'batchUpdate'])->name('employeeSchedule.batchUpdate');
+        Route::resource('employeeSchedules', '\\'.AdminEmployeeScheduleController::class)->only(['index', 'store']);
 
 // Admin-Activity Log Routes
-    Route::resource('activityLog', '\\'.AdminActivityLogController::class)->only(['index']);
+        Route::resource('activityLog', '\\'.AdminActivityLogController::class)->only(['index']);
 
 // Admin-Slideshow Routes
-    Route::resource('slideshow', '\\'.AdminSlideshowController::class)->only(['index']);
+        Route::resource('slideshow', '\\'.AdminSlideshowController::class)->only(['index']);
 
 // Admin-Abrisham Product Choice Route
-    Route::get('abrisham/productChoice',
-        [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
+        Route::get('abrisham/productChoice',
+            [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
+    });
+
 
     //=================================== Setting Routes ============================================
     Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
@@ -811,309 +821,313 @@ Route::prefix('v2')->group(function () {
 
 // Voip Controller Route
     Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
-});
 
-//Added Routs
+    //Added Routs
 
 //Verify Payment Routs
-Route::group(['prefix' => 'verifyPayment'], function () {
-    Route::group(['prefix' => 'online'], function () {
-        Route::any('{paymentMethod}/{device}',
-            [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
-        Route::any('{status}/{paymentMethod}/{device}',
-            [PaymentStatusController::class, 'show'])->name('showOnlinePaymentStatus');
+    Route::group(['prefix' => 'verifyPayment'], function () {
+        Route::group(['prefix' => 'online'], function () {
+            Route::any('{paymentMethod}/{device}',
+                [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
+            Route::any('{status}/{paymentMethod}/{device}',
+                [PaymentStatusController::class, 'show'])->name('showOnlinePaymentStatus');
+        });
+        Route::any('offline/{paymentMethod}/{device}',
+            [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
     });
-    Route::any('offline/{paymentMethod}/{device}',
-        [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
-});
 
 //Anarestan Landing
-Route::get('anarestan',
-    [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
+    Route::get('anarestan',
+        [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
 
 //Other
-Route::any('paymentRedirect/{paymentMethod}/{device}',
-    '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
-Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('api.user.dashboard');
-Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
-Route::get('findByCode', [CouponController::class, 'findByCode'])->name('api.admin.coupon.findByCode');
-Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');
-Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
-Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
-Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('api.groupRegistration');
-Route::resource('draft', '\\'.DraftController::class);
-Route::any('goToPaymentRoute/{paymentMethod}/{device}/',
-    '\\'.RedirectAPIUserToPaymentRoute::class)->name('redirectToPaymentRoute');
-Route::any('user/editProfile/android/{data}',
-    [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');
-Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');
+    Route::any('paymentRedirect/{paymentMethod}/{device}',
+        '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
+    Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('api.user.dashboard');
+    Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
+    Route::get('findByCode', [CouponController::class, 'findByCode'])->name('api.admin.coupon.findByCode');
+    Route::post('marketing-report', [UserController::class, 'marketingReport'])->name('marketing-report');
+    Route::get('complete-register', [UserController::class, 'completeRegister'])->name('completeRegister');
+    Route::post('exchangeOrderproduct/{order}', [OrderController::class, 'exchangeOrderproduct']);
+    Route::post('groupRegistration', [UserController::class, 'groupRegistration'])->name('api.groupRegistration');
+    Route::resource('draft', '\\'.DraftController::class);
+    Route::any('goToPaymentRoute/{paymentMethod}/{device}/',
+        '\\'.RedirectAPIUserToPaymentRoute::class)->name('redirectToPaymentRoute');
+    Route::any('user/editProfile/android/{data}',
+        [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');
+    Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');
 //Study Event
-Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
-Route::get('studyevent/{studyevent}/plansOfDate',
-    [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');
+    Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
+    Route::get('studyevent/{studyevent}/plansOfDate',
+        [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');
 
 //asset
-Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
-    Route::get('/', [UserController::class, 'userProductFiles'])->name('');
-    Route::get('abrisham',
-        [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham');#TODO:Need to change
-    Route::get('abrishamPro',
-        [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
-    Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
-});
+    Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
+        Route::get('/', [UserController::class, 'userProductFiles'])->name('');
+        Route::get('abrisham',
+            [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham');#TODO:Need to change
+        Route::get('abrishamPro',
+            [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
+        Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
+    });
 
 //ping
-Route::get('php-ping', [HomeController::class, 'phpPing'])->name('api.phpPing');
+    Route::get('php-ping', [HomeController::class, 'phpPing'])->name('api.phpPing');
 
 //submit Konkur Result
-Route::get('96', [UserController::class, 'submitKonkurResult']);
-Route::get('97', [UserController::class, 'submitKonkurResult']);
-Route::get('98', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.98');
-Route::get('99', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.99');
-Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
-Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');
+    Route::get('96', [UserController::class, 'submitKonkurResult']);
+    Route::get('97', [UserController::class, 'submitKonkurResult']);
+    Route::get('98', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.98');
+    Route::get('99', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.99');
+    Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
+    Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');
 
 //Chatre nejat Dashboard
-Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
-    Route::get('chatre-nejat', [
-        AbrishamDashboardPageController::class, 'chatreNejatDashboard'
-    ])->name('.chatreNejatDashboard');
-});
+    Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
+        Route::get('chatre-nejat', [
+            AbrishamDashboardPageController::class, 'chatreNejatDashboard'
+        ])->name('.chatreNejatDashboard');
+    });
 
 //Product 3A Exam
-Route::post('product/{product}/detachExam/{exam}',
-    [Product3aExamController::class, 'detachExam'])->name('api.product.detachExam');
-Route::post('product/{product}/attachExam',
-    [Product3aExamController::class, 'attachExam'])->name('api.product.attachExam');
+    Route::post('product/{product}/detachExam/{exam}',
+        [Product3aExamController::class, 'detachExam'])->name('api.product.detachExam');
+    Route::post('product/{product}/attachExam',
+        [Product3aExamController::class, 'attachExam'])->name('api.product.attachExam');
 
 //Billing
-Route::resource('billing', '\\'.BillingController::class)->only(['index']);
+    Route::resource('billing', '\\'.BillingController::class)->only(['index']);
 
 //Live Conductors
-Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
-    Route::get('/', [LiveConductorController::class, 'index'])->name('index');
-    Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
-});
+    Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
+        Route::get('/', [LiveConductorController::class, 'index'])->name('index');
+        Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
+    });
 
 //Marketing
-Route::group(['prefix' => 'marketing'], function () {
-    Route::post('referalCode/use',
-        [NetworkMarketingController::class, 'useCode'])->name('api.marketing.useReferalCode');
-    Route::post('getPackScores',
-        [NetworkMarketingController::class, 'getPackScores'])->name('api.marketing.getPackScores');
-    Route::get('getYaldaDiscount',
-        [SubscriptionController::class, 'getYaldaDiscount'])->name('api.marketing.getYaldaDiscount');
-    Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
-});
+    Route::group(['prefix' => 'marketing'], function () {
+        Route::post('referalCode/use',
+            [NetworkMarketingController::class, 'useCode'])->name('api.marketing.useReferalCode');
+        Route::post('getPackScores',
+            [NetworkMarketingController::class, 'getPackScores'])->name('api.marketing.getPackScores');
+        Route::get('getYaldaDiscount',
+            [SubscriptionController::class, 'getYaldaDiscount'])->name('api.marketing.getYaldaDiscount');
+        Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
+    });
 
 //translation
-Route::post('transactionToDonate/{transaction}', [TransactionController::class, 'convertToDonate']);
-Route::post('completeTransaction/{transaction}', [TransactionController::class, 'completeTransaction']);
-Route::post('myTransaction/{transaction}', [TransactionController::class, 'limitedUpdate']);
-Route::get('getUnverifiedTransactions',
-    [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
+    Route::post('transactionToDonate/{transaction}', [TransactionController::class, 'convertToDonate']);
+    Route::post('completeTransaction/{transaction}', [TransactionController::class, 'completeTransaction']);
+    Route::post('myTransaction/{transaction}', [TransactionController::class, 'limitedUpdate']);
+    Route::get('getUnverifiedTransactions',
+        [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
 
 //orderproduct
-Route::group(['prefix' => 'orderproduct'], function () {
-    Route::post('restore',
-        [OrderproductController::class, 'restore'])->name('api.orderproduct.restore');
-});
+    Route::group(['prefix' => 'orderproduct'], function () {
+        Route::post('restore',
+            [OrderproductController::class, 'restore'])->name('api.orderproduct.restore');
+    });
 
 //User
-Route::get('{user}/info', [UserController::class, 'information']);
-Route::post('{user}/completeInfo', [UserController::class, 'completeInformation']);
-Route::get('orders', [UserController::class, 'userOrders'])->name('api.user.orders');
-Route::post('update/partialInfo',
-    [UserController::class, 'partialUpdate'])->name('api.user.update.partial');
+    Route::get('{user}/info', [UserController::class, 'information']);
+    Route::post('{user}/completeInfo', [UserController::class, 'completeInformation']);
+    Route::get('orders', [UserController::class, 'userOrders'])->name('api.user.orders');
+    Route::post('update/partialInfo',
+        [UserController::class, 'partialUpdate'])->name('api.user.update.partial');
 
 //Order
-Route::group(['prefix' => 'order'], function () {
-    Route::post('detachorderproduct', [OrderController::class, 'detachOrderproduct']);
-    Route::post('addOrderproduct/{product}', [OrderController::class, 'addOrderproduct']);
-    Route::post('addProducts/{order}', [OrderController::class, 'addProducts'])->name('api.order.add.products');
-    Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
-    Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
-});
-Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');
-Route::post('/free', [
-    OrderController::class, 'storeFree'
-])->name('api.ajax.order.store.free');
+    Route::group(['prefix' => 'order'], function () {
+        Route::post('detachorderproduct', [OrderController::class, 'detachOrderproduct']);
+        Route::post('addOrderproduct/{product}', [OrderController::class, 'addOrderproduct']);
+        Route::post('addProducts/{order}', [OrderController::class, 'addProducts'])->name('api.order.add.products');
+        Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
+        Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
+    });
+    Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');
+    Route::post('/free', [
+        OrderController::class, 'storeFree'
+    ])->name('api.ajax.order.store.free');
 
 
 //Product
-Route::group(['prefix' => 'product'], function () {
-    Route::get('{product}/transferToDana',
-        [ProductController::class, 'transferToDana'])->name('api.product.transferToDana');
-    Route::get('{product}/createConfiguration', [ProductController::class, 'createConfiguration']);
-    Route::patch('updateProductsConfig',
-        [ProductController::class, 'updateProductsConfig'])->name('updateProductsConfig');
-    Route::post('{product}/makeConfiguration', [ProductController::class, 'makeConfiguration']);
-    Route::get('{product}/editAttributevalues',
-        [ProductController::class, 'editAttributevalues'])->name('api.product.attributevalue.edit');
-    Route::post('{product}/updateAttributevalues',
-        [ProductController::class, 'updateAttributevalues'])->name('api.product.attributevalue.update');
-    Route::post('{product}/attribute-value/attach',
-        [ProductController::class, 'attachAttributeValue'])->name('api.product.attributevalue.attach');
-    Route::delete('{product}/attribute-value/{attribute_value}/detach',
-        [ProductController::class, 'detachAttributeValue'])->name('api.product.attributevalue.detach');
+    Route::group(['prefix' => 'product'], function () {
+        Route::get('{product}/transferToDana',
+            [ProductController::class, 'transferToDana'])->name('api.product.transferToDana');
+        Route::get('{product}/createConfiguration', [ProductController::class, 'createConfiguration']);
+        Route::patch('updateProductsConfig',
+            [ProductController::class, 'updateProductsConfig'])->name('updateProductsConfig');
+        Route::post('{product}/makeConfiguration', [ProductController::class, 'makeConfiguration']);
+        Route::get('{product}/editAttributevalues',
+            [ProductController::class, 'editAttributevalues'])->name('api.product.attributevalue.edit');
+        Route::post('{product}/updateAttributevalues',
+            [ProductController::class, 'updateAttributevalues'])->name('api.product.attributevalue.update');
+        Route::post('{product}/attribute-value/attach',
+            [ProductController::class, 'attachAttributeValue'])->name('api.product.attributevalue.attach');
+        Route::delete('{product}/attribute-value/{attribute_value}/detach',
+            [ProductController::class, 'detachAttributeValue'])->name('api.product.attributevalue.detach');
 
-    Route::put('{product}/addGift', [ProductController::class, 'addGift']);
-    Route::delete('{product}/removeGift', [ProductController::class, 'removeGift']);
-    Route::post('{product}/copy', [ProductController::class, 'copy']);
-    Route::post('{product}/attachBlock', [ProductController::class, 'attachBlock'])->name('api.product.attach.block');
-    Route::delete('{product}/detachBlock', [ProductController::class, 'detachBlock'])->name('api.product.detach.block');
-    Route::put('child/{product}', [ProductController::class, 'childProductEnable']);
-    Route::put('addComplimentary/{product}', [ProductController::class, 'addComplimentary']);
-    Route::put('removeComplimentary/{product}', [ProductController::class, 'removeComplimentary']);
-    Route::post('{product}/photo/update-order',
-        [ProductphotoController::class, 'updateOrder'])->name('api.product.update.order');
-    Route::get('{product}/attribute-value',
-        [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
-});
+        Route::put('{product}/addGift', [ProductController::class, 'addGift']);
+        Route::delete('{product}/removeGift', [ProductController::class, 'removeGift']);
+        Route::post('{product}/copy', [ProductController::class, 'copy']);
+        Route::post('{product}/attachBlock',
+            [ProductController::class, 'attachBlock'])->name('api.product.attach.block');
+        Route::delete('{product}/detachBlock',
+            [ProductController::class, 'detachBlock'])->name('api.product.detach.block');
+        Route::put('child/{product}', [ProductController::class, 'childProductEnable']);
+        Route::put('addComplimentary/{product}', [ProductController::class, 'addComplimentary']);
+        Route::put('removeComplimentary/{product}', [ProductController::class, 'removeComplimentary']);
+        Route::post('{product}/photo/update-order',
+            [ProductphotoController::class, 'updateOrder'])->name('api.product.update.order');
+        Route::get('{product}/attribute-value',
+            [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
+    });
 
 //attributes
-Route::group(['prefix' => 'attribute'], function () {
-    Route::get('{attribute}/attribute-value', [
-        AttributevalueController::class, 'attributeAttributeValueIndex'
-    ])->name('api.attribute.attributevalue.index');
-});
+    Route::group(['prefix' => 'attribute'], function () {
+        Route::get('{attribute}/attribute-value', [
+            AttributevalueController::class, 'attributeAttributeValueIndex'
+        ])->name('api.attribute.attributevalue.index');
+    });
 
 //Website Setting
-Route::group(['prefix' => 'websiteSetting'], function () {
-    Route::get('{Websitesetting}/showFaq', [WebsiteSettingController::class, 'showFaq'])->name('api.setting.faq.show');
-    Route::post('{Websitesetting}/updateFaq',
-        [WebsiteSettingController::class, 'updateFaq'])->name('api.setting.faq.update');
-    Route::get('{Websitesetting}/editFaq/{faqId}',
-        [WebsiteSettingController::class, 'editFaq'])->name('api.setting.faq.edit');
-    Route::delete('{Websitesetting}/deleteFaq/{faqId}',
-        [WebsiteSettingController::class, 'destroyFaq'])->name('api.setting.faq.delete');
-});
+    Route::group(['prefix' => 'websiteSetting'], function () {
+        Route::get('{Websitesetting}/showFaq',
+            [WebsiteSettingController::class, 'showFaq'])->name('api.setting.faq.show');
+        Route::post('{Websitesetting}/updateFaq',
+            [WebsiteSettingController::class, 'updateFaq'])->name('api.setting.faq.update');
+        Route::get('{Websitesetting}/editFaq/{faqId}',
+            [WebsiteSettingController::class, 'editFaq'])->name('api.setting.faq.edit');
+        Route::delete('{Websitesetting}/deleteFaq/{faqId}',
+            [WebsiteSettingController::class, 'destroyFaq'])->name('api.setting.faq.delete');
+    });
 
 //Some Resources
 
 // shahr
-Route::resource('shahr', ShahrController::class)->only('index');
+    Route::resource('shahr', ShahrController::class)->only('index');
 
 // attributevalue
-Route::resource('attributevalue', AttributevalueController::class)->except(['create', 'show', 'index']);
+    Route::resource('attributevalue', AttributevalueController::class)->except(['create', 'show', 'index']);
 
 // attributegroup
-Route::resource('attributegroup', AttributegroupController::class)->except(['show', 'create']);
+    Route::resource('attributegroup', AttributegroupController::class)->except(['show', 'create']);
 
 // userupload
-Route::resource('userupload', UseruploadController::class)->except(['create', 'edit', 'destroy']);
+    Route::resource('userupload', UseruploadController::class)->except(['create', 'edit', 'destroy']);
 
 // phone
-Route::resource('phone', PhoneController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('phone', PhoneController::class)->only(['store', 'update', 'destroy']);
 
 // productfile
-Route::resource('productfile', ProductfileController::class)->except(['index', 'destroy', 'show']);
+    Route::resource('productfile', ProductfileController::class)->except(['index', 'destroy', 'show']);
 
 // productphoto
-Route::resource('productphoto', ProductphotoController::class)->only(['store', 'destroy']);
+    Route::resource('productphoto', ProductphotoController::class)->only(['store', 'destroy']);
 
 // city
-Route::resource('city', CityController::class)->only('index');
+    Route::resource('city', CityController::class)->only('index');
 
 // file
-Route::resource('file', FileController::class)->only(['store', 'destroy']);
+    Route::resource('file', FileController::class)->only(['store', 'destroy']);
 
 // section
-Route::resource('section', SectionController::class)->except('create');
+    Route::resource('section', SectionController::class)->except('create');
 
 // periodDescription
-Route::resource('periodDescription', PeriodDescriptionController::class);
+    Route::resource('periodDescription', PeriodDescriptionController::class);
 
 // source
-Route::resource('source', SourceController::class)->except('create');
+    Route::resource('source', SourceController::class)->except('create');
 
 // phonebook
-Route::resource('phonebook', PhoneBookController::class)->only(['index', 'store']);
+    Route::resource('phonebook', PhoneBookController::class)->only(['index', 'store']);
 
 // phonenumber
-Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'store']);
+    Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'store']);
 
 //List Pending Description
-Route::get('listPendingDescriptionContents',
-    [ContentController::class, 'indexPendingDescriptionContent'])->name('api.c.list.pending.description.content');
+    Route::get('listPendingDescriptionContents',
+        [ContentController::class, 'indexPendingDescriptionContent'])->name('api.c.list.pending.description.content');
 
 //Live
-Route::post('startlive', [LiveController::class, 'startLive'])->name('api.start.live');
-Route::post('endlive', [LiveController::class, 'endLive'])->name('api.end.live');
+    Route::post('startlive', [LiveController::class, 'startLive'])->name('api.start.live');
+    Route::post('endlive', [LiveController::class, 'endLive'])->name('api.end.live');
 
 //SMS
-Route::post('smsLink', [HomeController::class, 'smsLink'])->name('api.sms.link');
-Route::get('sms/{sms}/resend-bulk-sms',
-    [SmsController::class, 'resendUnsuccessfulBulkSms'])->name('resend.unsuccessful.bulk.sms');
-Route::post('adminSendSMS', [SmsController::class, 'sendSMS'])->name('api.sendSmsendSms');
-Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
-Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
+    Route::post('smsLink', [HomeController::class, 'smsLink'])->name('api.sms.link');
+    Route::get('sms/{sms}/resend-bulk-sms',
+        [SmsController::class, 'resendUnsuccessfulBulkSms'])->name('resend.unsuccessful.bulk.sms');
+    Route::post('adminSendSMS', [SmsController::class, 'sendSMS'])->name('api.sendSmsendSms');
+    Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
+    Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
 
 //Vast
-Route::resource('vast', '\\'.VastController::class)->except('index');
-Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'api.vasts'])->only([
-    'index', 'destroy', 'store'
-]);
-Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'api.vasts'])->only([
-    'index', 'store', 'destroy'
-]);
+    Route::resource('vast', '\\'.VastController::class)->except('index');
+    Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'api.vasts'])->only([
+        'index', 'destroy', 'store'
+    ]);
+    Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'api.vasts'])->only([
+        'index', 'store', 'destroy'
+    ]);
 
 //News Letter
-Route::resource('newsletter', '\\'.NewsletterController::class)->only(['store']);
+    Route::resource('newsletter', '\\'.NewsletterController::class)->only(['store']);
 
 //Ajax
-Route::group(['prefix' => '/ajax'], routes: function () {
+    Route::group(['prefix' => '/ajax'], routes: function () {
 
-    Route::group(['prefix' => 'orderproduct'], function () {
-        Route::post('batchExtensionRequest', [
-            OrderproductController::class, 'batchExtensionRequest'
-        ])->name('api.ajax.orderproduct.batchExtensionRequest');
-        Route::post('batchExtend', [
-            OrderproductController::class, 'batchExtend'
-        ])->name('api.ajax.orderproduct.batchExtend');
+        Route::group(['prefix' => 'orderproduct'], function () {
+            Route::post('batchExtensionRequest', [
+                OrderproductController::class, 'batchExtensionRequest'
+            ])->name('api.ajax.orderproduct.batchExtensionRequest');
+            Route::post('batchExtend', [
+                OrderproductController::class, 'batchExtend'
+            ])->name('api.ajax.orderproduct.batchExtend');
+        });
+        Route::group(['prefix' => 'product'], function () {
+            Route::post('{product}/attachRelation', [
+                AdminProductController::class, 'attachRelation'
+            ])->name('web.ajax.product.attach.relation');
+            Route::delete('{product}/detachRelation', [
+                AdminProductController::class, 'detachRelation'
+            ])->name('web.ajax.product.detach.relation');
+        });
     });
-    Route::group(['prefix' => 'product'], function () {
-        Route::post('{product}/attachRelation', [
-            AdminProductController::class, 'attachRelation'
-        ])->name('web.ajax.product.attach.relation');
-        Route::delete('{product}/detachRelation', [
-            AdminProductController::class, 'detachRelation'
-        ])->name('web.ajax.product.detach.relation');
-    });
-});
 
 //Analytics
-Route::group(['prefix' => 'analytics'], function () {
-    Route::get('/abrisham', [AnalyticsController::class, 'abrisham'])->name('api.analytics.abrisham');
-});
+    Route::group(['prefix' => 'analytics'], function () {
+        Route::get('/abrisham', [AnalyticsController::class, 'abrisham'])->name('api.analytics.abrisham');
+    });
 
 //Dana Check Token
-Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('api.checkDanaToken');
+    Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('api.checkDanaToken');
 
 //map
-Route::get('map', '\\'.MapPageController::class)->name('api.map');
+    Route::get('map', '\\'.MapPageController::class)->name('api.map');
 
 //Set
-Route::group(['prefix' => 'set'], function () {
-    Route::get('{set}/list/links', [SetController::class, 'indexContentLinks'])->name('api.set.list.links');
-    Route::get('{set}/list', [SetController::class, 'indexContent'])->name('api.set.list.contents');
-    Route::get('{set}/transferToDana', [SetController::class, 'transferToDana'])->name('api.set.transferToDana');
-    Route::post('{set}/products', [SetController::class, 'toggleProductForSet'])->name('api.set.toggleProductForSet');
-    Route::get('{setId}/transfer-to-dana-info',
-        [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
-});
-Route::post('set/bulk-activate', [SetController::class, 'bulkActivate'])->name('set.bulk-activate');
+    Route::group(['prefix' => 'set'], function () {
+        Route::get('{set}/list/links', [SetController::class, 'indexContentLinks'])->name('api.set.list.links');
+        Route::get('{set}/list', [SetController::class, 'indexContent'])->name('api.set.list.contents');
+        Route::get('{set}/transferToDana', [SetController::class, 'transferToDana'])->name('api.set.transferToDana');
+        Route::post('{set}/products',
+            [SetController::class, 'toggleProductForSet'])->name('api.set.toggleProductForSet');
+        Route::get('{setId}/transfer-to-dana-info',
+            [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
+    });
+    Route::post('set/bulk-activate', [SetController::class, 'bulkActivate'])->name('set.bulk-activate');
 
 //Content
-Route::group(['prefix' => 'c'], function () {
-    Route::get('uploadContent', [ContentController::class, 'uploadContent'])->name('c.upload.content');
-    Route::get('createArticle', [ContentController::class, 'createArticle'])->name('c.create.article');
-    Route::post('updateTmpDescription',
-        [ContentController::class, 'createArticle'])->name('c.update.pending.description');
-    Route::post('{c}/updateSet', [ContentController::class, 'updateSet'])->name('c.updateSet');
-    Route::post('{c}/copyTmp', [ContentController::class, 'copyTimepoints'])->name('c.copyTmp');
-    Route::get('{c}/transferToDana', [ContentController::class, 'transferToDana'])->name('c.transferToDana');
-    Route::get('{contentId}/transfer-to-dana-info',
-        [ContentController::class, 'transferToDanaInfo'])->name('c.transferToDanaInfo');
+    Route::group(['prefix' => 'c'], function () {
+        Route::get('uploadContent', [ContentController::class, 'uploadContent'])->name('c.upload.content');
+        Route::get('createArticle', [ContentController::class, 'createArticle'])->name('c.create.article');
+        Route::post('updateTmpDescription',
+            [ContentController::class, 'createArticle'])->name('c.update.pending.description');
+        Route::post('{c}/updateSet', [ContentController::class, 'updateSet'])->name('c.updateSet');
+        Route::post('{c}/copyTmp', [ContentController::class, 'copyTimepoints'])->name('c.copyTmp');
+        Route::get('{c}/transferToDana', [ContentController::class, 'transferToDana'])->name('c.transferToDana');
+        Route::get('{contentId}/transfer-to-dana-info',
+            [ContentController::class, 'transferToDanaInfo'])->name('c.transferToDanaInfo');
+    });
 });
 
