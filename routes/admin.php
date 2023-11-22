@@ -1,9 +1,5 @@
 <?php
 
-/*
-    These routes are loaded by the RouteServiceProvider within a group which is assigned the "api" middleware group.
-*/
-
 use App\Http\Controllers\Api\Admin\ActivityLogController as AdminActivityLogController;
 use App\Http\Controllers\Api\Admin\AttributeController;
 use App\Http\Controllers\Api\Admin\AttributeSetController;
@@ -23,12 +19,7 @@ use App\Http\Controllers\Api\CacheController;
 use Illuminate\Support\Facades\Route;
 
 
-/*
-|--------------------------------------------------------------------------
-| V2
-|--------------------------------------------------------------------------
 //=================================== Admin Routes ============================================
-*/
 Route::prefix('v2')->group(function () {
     Route::group(['middleware' => 'auth:api', 'prefix' => 'admin'], function () {
 
