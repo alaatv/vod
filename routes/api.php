@@ -1,19 +1,8 @@
 <?php
 
-/*
-    These routes are loaded by the RouteServiceProvider within a group which is assigned the "api" middleware group.
-*/
 
 use App\Http\Controllers\AndroidLogController;
 use App\Http\Controllers\Api\_3AController;
-use App\Http\Controllers\Api\AbrishamDashboardPageController;
-use App\Http\Controllers\Api\AbrishamDashboardPageV2Controller;
-use App\Http\Controllers\Api\Admin\BlockProductsController;
-use App\Http\Controllers\Api\Admin\BlockRelationsController;
-use App\Http\Controllers\Api\Admin\BlockSetsController;
-use App\Http\Controllers\Api\Admin\BlockSlideshowController;
-use App\Http\Controllers\Api\Admin\BlockTypesController;
-use App\Http\Controllers\Api\Admin\ContentInComeController;
 use App\Http\Controllers\Api\Admin\CouponController;
 use App\Http\Controllers\Api\Admin\MarketingController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
@@ -24,22 +13,15 @@ use App\Http\Controllers\Api\Admin\VoucherManagementController;
 use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\AppVersionController;
 use App\Http\Controllers\Api\AttributegroupController;
-use App\Http\Controllers\Api\AttributevalueController;
-use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\BatchContentInsertController;
-use App\Http\Controllers\Api\BillingController;
-use App\Http\Controllers\Api\BlockController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\NotificationController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\OrderController as BonyadEhsanOrderController;
 use App\Http\Controllers\Api\BonyadEhsan\Admin\UserController as BonyadEhsanUserController;
-use App\Http\Controllers\Api\BookmarkPageV2Controller;
 use App\Http\Controllers\Api\BotsController;
-use App\Http\Controllers\Api\ChannelController as ApiChannelController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\ContactUsController;
 use App\Http\Controllers\Api\ContentController;
-use App\Http\Controllers\Api\ContentStatusController;
 use App\Http\Controllers\Api\DanaController;
 use App\Http\Controllers\Api\DashboardPageController;
 use App\Http\Controllers\Api\DashboardPageV2Controller;
@@ -53,17 +35,14 @@ use App\Http\Controllers\Api\EwanoController;
 use App\Http\Controllers\Api\ExamResultsController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\FaqPageController;
-use App\Http\Controllers\Api\FavorableController;
 use App\Http\Controllers\Api\FavorableListController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\FirebasetokenController;
 use App\Http\Controllers\Api\FormBuilder;
 use App\Http\Controllers\Api\ForrestController;
 use App\Http\Controllers\Api\GatewayController;
-use App\Http\Controllers\Api\GetPaymentRedirectEncryptedLink;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\IndexPageController;
-use App\Http\Controllers\Api\LandingPageController;
 use App\Http\Controllers\Api\LiveConductorController;
 use App\Http\Controllers\Api\LiveController;
 use App\Http\Controllers\Api\LiveDescriptionController;
@@ -72,30 +51,22 @@ use App\Http\Controllers\Api\MapPageController;
 use App\Http\Controllers\Api\MobileVerificationController;
 use App\Http\Controllers\Api\NetworkMarketingController;
 use App\Http\Controllers\Api\NewsletterController;
-use App\Http\Controllers\Api\OfflinePaymentController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderproductController;
-use App\Http\Controllers\Api\PaymentStatusController;
-use App\Http\Controllers\Api\PaymentVerifierController;
 use App\Http\Controllers\Api\PeriodDescriptionController;
 use App\Http\Controllers\Api\PhoneBookController;
 use App\Http\Controllers\Api\PhoneController;
 use App\Http\Controllers\Api\PhoneNumberController;
 use App\Http\Controllers\Api\PlanController;
-use App\Http\Controllers\Api\Product3aExamController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductfileController;
-use App\Http\Controllers\Api\ProductLandingController;
 use App\Http\Controllers\Api\ProductphotoController;
-use App\Http\Controllers\Api\RahAbrishamController;
 use App\Http\Controllers\Api\ReceiveSMSController;
-use App\Http\Controllers\Api\ReferralCodesController;
 use App\Http\Controllers\Api\RulesPageController;
 use App\Http\Controllers\Api\SalesManController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\SeoController;
-use App\Http\Controllers\Api\SetController;
 use App\Http\Controllers\Api\ShahrController;
 use App\Http\Controllers\Api\ShopPageController;
 use App\Http\Controllers\Api\SmsController;
@@ -106,18 +77,12 @@ use App\Http\Controllers\Api\StudyEventReportController;
 use App\Http\Controllers\Api\StudyPlanController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SubscriptoinController;
-use App\Http\Controllers\Api\TaftanDashboardPageController;
 use App\Http\Controllers\Api\TagGroupController;
-use App\Http\Controllers\Api\TimepointController;
 use App\Http\Controllers\Api\UploadCenterController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UseruploadController;
-use App\Http\Controllers\Api\VastContentController;
-use App\Http\Controllers\Api\VastController;
-use App\Http\Controllers\Api\VastSetController;
 use App\Http\Controllers\Api\VoucherController;
 use App\Http\Controllers\Api\VoucherPageController;
-use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WatchHistoryController;
 use App\Http\Controllers\Api\WebsiteSettingController;
 use App\Http\Controllers\Auth\ApiLoginController;
@@ -128,59 +93,16 @@ use App\PaymentModule\Controllers\RedirectUserToPaymentPage;
 use Illuminate\Support\Facades\Route;
 
 
-/*
-|--------------------------------------------------------------------------
-| V2
-|--------------------------------------------------------------------------
-*/
 Route::prefix('v2')->group(function () {
 
     // FAQs
     Route::resource('faqs', FaqController::class)->only(['index', 'show']);
     Route::get('faq', '\\'.FaqPageController::class)->name('api.v2.faq');
 
-    // Block routes
-    Route::prefix('block')->name('api.')->group(function () {
-        Route::resource('block', BlockController::class)->only(['show', 'index']);
-        Route::get('{block}/products', [BlockRelationsController::class, 'products'])->name('block.products');
-        Route::post('{block}/products/attach',
-            [BlockRelationsController::class, 'attachProducts'])->name('block.attachProducts');
-        Route::post('{block}/products/detach',
-            [BlockRelationsController::class, 'detachProducts'])->name('block.detachProducts');
-        Route::get('{block}/sets', [BlockRelationsController::class, 'sets'])->name('block.sets');
-        Route::post('{block}/sets/attach', [BlockRelationsController::class, 'attachSets'])->name('block.attachSets');
-        Route::post('{block}/sets/detach', [BlockRelationsController::class, 'detachSets'])->name('block.detachSets');
-        Route::get('{block}/contents', [BlockRelationsController::class, 'contents'])->name('block.contents');
-        Route::post('{block}/contents/attach',
-            [BlockRelationsController::class, 'attachContents'])->name('block.attachContents');
-        Route::post('{block}/contents/detach',
-            [BlockRelationsController::class, 'detachContents'])->name('block.detachContents');
-        Route::get('{block}/banners', [BlockRelationsController::class, 'banners'])->name('block.banners');
-        Route::post('{block}/banners/attach',
-            [BlockRelationsController::class, 'attachBanners'])->name('block.attachBanners');
-        Route::post('{block}/banners/detach',
-            [BlockRelationsController::class, 'detachBanners'])->name('block.detachBanners');
-    });
-    Route::get('get-blocks', [BlockController::class, 'block'])
-        ->name('blocks.get');
-    Route::get('blockSlideShows', [BlockSlideshowController::class, 'index'])->name('blockSlideShow.index');
-    Route::get('blockTypes', [BlockTypesController::class, 'index'])->name('blockTypes.index');
-    Route::get('blockSets', [BlockSetsController::class, 'index'])->name('blockSets.index');
-    Route::get('blockProducts', [BlockProductsController::class, 'index'])->name('blockProducts.index');
-
     // Debug routes
     Route::get('debug', [HomeController::class, 'debug'])->name('api.v2.debug');
     Route::get('satra', [HomeController::class, 'satra']);
 
-    // Landing routes
-    Route::prefix('landing')->group(function () {
-        for ($i = 1; $i <= 10; $i++) {
-            Route::get($i, [ProductLandingController::class, 'landing'.$i])->name('api.v2.landing.'.$i);
-        }
-        Route::get('17', [ProductLandingController::class, 'landing17'])->name('api.v2.landing.17');
-        Route::get('13Aban', [LandingPageController::class, 'roozeDaneshAmooz'])->name('api.v2.landing.13Aban');
-        Route::get('13aban', [LandingPageController::class, 'roozeDaneshAmooz2'])->name('api.v2.landing.13aban');
-    });
 
 // Ewano routes
     Route::group(['prefix' => 'ewano'], function () {
@@ -200,97 +122,11 @@ Route::prefix('v2')->group(function () {
     Route::post('logout', [ApiLoginController::class, 'logout'])->name('api.logout');
     Route::get('authTest', [HomeController::class, 'authTestV2'])->name('api.v2.authTest');
 
-// Content routes
-    Route::get('c/{c}', [ContentController::class, 'showV2'])->name('api.v2.content.show');
-    Route::get('c/{c}/products', [ContentController::class, 'products'])->name('api.v2.content.products');
-    Route::put('c/updateDuration', [ContentController::class, 'updateDuration'])->name('api.v2.content.updateDuration');
-    Route::put('contents/bulk-update', [ContentController::class, 'bulkUpdate'])->name('content.bulk-update');
-    Route::put('contents/bulk-edit-text', [ContentController::class, 'bulkEditText'])->name('content.bulk-edit-text');
-    Route::put('contents/bulk-edit-tags', [ContentController::class, 'bulkEditTags'])->name('content.bulk-edit-tags');
-    Route::get('content-statuses', [ContentStatusController::class, 'index']);
-
-// Product routes
-    Route::prefix('product')->name('api.v2.product.')->group(function () {
-        Route::get('lives', [ProductController::class, 'lives'])->name('lives');
-        Route::get('{product}', [ProductController::class, 'showV2'])->name('show');
-        Route::get('{product}/sample', [ProductController::class, 'sampleVideo'])->name('sample');
-        Route::get('{product}/faq', [ProductController::class, 'faq'])->name('faq');
-        Route::get('{product}/complimentary', [ProductController::class, 'complimentary'])->name('complimentary');
-        Route::get('{product}/exams', [ProductController::class, 'exams'])->name('exams');
-        Route::get('gift-products/{product}',
-            [ProductController::class, 'giftProducts'])->name('api.v2.product.gift-products');
-        Route::get('{product}/sets', [ProductController::class, 'sets'])->name('sets');
-        Route::get('{product}/contents', [ProductController::class, 'contents'])->name('api.v2.product.contents');
-        Route::get('{product}/content-comments',
-            [ProductController::class, 'contentComments'])->name('api.v2.product.content.comments');
-        Route::get('{product}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
-            ->name('api.v2.get.user.favorite.product');
-        Route::post('{product}/favored', [FavorableController::class, 'markFavorableFavorite'])
-            ->name('api.v2.mark.favorite.product');
-        Route::post('{product}/unfavored',
-            [FavorableController::class, 'markUnFavorableFavorite'])->name('api.v2.mark.unfavorite.product');
-        Route::post('create', [ProductController::class, 'storeV2'])->name('api.v2.product.store');
-        Route::put('{product}', [ProductController::class, 'updateV2'])->name('api.v2.product.update');
-        Route::get('{product}/toWatch', [ProductController::class, 'nextWatchContent'])
-            ->name('api.v2.product.nextWatchContent');
-        Route::get('{product}/liveInfo', [ProductController::class, 'liveInfo'])
-            ->name('api.v2.product.liveInfo');
-        Route::post('{product}/updateSetOrder', [ProductController::class, 'updateSetOrder'])
-            ->name('api.v2.product.updateSetOrder');
-        Route::get('soalaa/all', [ProductController::class, 'soalaaProducts'])->name('api.v2.product.soalaaProducts');
-    });
-    Route::get('product-categories', [ProductController::class, 'productCategory'])->name('api.v2.product.category');
-    Route::get('product', [ProductController::class, 'index'])->name('api.v2.product.index');
-    Route::post('getPricgroupIndexe/{product}',
-        [ProductController::class, 'refreshPriceV2'])->name('api.v2.refreshPrice');
-
-    // Routes related to 'abrisham'
-    Route::group(['prefix' => 'abrisham', 'as' => 'abrisham.'], function () {
-        Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('lessons');
-        Route::get('flatLessons', [ProductController::class, 'flatLessons'])->name('flatLessons');
-        Route::get('whereIsKarvan', [StudyEventController::class, 'whereIsKarvan'])->name('whereIsKarvan');
-        Route::get('majors', [ProductController::class, 'abrishamMajors'])->name('majors');
-        Route::get('/selectPlan/create',
-            [RahAbrishamController::class, 'selectPlanCreate'])->name('selectPlan.create');
-        Route::get('/myStudyPlan', [StudyEventController::class, 'showMyStudyEvent'])->name('myStudyPlan.get');
-        Route::post('/myStudyPlan', [StudyEventController::class, 'storeMyStudyEvent'])->name('myStudyPlan.store');
-        Route::get('/findStudyPlan', [StudyEventController::class, 'findStudyPlan'])->name('findStudyPlan');
-        Route::get('/systemReport', [RahAbrishamController::class, 'indexSystemReport'])->name('systemReport.get');
-        Route::get('lessons', [ProductController::class, 'abrishamLessons'])->name('bonyadLessons');
-    });
-
-    // Routes related to 'taftan'
-    Route::group(['prefix' => 'taftan', 'as' => 'taftan.'], function () {
-        Route::get('lessons', [ProductController::class, 'taftanLessons'])->name('lessons');
-        Route::get('majors', [ProductController::class, 'taftanMajors'])->name('majors');
-    });
-
-    // Routes related to 'chatre Nejat'
-    Route::group(['prefix' => 'chatreNejat', 'as' => 'chatreNejat.'], function () {
-        Route::get('lessons', [ProductController::class, 'chatreNejatLessons'])->name('lessons');
-        Route::get('majors', [ProductController::class, 'chatrNejatMajors'])->name('majors');
-    });
-
-    // Set routes
-    Route::prefix('set')->name('api.v2.set.')->group(function () {
-        Route::get('', [SetController::class, 'index'])->name('index');
-        Route::get('{set}', [SetController::class, 'showV2'])->name('show');
-        Route::get('{set}/contents', [SetController::class, 'contents'])->name('contents');
-        Route::get('{set}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
-            ->name('api.v2.get.user.favorite.set');
-        Route::post('{set}/favored', [FavorableController::class, 'markFavorableFavorite'])
-            ->name('api.v2.mark.favorite.set');
-        Route::post('{set}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
-            ->name('api.v2.mark.unfavorite.set');
-    });
-    Route::get('content-set/{set}', [SetController::class, 'showWithContents']);
-
 // Forrest routes
     Route::resource('/forrest/tree', '\\'.ForrestController::class)->only(['index', 'store', 'update']);
     Route::get('/forrest/tree/{grid}',
         [ForrestController::class, 'show'])->name('api.v2.forrest.tree.show');
     Route::get('/forrest/tags', [ForrestController::class, 'tags'])->name('api.v2.forrest.tree.tags');
-
 
 // Additional Home routes
     Route::get('shop', '\\'.ShopPageController::class)->name('api.v2.shop');
@@ -300,7 +136,6 @@ Route::prefix('v2')->group(function () {
 
 // Newsletter Routes
     Route::resource('newsletter', '\\'.NewsletterController::class, ['as' => 'api'])->only(['store']);
-
 
 // Comment Routes
     Route::resource('comment', '\\'.CommentController::class)->only(['store', 'update', 'destroy', 'show']);
@@ -366,20 +201,26 @@ Route::prefix('v2')->group(function () {
         Route::get('products', [ProductController::class, 'userProducts'])->name('api.v2.user.products');
         Route::get('{user}', [UserController::class, 'showV2'])->name('api.v2.user.show');
         Route::put('{user}', [UserController::class, 'updateV2'])->name('api.v2.user.update');
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::get('{user}/orders', [UserController::class, 'userOrdersV2'])->name('orders');
+        Route::get('{user}/transactions', [UserController::class, 'userTransactionsV2'])->name('transactions');
+        Route::get('{user}/installments', [UserController::class, 'userInstallmentsV2'])->name('installments');
+        Route::get('{user}/dashboard', '\\'.DashboardPageV2Controller::class)->name('dashboard');
+        Route::post('{user}/firebasetoken', [FirebasetokenController::class, 'storeByUser']);
+        Route::post('getInfo', [UserController::class, 'getInfo'])->name('getInfo');
+        Route::post('national-card-photo',
+            [UserController::class, 'storeNationalCardPhoto'])->name('store.nationalPhoto');
+        Route::get('national-card-photo/get',
+            [UserController::class, 'getNationalCardPhoto'])->name('get.nationalPhoto');
+        Route::get('/products/hasPurchased', [UserController::class, 'hasPurchased'])->name('api.v2.user.hasPurchased');
+        Route::get('/isPermittedToPurchase/{product}',
+            [UserController::class, 'isPermittedToPurchase'])->name('api.v2.user.isPermittedToPurchase');
+        Route::get('/get/entekhab-reshte',
+            [UserController::class, 'getEntekhabReshte'])->name('api.v2.user.getEntekhabReshte');
     });
-
     Route::post('checkUserAccess', [UserController::class, 'checkUserAccess']);
     Route::get('unknownUsersCityIndex',
         [UserController::class, 'unknownUsersCityIndex'])->name('user.index.unknown.city');
-
-// Coupon Routes
-    Route::group(['prefix' => 'coupon', 'as' => 'coupon.'], function () {
-        Route::resource('', '\\'.CouponController::class)->except(['create', 'edit']);
-        Route::get('findByCode', [CouponController::class, 'findByCode'])->name('findByCode');
-        Route::post('generateMassiveRandomCoupon',
-            [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
-    });
-    Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
 
 // BonyadEhsan Routes
     Route::group(['prefix' => 'bonyadEhsan', 'as' => 'bonyadEhsan'], function () {
@@ -452,62 +293,6 @@ Route::prefix('v2')->group(function () {
 // Watch History routes
     Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
 
-// Content Income routes
-    Route::get('contentIncomeGroupIndex', [ContentInComeController::class, 'groupIndex']);
-    Route::resource('contentIncome', '\\'.ContentInComeController::class)->only(['index', 'show']);
-
-// Order routes
-    Route::post('orderproduct', [OrderproductController::class, 'storeV2'])->name('api.v2.orderproduct.store');
-    Route::delete('orderproduct/{orderproduct}',
-        [OrderproductController::class, 'destroyV2'])->name('api.v2.orderproduct.destroy');
-    Route::post('orderproduct/restore',
-        [OrderproductController::class, 'restore'])->name('api.v2.orderproduct.restore');
-    Route::delete('remove-order-product/{product}',
-        [OrderController::class, 'removeOrderProduct'])->name('api.v2.order.remove-order-product');
-    Route::post('orderCoupon', [OrderController::class, 'submitCouponV2'])->name('api.v2.coupon.submit');
-    Route::delete('orderCoupon', [OrderController::class, 'removeCouponV2'])->name('api.v2.coupon.remove');
-    Route::post('/order-referral-code',
-        [OrderController::class, 'submitReferralCode'])->name('api.v2.order.submitGiftCard');
-    Route::delete('/order-referral-code',
-        [OrderController::class, 'removeReferralCode'])->name('api.v2.order.removeGiftCard');
-
-// Order nested routes
-    Route::group(['prefix' => 'order'], function () {
-        Route::post('3a', [OrderController::class, 'create3aOrder'])->name('api.v2.order.3a');
-        Route::post('freeSubscription',
-            [OrderController::class, 'freeSubscription'])->name('api.v2.order.freeSubscription');
-    });
-
-// Referral Code routes
-    Route::prefix('referral-code')->name('api.v2.referral-code.')->group(function () {
-        Route::get('/', [ReferralCodesController::class, 'index'])->name('index');
-        Route::get('/orderproducts', [ReferralCodesController::class, 'indexOrderproducts'])->name('orderproducts');
-        Route::get('/noneProfitableOrderproducts',
-            [ReferralCodesController::class, 'indexNoneProfitableOrderproducts'])->name('orderproducts.noneProfitable');
-        Route::get('/{referralCode}', [ReferralCodesController::class, 'show'])->name('show');
-        Route::post('/batch-store', [ReferralCodesController::class, 'batchStore'])->name('batch-store');
-        Route::post('/{referralCode}/assign', [ReferralCodesController::class, 'assign'])->name('assign');
-    });
-
-// User routes
-    Route::group(['prefix' => 'user', 'as' => 'api.v2.user.'], function () {
-        Route::get('', [UserController::class, 'index'])->name('index');
-        Route::get('{user}/orders', [UserController::class, 'userOrdersV2'])->name('orders');
-        Route::get('{user}/transactions', [UserController::class, 'userTransactionsV2'])->name('transactions');
-        Route::get('{user}/installments', [UserController::class, 'userInstallmentsV2'])->name('installments');
-        Route::get('{user}/dashboard', '\\'.DashboardPageV2Controller::class)->name('dashboard');
-        Route::post('{user}/firebasetoken', [FirebasetokenController::class, 'storeByUser']);
-        Route::post('getInfo', [UserController::class, 'getInfo'])->name('getInfo');
-        Route::post('national-card-photo',
-            [UserController::class, 'storeNationalCardPhoto'])->name('store.nationalPhoto');
-        Route::get('national-card-photo/get',
-            [UserController::class, 'getNationalCardPhoto'])->name('get.nationalPhoto');
-        Route::get('/products/hasPurchased', [UserController::class, 'hasPurchased'])->name('api.v2.user.hasPurchased');
-        Route::get('/isPermittedToPurchase/{product}',
-            [UserController::class, 'isPermittedToPurchase'])->name('api.v2.user.isPermittedToPurchase');
-        Route::get('/get/entekhab-reshte',
-            [UserController::class, 'getEntekhabReshte'])->name('api.v2.user.getEntekhabReshte');
-    });
 
 // Sales Man routes
     Route::prefix('sales-man')->name('api.v2.sales-man')->group(function () {
@@ -525,39 +310,8 @@ Route::prefix('v2')->group(function () {
             [MobileVerificationController::class, 'verifyMoshavereh'])->name('mobile.verification.verifyMoshavereh');
     });
 
-// Dashboard routes
-    Route::group(['prefix' => 'dashboard'], function () {
-        Route::get('/', '\\'.DashboardPageV2Controller::class)->name('api.v2.asset');
-        Route::get('/abrisham', '\\'.AbrishamDashboardPageV2Controller::class)->name('api.v2.asset.abrisham');
-    });
-
-// Bookmark route
-    Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
-
-// Checkout routes
-    Route::group(['prefix' => 'checkout'], function () {
-        Route::get('payment', [OrderController::class, 'checkoutPayment'])->name('api.v2.checkout.payment');
-        Route::post('addDonate', [OrderController::class, 'addDonate']);
-        Route::delete('removeDonate', [OrderController::class, 'removeDonate']);
-    });
-
-// Payment redirect link
-    Route::any('getPaymentRedirectEncryptedLink',
-        '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v2.payment.getEncryptedLink');
-
 // Insert KMT route
     Route::post('insertKMT', [BotsController::class, 'queueBatchInsertJob'])->name('api.bot.pk');
-
-// Time point routes
-    Route::group(['prefix' => 'timepoint'], function () {
-        Route::resource('', '\\'.TimepointController::class)->except(['create', 'edit']);
-        Route::get('{timepoint}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
-            ->name('api.v2.get.user.favorite.content.timepoint');
-        Route::post('{timepoint}/favored', [FavorableController::class, 'markFavorableFavorite'])
-            ->name('api.v2.mark.favorite.content.timepoint');
-        Route::post('{timepoint}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])
-            ->name('api.v2.mark.unfavorite.content.timepoint');
-    });
 
 // Firebase token routes
     Route::group(['prefix' => 'firebasetoken'], function () {
@@ -636,14 +390,6 @@ Route::prefix('v2')->group(function () {
     Route::get('/orderWithTransaction/{order}',
         [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
 
-// Payment status routes
-    Route::resource('paymentstatuses', '\\'.PaymentStatusController::class)->only(['index']);
-    Route::post('bank-accounts', [BankAccountController::class, 'store'])->name('api.v2.bank-account.store');
-    Route::get('bank-accounts', [BankAccountController::class, 'index'])->name('api.v2.bank-account.index');
-    Route::post('wallet/withdraw', [WalletController::class, 'withdrawWallet'])->name('api.v2.wallet.withdraw');
-    Route::get('wallet/withdraw-requests',
-        [WalletController::class, 'withdrawRequests'])->name('api.v2.wallet.request');
-
 // Event result routes
     Route::resource('event-result', '\\'.EventResultController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('event-result/event/{event}',
@@ -676,9 +422,6 @@ Route::prefix('v2')->group(function () {
 // Seo Controller Route
     Route::get('/seo', '\\'.SeoController::class);
 
-// Coupon Controller Routes
-    Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
-
 // Bots Controller Routes
     Route::post('sc/pen',
         [BotsController::class, 'sendCodeToUnknownNumberPen'])->name('api.v2.sendCodeToUnknownNumberPen');
@@ -691,29 +434,10 @@ Route::prefix('v2')->group(function () {
         Route::get('failTrack', [AndroidLogController::class, 'failTrack']);
     });
 
-// Api Channel Controller Route
-    Route::resource('ch', '\\'.ApiChannelController::class, ['as' => 'api'])->only(['show']);
-
 // Voip Controller Route
     Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
 
     //Added Routs
-
-//Verify Payment Routs
-    Route::group(['prefix' => 'verifyPayment'], function () {
-        Route::group(['prefix' => 'online'], function () {
-            Route::any('{paymentMethod}/{device}',
-                [PaymentVerifierController::class, 'verify'])->name('verifyOnlinePayment');
-            Route::any('{status}/{paymentMethod}/{device}',
-                [PaymentStatusController::class, 'show'])->name('showOnlinePaymentStatus');
-        });
-        Route::any('offline/{paymentMethod}/{device}',
-            [OfflinePaymentController::class, 'verifyPayment'])->name('verifyOfflinePayment');
-    });
-
-//Anarestan Landing
-    Route::get('anarestan',
-        [ProductLandingController::class, 'anareshtan'])->name('api.landing.anarestan');
 
 //Other
     Route::any('paymentRedirect/{paymentMethod}/{device}',
@@ -731,20 +455,11 @@ Route::prefix('v2')->group(function () {
     Route::any('user/editProfile/android/{data}',
         [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');
     Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');
+
 //Study Event
     Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
     Route::get('studyevent/{studyevent}/plansOfDate',
         [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');
-
-//asset
-    Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
-        Route::get('/', [UserController::class, 'userProductFiles'])->name('');
-        Route::get('abrisham',
-            [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham');#TODO:Need to change
-        Route::get('abrishamPro',
-            [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
-        Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
-    });
 
 //ping
     Route::get('php-ping', [HomeController::class, 'phpPing'])->name('api.phpPing');
@@ -757,21 +472,6 @@ Route::prefix('v2')->group(function () {
     Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
     Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');
 
-//Chatre nejat Dashboard
-    Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
-        Route::get('chatre-nejat', [
-            AbrishamDashboardPageController::class, 'chatreNejatDashboard'
-        ])->name('.chatreNejatDashboard');
-    });
-
-//Product 3A Exam
-    Route::post('product/{product}/detachExam/{exam}',
-        [Product3aExamController::class, 'detachExam'])->name('api.product.detachExam');
-    Route::post('product/{product}/attachExam',
-        [Product3aExamController::class, 'attachExam'])->name('api.product.attachExam');
-
-//Billing
-    Route::resource('billing', '\\'.BillingController::class)->only(['index']);
 
 //Live Conductors
     Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
@@ -797,73 +497,6 @@ Route::prefix('v2')->group(function () {
     Route::get('getUnverifiedTransactions',
         [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
 
-//orderproduct
-    Route::group(['prefix' => 'orderproduct'], function () {
-        Route::post('restore',
-            [OrderproductController::class, 'restore'])->name('api.orderproduct.restore');
-    });
-
-//User
-    Route::get('{user}/info', [UserController::class, 'information']);
-    Route::post('{user}/completeInfo', [UserController::class, 'completeInformation']);
-    Route::get('orders', [UserController::class, 'userOrders'])->name('api.user.orders');
-    Route::post('update/partialInfo',
-        [UserController::class, 'partialUpdate'])->name('api.user.update.partial');
-
-//Order
-    Route::group(['prefix' => 'order'], function () {
-        Route::post('detachorderproduct', [OrderController::class, 'detachOrderproduct']);
-        Route::post('addOrderproduct/{product}', [OrderController::class, 'addOrderproduct']);
-        Route::post('addProducts/{order}', [OrderController::class, 'addProducts'])->name('api.order.add.products');
-        Route::get('get4kGift/{product}', [OrderController::class, 'add4kToArashOrder'])->name('api.order.get4kGift');
-        Route::get('/upgradeOrder', [OrderController::class, 'upgrade'])->name('api.order.upgrade');
-    });
-    Route::get('purchaseCoupon', [OrderController::class, 'couponOrder'])->name('api.purchase.coupon');
-    Route::post('/free', [
-        OrderController::class, 'storeFree'
-    ])->name('api.ajax.order.store.free');
-
-
-//Product
-    Route::group(['prefix' => 'product'], function () {
-        Route::get('{product}/transferToDana',
-            [ProductController::class, 'transferToDana'])->name('api.product.transferToDana');
-        Route::get('{product}/createConfiguration', [ProductController::class, 'createConfiguration']);
-        Route::patch('updateProductsConfig',
-            [ProductController::class, 'updateProductsConfig'])->name('updateProductsConfig');
-        Route::post('{product}/makeConfiguration', [ProductController::class, 'makeConfiguration']);
-        Route::get('{product}/editAttributevalues',
-            [ProductController::class, 'editAttributevalues'])->name('api.product.attributevalue.edit');
-        Route::post('{product}/updateAttributevalues',
-            [ProductController::class, 'updateAttributevalues'])->name('api.product.attributevalue.update');
-        Route::post('{product}/attribute-value/attach',
-            [ProductController::class, 'attachAttributeValue'])->name('api.product.attributevalue.attach');
-        Route::delete('{product}/attribute-value/{attribute_value}/detach',
-            [ProductController::class, 'detachAttributeValue'])->name('api.product.attributevalue.detach');
-
-        Route::put('{product}/addGift', [ProductController::class, 'addGift']);
-        Route::delete('{product}/removeGift', [ProductController::class, 'removeGift']);
-        Route::post('{product}/copy', [ProductController::class, 'copy']);
-        Route::post('{product}/attachBlock',
-            [ProductController::class, 'attachBlock'])->name('api.product.attach.block');
-        Route::delete('{product}/detachBlock',
-            [ProductController::class, 'detachBlock'])->name('api.product.detach.block');
-        Route::put('child/{product}', [ProductController::class, 'childProductEnable']);
-        Route::put('addComplimentary/{product}', [ProductController::class, 'addComplimentary']);
-        Route::put('removeComplimentary/{product}', [ProductController::class, 'removeComplimentary']);
-        Route::post('{product}/photo/update-order',
-            [ProductphotoController::class, 'updateOrder'])->name('api.product.update.order');
-        Route::get('{product}/attribute-value',
-            [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
-    });
-
-//attributes
-    Route::group(['prefix' => 'attribute'], function () {
-        Route::get('{attribute}/attribute-value', [
-            AttributevalueController::class, 'attributeAttributeValueIndex'
-        ])->name('api.attribute.attributevalue.index');
-    });
-
 //Website Setting
     Route::group(['prefix' => 'websiteSetting'], function () {
         Route::get('{Websitesetting}/showFaq',
@@ -880,9 +513,6 @@ Route::prefix('v2')->group(function () {
 
 // shahr
     Route::resource('shahr', ShahrController::class)->only('index');
-
-// attributevalue
-    Route::resource('attributevalue', AttributevalueController::class)->except(['create', 'show', 'index']);
 
 // attributegroup
     Route::resource('attributegroup', AttributegroupController::class)->except(['show', 'create']);
@@ -936,15 +566,6 @@ Route::prefix('v2')->group(function () {
     Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
     Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
 
-//Vast
-    Route::resource('vast', '\\'.VastController::class)->except('index');
-    Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'api.vasts'])->only([
-        'index', 'destroy', 'store'
-    ]);
-    Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'api.vasts'])->only([
-        'index', 'store', 'destroy'
-    ]);
-
 //News Letter
     Route::resource('newsletter', '\\'.NewsletterController::class)->only(['store']);
 
@@ -980,29 +601,5 @@ Route::prefix('v2')->group(function () {
 //map
     Route::get('map', '\\'.MapPageController::class)->name('api.map');
 
-//Set
-    Route::group(['prefix' => 'set'], function () {
-        Route::get('{set}/list/links', [SetController::class, 'indexContentLinks'])->name('api.set.list.links');
-        Route::get('{set}/list', [SetController::class, 'indexContent'])->name('api.set.list.contents');
-        Route::get('{set}/transferToDana', [SetController::class, 'transferToDana'])->name('api.set.transferToDana');
-        Route::post('{set}/products',
-            [SetController::class, 'toggleProductForSet'])->name('api.set.toggleProductForSet');
-        Route::get('{setId}/transfer-to-dana-info',
-            [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
-    });
-    Route::post('set/bulk-activate', [SetController::class, 'bulkActivate'])->name('set.bulk-activate');
-
-//Content
-    Route::group(['prefix' => 'c'], function () {
-        Route::get('uploadContent', [ContentController::class, 'uploadContent'])->name('c.upload.content');
-        Route::get('createArticle', [ContentController::class, 'createArticle'])->name('c.create.article');
-        Route::post('updateTmpDescription',
-            [ContentController::class, 'createArticle'])->name('c.update.pending.description');
-        Route::post('{c}/updateSet', [ContentController::class, 'updateSet'])->name('c.updateSet');
-        Route::post('{c}/copyTmp', [ContentController::class, 'copyTimepoints'])->name('c.copyTmp');
-        Route::get('{c}/transferToDana', [ContentController::class, 'transferToDana'])->name('c.transferToDana');
-        Route::get('{contentId}/transfer-to-dana-info',
-            [ContentController::class, 'transferToDanaInfo'])->name('c.transferToDanaInfo');
-    });
 });
 
