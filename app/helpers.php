@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 if (!function_exists('nullable')) {
     function nullable($result, $data = []): Nullable
@@ -884,5 +885,9 @@ if (!function_exists('nationalCodeValidation')) {
             }
             return $rand;
         }
+    }
+    function studly_case($value)
+    {
+        return Str::studly($value);
     }
 }
