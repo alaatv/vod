@@ -91,7 +91,7 @@ abstract class SearchAbstract
 
     protected function createFilterDecorator($name)
     {
-        return __NAMESPACE__.'\\Filters\\'.studly_case($name);
+        return __NAMESPACE__.'\\Filters\\'.Str::studly($name);
     }
 
     protected function isValidFilter($filterName)

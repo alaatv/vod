@@ -8,6 +8,7 @@
 
 namespace App\Classes\Abstracts\Checkout;
 
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Exception;
 
 abstract class CheckoutInvoker
@@ -58,7 +59,7 @@ abstract class CheckoutInvoker
     protected function initiateChain()
     {
         foreach ($this->chainArray as $chainCellName) {
-            $chainCellClassName = "\\".$this->getChainClassesNameSpace()."\\".studly_case($chainCellName);
+            $chainCellClassName = "\\".$this->getChainClassesNameSpace()."\\".Str::studly($chainCellName);
             $chainCell = (new $chainCellClassName());
             array_push($this->chainObjectArray, $chainCell);
         }
