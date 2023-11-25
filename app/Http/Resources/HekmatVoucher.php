@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 
 /**
- * Class \App\Productvoucher
+ * Class \App\Models\Productvoucher
  *
  * @mixin Productvoucher
  *

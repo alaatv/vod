@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 /**
  * Class Product
  *
- * @mixin \App\Product
+ * @mixin \App\Models\Product
  */
 class ProductForWeb extends AlaaJsonResource
 {
@@ -24,7 +24,7 @@ class ProductForWeb extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Product)) {
+        if (!($this->resource instanceof \App\Models\Product)) {
             return [];
         }
 

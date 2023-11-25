@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class AttributeType
  *
- * @mixin \App\Attributetype
+ * @mixin \App\Models\Attributetype
  */
 class AttributeType extends AlaaJsonResource
 {
@@ -20,7 +20,7 @@ class AttributeType extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Attributetype)) {
+        if (!($this->resource instanceof \App\Models\Attributetype)) {
             return [];
         }
 

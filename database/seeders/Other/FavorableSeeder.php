@@ -25,7 +25,7 @@ class FavorableSeeder extends Seeder
             $data[] = [
                 'user_id' => 1,
                 'favorable_id' => $contentId,
-                'favorable_type' => 'App\Content',
+                'favorable_type' => 'App\Models\Content',
                 'created_at' => now(),
                 'updated_at' => now()
             ];
@@ -34,7 +34,7 @@ class FavorableSeeder extends Seeder
             $data[] = [
                 'user_id' => 1,
                 'favorable_id' => $setId,
-                'favorable_type' => 'App\Contentset',
+                'favorable_type' => 'App\Models\Contentset',
                 'created_at' => now(),
                 'updated_at' => now()
             ];
@@ -43,7 +43,7 @@ class FavorableSeeder extends Seeder
             $data[] = [
                 'user_id' => 1,
                 'favorable_id' => $productId,
-                'favorable_type' => 'App\Product',
+                'favorable_type' => 'App\Models\Product',
                 'created_at' => now(),
                 'updated_at' => now()
             ];

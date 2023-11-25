@@ -19,11 +19,11 @@ class BlockableResource extends AlaaJsonResource
     {
         if (($this->blockable instanceof \App\Slideshow)) {
             $type = 'slideshow';
-        } elseif (($this->blockable instanceof \App\Content)) {
+        } elseif (($this->blockable instanceof \App\Models\Content)) {
             $type = 'content';
         } elseif (($this->blockable instanceof Contentset)) {
             $type = 'set';
-        } elseif (($this->blockable instanceof \App\Product)) {
+        } elseif (($this->blockable instanceof \App\Models\Product)) {
             $type = 'product';
         } else {
             return [];

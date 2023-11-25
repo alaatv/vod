@@ -5,11 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 
 
-/**
- * Class Block
- *
- * @mixin \App\Block
- * */
 class Channel extends AlaaJsonResource
 {
     /**
@@ -21,7 +16,7 @@ class Channel extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Channel)) {
+        if (!($this->resource instanceof \App\Models\Channel)) {
             return [];
         }
 

@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 
 /**
- * Class \App\Contenttype
+ * Class \App\Models\Contenttype
  *
- * @mixin \App\Contenttype
+ * @mixin \App\Models\Contenttype
  * */
 class Contenttype extends AlaaJsonResource
 {
@@ -21,7 +21,7 @@ class Contenttype extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Contenttype)) {
+        if (!($this->resource instanceof \App\Models\Contenttype)) {
             return [];
         }
 

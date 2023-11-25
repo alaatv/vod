@@ -33,14 +33,14 @@ class FavorableListResource extends AlaaJsonResource
         $contentSets = collect();
         $timePoints = collect();
         foreach ($this->favors as $favor) {
-            if ($favor->favorable_type === 'App\Content') {
-                $content = \App\Content::find($favor->favorable_id);
+            if ($favor->favorable_type === 'App\Models\Content') {
+                $content = \App\Models\Content::find($favor->favorable_id);
                 $contents->push(new ContentWithFavoredTimePoints($content));
-            } elseif ($favor->favorable_type === 'App\Contentset') {
+            } elseif ($favor->favorable_type === 'App\Models\Contentset') {
                 $contentSet = Contentset::find($favor->favorable_id);
                 $contentSets->push(new SetInIndex($contentSet));
-            } elseif ($favor->favorable_type === 'App\Product') {
-                $product = \App\Product::find($favor->favorable_id);
+            } elseif ($favor->favorable_type === 'App\Models\Product') {
+                $product = \App\Models\Product::find($favor->favorable_id);
                 $products->push(new Product($product));
             } else {
                 $timePoint = Timepoint::find($favor->favorable_id);

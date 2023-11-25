@@ -21,7 +21,7 @@ class BlockV2 extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Block)) {
+        if (!($this->resource instanceof \App\Models\Block)) {
             return [];
         }
 

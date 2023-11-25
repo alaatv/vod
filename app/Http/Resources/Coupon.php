@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class Coupon
  *
- * @mixin \App\Coupon
+ * @mixin \App\Models\Coupon
  * */
 class Coupon extends AlaaJsonResource
 {
@@ -21,7 +21,7 @@ class Coupon extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Coupon)) {
+        if (!($this->resource instanceof \App\Models\Coupon)) {
             return [];
         }
 

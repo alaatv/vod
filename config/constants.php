@@ -789,7 +789,7 @@ return [
 
     'MORPH_MAP_MODELS' => [
         'content' => [
-            'model' => App\Content::class,
+            'model' => App\Models\Content::class,
             'default_resource' => App\Http\Resources\AbrishamContentResource::class,
             'resource' => [
 //                'blockable' => App\Http\Resources\Content::class,
@@ -798,7 +798,7 @@ return [
             ],
         ],
         'set' => [
-            'model' => App\Contentset::class,
+            'model' => App\Models\Contentset::class,
             'default_resource' => App\Http\Resources\SetWithoutPaginationV2::class,
             'resource' => [
 //                'blockable' => App\Http\Resources\TestResource::class,
@@ -807,7 +807,7 @@ return [
             ],
         ],
         'product' => [
-            'model' => App\Product::class,
+            'model' => App\Models\Product::class,
             'default_resource' => App\Http\Resources\Product::class,
             'resource' => [
 //                'blockable' => App\Http\Resources\Product::class,

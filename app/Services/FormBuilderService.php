@@ -61,7 +61,7 @@ class FormBuilderService
 
     private function contenttypes()
     {
-        return \App\Contenttype::all();
+        return \App\Models\Contenttype::all();
     }
 
     private function studyEvents()

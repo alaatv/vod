@@ -8,13 +8,13 @@ use Illuminate\Support\Arr;
 /**
  * Class Content
  *
- * @mixin \App\Content
+ * @mixin \App\Models\Content
  * */
 class ContentInSetWithFileWithoutPagination extends AlaaJsonResource
 {
     use Resource;
 
-    public function __construct(\App\Content $model)
+    public function __construct(\App\Models\Content $model)
     {
         parent::__construct($model);
     }
@@ -29,7 +29,7 @@ class ContentInSetWithFileWithoutPagination extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Content)) {
+        if (!($this->resource instanceof \App\Models\Content)) {
             return [];
         }
 

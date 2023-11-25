@@ -25,7 +25,7 @@ class SubscriptionResource extends JsonResource
             'order' => new OrderResource($this->order),
             'subscription' => $this->when($this->relationLoaded('subscription'), function () {
                 return match (true) {
-                    $this->subscription instanceof \App\Product => new ProductResource($this->subscription),
+                    $this->subscription instanceof \App\Models\Product => new ProductResource($this->subscription),
                     $this->subscription instanceof Event => new EventResource($this->subscription),
                     default => null
                 };

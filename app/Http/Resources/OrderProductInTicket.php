@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class Product
  *
- * @mixin \App\Product
+ * @mixin \App\Models\Product
  * */
 class OrderProductInTicket extends AlaaJsonResource
 {

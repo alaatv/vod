@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 /**
  * Class Content
  *
- * @mixin \App\Content
+ * @mixin \App\Models\Content
  * */
 class ContentInPlan extends AlaaJsonResource
 {
     use Resource;
 
-    public function __construct(\App\Content $model)
+    public function __construct(\App\Models\Content $model)
     {
         parent::__construct($model);
     }
@@ -30,7 +30,7 @@ class ContentInPlan extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Content)) {
+        if (!($this->resource instanceof \App\Models\Content)) {
             return [];
         }
 

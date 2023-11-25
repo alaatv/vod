@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 /**
  * Class Product
  *
- * @mixin \App\Product
+ * @mixin \App\Models\Product
  * */
 class HekmatVoucherProduct extends AlaaJsonResource
 {
-    public function __construct(\App\Product $model)
+    public function __construct(\App\Models\Product $model)
     {
         parent::__construct($model);
     }
@@ -25,7 +25,7 @@ class HekmatVoucherProduct extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Product)) {
+        if (!($this->resource instanceof \App\Models\Product)) {
             return [];
         }
 

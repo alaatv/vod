@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 /**
  * Class Block
  *
- * @mixin \App\Block
+ * @mixin \App\Models\Block
  * */
 class BlockInWebAsset extends AlaaJsonResource
 {
-    public function __construct(\App\Block $model)
+    public function __construct(\App\Models\Block $model)
     {
         parent::__construct($model);
     }
@@ -26,7 +26,7 @@ class BlockInWebAsset extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Block)) {
+        if (!($this->resource instanceof \App\Models\Block)) {
             return [
 
             ];

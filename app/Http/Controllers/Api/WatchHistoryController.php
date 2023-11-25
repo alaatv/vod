@@ -83,7 +83,7 @@ class WatchHistoryController extends Controller
                 continue;
             }
             $watchable['user_id'] = $userId;
-            $watchable['watchable_type'] = 'App\Content';
+            $watchable['watchable_type'] = 'App\Models\Content';
             $watchable['created_at'] = now();
             $watchable['updated_at'] = now();
             $watchables[] = $watchable;

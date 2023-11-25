@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 /**
  * Class Content
  *
- * @mixin \App\Content
+ * @mixin \App\Models\Content
  * */
 class Content extends AlaaJsonResource
 {
@@ -24,7 +24,7 @@ class Content extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Content)) {
+        if (!($this->resource instanceof \App\Models\Content)) {
             return [];
         }
         $this->loadMissing('contenttype', 'section', 'user', 'set');

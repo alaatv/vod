@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class Block
  *
- * @mixin \App\Block
+ * @mixin \App\Models\Block
  *
  * @property mixed notRedirectedContents
  * @property mixed sets
@@ -24,7 +24,7 @@ class BlockInAdmin extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Block)) {
+        if (!($this->resource instanceof \App\Models\Block)) {
             return [
 
             ];

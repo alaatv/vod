@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 /**
  * Class AttributeControl
  *
- * @mixin \App\Attributecontrol
+ * @mixin \App\Models\Attributecontrol
  */
 class AttributeControl extends AlaaJsonResource
 {
@@ -20,7 +20,7 @@ class AttributeControl extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Attributecontrol)) {
+        if (!($this->resource instanceof \App\Models\Attributecontrol)) {
             return [];
         }
 

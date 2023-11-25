@@ -14,7 +14,7 @@ class BlockInChannelResource extends AlaaJsonResource
      */
     public function toArray($request): array
     {
-        if (!($this->resource instanceof \App\Block)) {
+        if (!($this->resource instanceof \App\Models\Block)) {
             return [];
         }
         $contests = $this->notRedirectedContents;

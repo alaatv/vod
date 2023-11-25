@@ -2082,7 +2082,7 @@ class GeneralCommand extends Command
     {
         $favoredContents = collect();
         DB::table('favorables')
-            ->where('favorable_type', 'App\Content')
+            ->where('favorable_type', 'App\Models\Content')
             ->orderBy('created_at')
             ->chunk(500, function ($favorites) use ($favoredContents) {
                 foreach ($favorites as $favorite) {
@@ -2105,7 +2105,7 @@ class GeneralCommand extends Command
                         $data[] = [
                             'user_id' => $favorite->user_id,
                             'favorable_id' => $timePoint->content_id,
-                            'favorable_type' => 'App\Content',
+                            'favorable_type' => 'App\Models\Content',
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];

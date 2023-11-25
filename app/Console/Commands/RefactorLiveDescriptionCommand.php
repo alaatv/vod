@@ -21,7 +21,7 @@ class RefactorLiveDescriptionCommand extends Command
      *
      * @var string
      */
-    protected $description = "in livedescriptions table if product_id is null make instance's entity_id = 5 and entity_type = App\Studyevent if product_id is not null make entity_id = product_id and entity_type = App\Products";
+    protected $description = "in livedescriptions table if product_id is null make instance's entity_id = 5 and entity_type = App\Studyevent if product_id is not null make entity_id = product_id and entity_type = App\Models\Products";
 
     /**
      * Create a new command instance.
@@ -51,7 +51,7 @@ class RefactorLiveDescriptionCommand extends Command
 
     private function fillProductId()
     {
-        LiveDescription::withTrashed()->where('entity_type', '\App\Product')->update([
+        LiveDescription::withTrashed()->where('entity_type', '\App\Models\Product')->update([
             'product_id' => DB::raw('ENTITY_ID'),
         ]);
         LiveDescription::withTrashed()->where('entity_type', '\App\Studyevent')->update([
@@ -67,7 +67,7 @@ class RefactorLiveDescriptionCommand extends Command
         ]);
         LiveDescription::withTrashed()->whereNotNull('product_id')->update([
             'entity_id' => DB::raw('PRODUCT_ID'),
-            'entity_type' => 'App\Product',
+            'entity_type' => 'App\Models\Product',
         ]);
     }
 }

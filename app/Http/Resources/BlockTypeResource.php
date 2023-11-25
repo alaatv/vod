@@ -17,7 +17,7 @@ class BlockTypeResource extends AlaaJsonResource
 {
     public function toArray($resource)
     {
-        if (!($this->resource instanceof \App\BlockType)) {
+        if (!($this->resource instanceof \App\Models\BlockType)) {
             return [];
         }
 
