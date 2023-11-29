@@ -4,8 +4,8 @@
 namespace App\Classes;
 
 
-use Config;
 use Illuminate\Cache\RedisStore;
+use Illuminate\Support\Facades\Config;
 
 class AlaaRedisStore extends RedisStore
 {
