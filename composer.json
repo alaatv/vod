@@ -8,7 +8,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": "^8.2    ",
+    "php": "^8.3    ",
     "ext-curl": "*",
     "ext-simplexml": "*",
     "algolia/algoliasearch-client-php": "*",
@@ -39,7 +39,7 @@
     "barryvdh/laravel-ide-helper": "*",
     "fakerphp/faker": "^1.9.1",
     "laravel/pint": "*",
-    "laravel/sail": "^1.18",
+    "laravel/sail": "^1.26",
     "mockery/mockery": "^1.4.4",
     "nunomaduro/collision": "^7.0",
     "phpunit/phpunit": "^10.1",
