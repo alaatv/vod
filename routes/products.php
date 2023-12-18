@@ -32,7 +32,6 @@ use App\Http\Controllers\Api\VastController;
 use App\Http\Controllers\Api\VastSetController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('v2')->group(function () {
 
     // Block routes
@@ -106,20 +105,20 @@ Route::prefix('v2')->group(function () {
     //Chatre nejat Dashboard
     Route::group(['prefix' => 'panel', 'as' => 'api.user.panel'], function () {
         Route::get('chatre-nejat', [
-            AbrishamDashboardPageController::class, 'chatreNejatDashboard'
+            AbrishamDashboardPageController::class, 'chatreNejatDashboard',
         ])->name('.chatreNejatDashboard');
     });
 
-// Dashboard routes
+    // Dashboard routes
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('/', '\\'.DashboardPageV2Controller::class)->name('api.v2.asset');
         Route::get('/abrisham', '\\'.AbrishamDashboardPageV2Controller::class)->name('api.v2.asset.abrisham');
     });
 
-// Bookmark route
+    // Bookmark route
     Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
 
-// Time point routes
+    // Time point routes
     Route::group(['prefix' => 'timepoint'], function () {
         Route::resource('', '\\'.TimepointController::class)->except(['create', 'edit']);
         Route::get('{timepoint}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
@@ -130,7 +129,7 @@ Route::prefix('v2')->group(function () {
             ->name('api.v2.mark.unfavorite.content.timepoint');
     });
 
-//Product
+    //Product
     Route::group(['prefix' => 'product'], function () {
         Route::get('', [ProductController::class, 'index'])->name('api.v2.product.index');
         Route::get('{product}/transferToDana',
@@ -193,7 +192,7 @@ Route::prefix('v2')->group(function () {
     Route::post('getPricgroupIndexe/{product}',
         [ProductController::class, 'refreshPriceV2'])->name('api.v2.refreshPrice');
 
-//Set
+    //Set
     Route::group(['prefix' => 'set'], function () {
         Route::get('{set}/list/links', [SetController::class, 'indexContentLinks'])->name('api.set.list.links');
         Route::get('{set}/list', [SetController::class, 'indexContent'])->name('api.set.list.contents');
@@ -215,7 +214,7 @@ Route::prefix('v2')->group(function () {
     });
     Route::get('content-set/{set}', [SetController::class, 'showWithContents']);
 
-//Content
+    //Content
     Route::prefix('c')->group(function () {
         $controller = ContentController::class;
         Route::name('c.')->group(function () use ($controller) {
@@ -254,26 +253,26 @@ Route::prefix('v2')->group(function () {
     Route::group(['prefix' => 'asset', 'as' => 'api.user.asset'], function () {
         Route::get('/', [UserController::class, 'userProductFiles'])->name('');
         Route::get('abrisham',
-            [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham');#TODO:Need to change
+            [AbrishamDashboardPageController::class, 'oldDashboard'])->name('.abrisham'); //TODO:Need to change
         Route::get('abrishamPro',
-            [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro');#TODO:Need to change
-        Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan');#TODO:Need to change
+            [AbrishamDashboardPageController::class, 'proDashboard'])->name('.abrisham.pro'); //TODO:Need to change
+        Route::get('taftan', '\\'.TaftanDashboardPageController::class)->name('.taftan'); //TODO:Need to change
     });
 
     //attributes
     Route::group(['prefix' => 'attribute'], function () {
         Route::get('{attribute}/attribute-value', [
-            AttributevalueController::class, 'attributeAttributeValueIndex'
+            AttributevalueController::class, 'attributeAttributeValueIndex',
         ])->name('api.attribute.attributevalue.index');
     });
 
     //Vast
     Route::resource('vast', '\\'.VastController::class)->except('index');
     Route::resource('vasts/{vast}/contents', '\\'.VastContentController::class, ['as' => 'api.vasts'])->only([
-        'index', 'destroy', 'store'
+        'index', 'destroy', 'store',
     ]);
     Route::resource('vasts/{vast}/sets', '\\'.VastSetController::class, ['as' => 'api.vasts'])->only([
-        'index', 'store', 'destroy'
+        'index', 'store', 'destroy',
     ]);
 
     // attribute value

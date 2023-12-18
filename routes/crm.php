@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\TicketMessageController;
 use App\Http\Controllers\Api\TicketPriorityController;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | V2

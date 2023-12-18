@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\AndroidLogController;
 use App\Http\Controllers\Api\_3AController;
 use App\Http\Controllers\Api\Admin\CouponController;
@@ -92,7 +91,6 @@ use App\PaymentModule\Controllers\RedirectAPIUserToPaymentRoute;
 use App\PaymentModule\Controllers\RedirectUserToPaymentPage;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('v2')->group(function () {
 
     // FAQs
@@ -103,58 +101,57 @@ Route::prefix('v2')->group(function () {
     Route::get('debug', [HomeController::class, 'debug'])->name('api.v2.debug');
     Route::get('satra', [HomeController::class, 'satra']);
 
-
-// Ewano routes
+    // Ewano routes
     Route::group(['prefix' => 'ewano'], function () {
         Route::get('/', [EwanoController::class, 'root'])->name('ewano.get');
         Route::post('/order', [EwanoController::class, 'makeOrder'])->name('ewano.make.order');
         Route::post('/pay', [EwanoController::class, 'pay'])->name('ewano.pay');
     });
 
-// Search route
+    // Search route
     Route::get('search', [SearchController::class, 'index'])->name('api.v2.search');
 
-// App version route
+    // App version route
     Route::get('lastVersion', [AppVersionController::class, 'showV2']);
 
-// Authentication routes
+    // Authentication routes
     Route::post('login', [LoginController::class, 'login']); // Login route
     Route::post('logout', [ApiLoginController::class, 'logout'])->name('api.logout');
     Route::get('authTest', [HomeController::class, 'authTestV2'])->name('api.v2.authTest');
 
-// Forrest routes
+    // Forrest routes
     Route::resource('/forrest/tree', '\\'.ForrestController::class)->only(['index', 'store', 'update']);
     Route::get('/forrest/tree/{grid}',
         [ForrestController::class, 'show'])->name('api.v2.forrest.tree.show');
     Route::get('/forrest/tags', [ForrestController::class, 'tags'])->name('api.v2.forrest.tree.tags');
 
-// Additional Home routes
+    // Additional Home routes
     Route::get('shop', '\\'.ShopPageController::class)->name('api.v2.shop');
     Route::get('home', '\\'.IndexPageController::class)->name('api.v2.home');
     Route::get('contact', '\\'.ContactUsController::class)->name('api.v2.contact');
     Route::get('rule', '\\'.RulesPageController::class)->name('api.v2.rule');
 
-// Newsletter Routes
+    // Newsletter Routes
     Route::resource('newsletter', '\\'.NewsletterController::class, ['as' => 'api'])->only(['store']);
 
-// Comment Routes
+    // Comment Routes
     Route::resource('comment', '\\'.CommentController::class)->only(['store', 'update', 'destroy', 'show']);
 
-// Watched Routes
+    // Watched Routes
     Route::resource('watched', '\\'.WatchHistoryController::class)->only('store');
     Route::post('watched-bulk', [WatchHistoryController::class, 'bulkInsert']);
 
-// Donate route
+    // Donate route
     Route::get('donate', '\\'.DonateController::class)->name('api.v2.donate');
     Route::post('donate', [OrderController::class, 'donateOrderV2'])->name('api.v2.make.donate');
 
-// Mega route group
+    // Mega route group
     Route::group(['prefix' => 'megaroute', 'as' => 'api.v2.'], function () {
         Route::get('getUserFormData',
             [UserController::class, 'getUserFormData'])->name('user.formData');
     });
 
-// SMS Routes
+    // SMS Routes
     Route::group(['prefix' => 'sms'], function () {
         // Get Credit for Mediana
         Route::get('mediana-get-credit',
@@ -182,18 +179,18 @@ Route::prefix('v2')->group(function () {
         Route::post('/uesrStore', [SettingController::class, 'userStore'])->middleware('auth:api')->name('user-store');
     });
 
-// Website setting routes
+    // Website setting routes
     Route::prefix('website-setting')->name('website-setting.')->group(function () {
         Route::post('/user', [WebsiteSettingController::class, 'storeUserSetting'])->name('store-user-setting');
         Route::get('/user', [WebsiteSettingController::class, 'userSetting'])->name('user-setting');
     });
 
-// Upload Center routes
+    // Upload Center routes
     Route::post('upload/presigned-request',
         [UploadCenterController::class, 'presignedRequest'])->name('upload.presigned-request');
     Route::get('upload', [UploadCenterController::class, 'upload'])->name('upload');
 
-// User Routes
+    // User Routes
     Route::prefix('user')->group(function () {
 
         Route::get('favored', [UserController::class, 'userFavored'])->name('api.v2.user.favored');
@@ -222,7 +219,7 @@ Route::prefix('v2')->group(function () {
     Route::get('unknownUsersCityIndex',
         [UserController::class, 'unknownUsersCityIndex'])->name('user.index.unknown.city');
 
-// BonyadEhsan Routes
+    // BonyadEhsan Routes
     Route::group(['prefix' => 'bonyadEhsan', 'as' => 'bonyadEhsan'], function () {
         Route::get('order', [BonyadEhsanOrderController::class, 'index'])->name('order.index');
         Route::delete('order/{order}', [BonyadEhsanOrderController::class, 'destroy'])->name('order.remove');
@@ -238,7 +235,7 @@ Route::prefix('v2')->group(function () {
         Route::get('consultant/{consultant}',
             [BonyadEhsanUserController::class, 'consultantInfo'])->name('user.consultant');
         Route::get('selectOption', [
-            \App\Http\Controllers\Api\BonyadEhsan\Admin\ProductController::class, 'selectOption'
+            \App\Http\Controllers\Api\BonyadEhsan\Admin\ProductController::class, 'selectOption',
         ])->name('bonyad.select.option');
         Route::post('studentLimit', [BonyadEhsanUserController::class, 'studentLimit'])->name('user.studentLimit');
         Route::group(['prefix' => 'notification', 'as' => 'notification'], function () {
@@ -248,14 +245,13 @@ Route::prefix('v2')->group(function () {
         });
     });
 
-// Form Builder Routes
+    // Form Builder Routes
     Route::get('/form-builder', '\\'.FormBuilder::class);
 
-
-// Favorable List Routes
+    // Favorable List Routes
     Route::apiResource('favorable-list', '\\'.FavorableListController::class);
 
-// Voucher Routes
+    // Voucher Routes
     Route::prefix('voucher')->group(function () {
         Route::post('createByCompany',
             [VoucherManagementController::class, 'createVoucherByCompany'])->name('api.v2.admin.createByCompany');
@@ -264,10 +260,10 @@ Route::prefix('v2')->group(function () {
         Route::post('submit', [VoucherController::class, 'submit'])->name('api.v2.submit.voucher');
     });
     Route::resource('vouchers', '\\'.VoucherManagementController::class, ['as' => 'api.v2.admin.'])->only([
-        'store', 'show', 'update', 'destroy'
+        'store', 'show', 'update', 'destroy',
     ]);
 
-// Study Plan routes
+    // Study Plan routes
     Route::prefix('studyPlan')->group(function () {
         Route::resource('/', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
         Route::get('planDate/{plan_date}/event/{event}/showByDate',
@@ -278,7 +274,7 @@ Route::prefix('v2')->group(function () {
     });
     Route::resource('plan', '\\'.PlanController::class, ['as' => 'api'])->except(['create', 'edit']);
 
-// Subscriptions routes
+    // Subscriptions routes
     Route::get('subscriptions/user',
         ['\\'.SubscriptoinController::class, 'userSubscriptions'])->name('user.subscriptions');
     Route::post('user/subscription/inquiry',
@@ -287,20 +283,19 @@ Route::prefix('v2')->group(function () {
         ['\\'.SubscriptoinController::class, 'updateValue'])->name('user.subscriptions.updateValue');
     Route::resource('subscription', '\\'.SubscriptoinController::class)->only(['store']);
 
-// Entekhab Reshte routes
+    // Entekhab Reshte routes
     Route::resource('entekhab-reshte', '\\'.EntekhabReshteController::class)->only('store');
 
-// Watch History routes
+    // Watch History routes
     Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
 
-
-// Sales Man routes
+    // Sales Man routes
     Route::prefix('sales-man')->name('api.v2.sales-man')->group(function () {
         Route::get('/', [SalesManController::class, 'index'])->name('index');
         Route::post('/contract', [SalesManController::class, 'submitContract'])->name('contract');
     });
 
-// Mobile Verification routes
+    // Mobile Verification routes
     Route::prefix('mobile')->group(function () {
         Route::post('verify', [MobileVerificationController::class, 'verify'])->name('api.mobile.verification.verify');
         Route::get('resend', [MobileVerificationController::class, 'resend'])->name('api.mobile.verification.resend');
@@ -310,49 +305,49 @@ Route::prefix('v2')->group(function () {
             [MobileVerificationController::class, 'verifyMoshavereh'])->name('mobile.verification.verifyMoshavereh');
     });
 
-// Insert KMT route
+    // Insert KMT route
     Route::post('insertKMT', [BotsController::class, 'queueBatchInsertJob'])->name('api.bot.pk');
 
-// Firebase token routes
+    // Firebase token routes
     Route::group(['prefix' => 'firebasetoken'], function () {
         Route::resource('', '\\'.FirebasetokenController::class)->only('store');
         Route::delete('{refreshToken}', [FirebasetokenController::class, 'destroyByRefreshToken']);
         Route::put('{refreshToken}', [FirebasetokenController::class, 'updateByRefreshToken']);
     });
 
-// Routes related to BotsController
+    // Routes related to BotsController
     Route::post('insertExcel', [BotsController::class, 'queueExcelInsertion'])->name('api.v2.queueExcelInsertion');
     Route::post('sc', [BotsController::class, 'sendCodeToUnknownNumber'])->name('api.v2.sendCodeToUnknownNumber');
     Route::get('getUserData/{user}', [BotsController::class, 'getUserData']);
 
-// Routes related to HomeController
+    // Routes related to HomeController
     Route::get('getTelescopeExpiration', [HomeController::class, 'getUserTelescopeExpiration']);
 
-// Routes related to 3AController
+    // Routes related to 3AController
     Route::get('getUserFor3a', [_3AController::class, 'getUserFor3a']);
     Route::get('getUserRoleAndPermission', [_3AController::class, 'getUserFor3a']);
 
-// Tag group routes
+    // Tag group routes
     Route::resource('tagGroup', '\\'.TagGroupController::class)->only(['index']);
 
-// Routes map-details
+    // Routes map-details
     Route::group(['as' => 'api.v2.'], function () {
         Route::resource('map-details', '\\'.MapDetailController::class)->except(['create', 'edit']);
     });
 
-// Routes related to 'studyEvent'
+    // Routes related to 'studyEvent'
     Route::group(['prefix' => 'studyEvent', 'as' => 'event.'], function () {
         Route::get('{studyevent}/studyPlans', [StudyEventController::class, 'studyPlans'])->name('studyPlans');
         Route::get('whereIsEvent', [StudyEventController::class, 'whereIsEvent'])->name('whereIsEvent');
     });
 
-// Routes related to 'employee timesheet'
+    // Routes related to 'employee timesheet'
     Route::group(['prefix' => 'employeetimesheet', 'as' => 'employeetimesheet.'], function () {
         Route::post('confirmOverTime',
             [EmployeetimesheetController::class, 'confirmEmployeeOverTime'])->name('confirmOverTime');
     });
 
-//Live Routes
+    //Live Routes
     Route::group(['prefix' => 'livedescription', 'as' => 'LiveDescriptionController.'], function () {
         Route::resource('',
             '\\'.LiveDescriptionController::class)->where(['livedescription' => '[0-9]+'])->except(['create', 'edit']);
@@ -366,11 +361,11 @@ Route::prefix('v2')->group(function () {
             ->name('increaseSeeliveDescriptionn');
     });
 
-//Role Routes
+    //Role Routes
     Route::post('authorize', [RolePermissionController::class, 'getResponse']);
     Route::post('authorizeWithPermissionName', [RolePermissionController::class, 'authorizeWithPermissionName']);
 
-// Exam routes
+    // Exam routes
     Route::group(['prefix' => 'exam'], function () {
         Route::get('rank-chart', [ExamResultsController::class, 'rankChart'])->name('api.v2.rank.charts');
         Route::get('user-rank', [ExamResultsController::class, 'userRank'])->name('api.v2.user.rank');
@@ -380,7 +375,7 @@ Route::prefix('v2')->group(function () {
             [ExamResultsController::class, 'checkExport'])->name('api.v2.check.export');
     });
 
-// Exam Results Controller Route
+    // Exam Results Controller Route
     Route::post('/exam/store',
         [ExamResultsController::class, 'store'])->name('api.v2.store.exam')->middleware('3aIpAccess');
 
@@ -390,12 +385,12 @@ Route::prefix('v2')->group(function () {
     Route::get('/orderWithTransaction/{order}',
         [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
 
-// Event result routes
+    // Event result routes
     Route::resource('event-result', '\\'.EventResultController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('event-result/event/{event}',
         [EventResultController::class, 'getInfoByEvent'])->name('api.v2.eventResult.getInfo.byEvent');
 
-// Study event routes
+    // Study event routes
     Route::prefix('events')->name('event.')->group(function () {
         Route::get('/', [StudyEventController::class, 'index'])->name('index');
         Route::get('{studyEvent}/advisor', [StudyEventController::class, 'advisor'])->name('advisor');
@@ -407,41 +402,41 @@ Route::prefix('v2')->group(function () {
             [StudyEventReportController::class, 'markAsRead'])->name('mark-as-read');
     });
 
-// Additional miscellaneous routes
+    // Additional miscellaneous routes
     Route::get('konkur1403Countdown',
         [HomeController::class, 'getKonkur1403Countdown'])->name('api.v2.getKonkur1403Countdown');
 
-// Route for updating the view of a live conductor
+    // Route for updating the view of a live conductor
     Route::prefix('/live-conductor')->name('live-conductor.')->group(function () {
         Route::put('/view', [LiveConductorController::class, 'view'])->name('view');
     });
 
-// Route for showing live conductor information
+    // Route for showing live conductor information
     Route::get('conductor/{liveConductor}/live', [LiveConductorController::class, 'show'])->name('show');
 
-// Seo Controller Route
+    // Seo Controller Route
     Route::get('/seo', '\\'.SeoController::class);
 
-// Bots Controller Routes
+    // Bots Controller Routes
     Route::post('sc/pen',
         [BotsController::class, 'sendCodeToUnknownNumberPen'])->name('api.v2.sendCodeToUnknownNumberPen');
 
-// Gateway Controller Route
+    // Gateway Controller Route
     Route::get('/gateways', [GatewayController::class, 'index'])->name('api.v2.gateways');
 
-// Android Log Controller Route
+    // Android Log Controller Route
     Route::group(['prefix' => 'androidLog'], function () {
         Route::get('failTrack', [AndroidLogController::class, 'failTrack']);
     });
 
-// Voip Controller Route
+    // Voip Controller Route
     Route::post('/voip_admin', [VoipController::class, 'sendUserToAdmin'])->name('api.voip_websocket_adminPannel');
 
     //Added Routs
 
-//Other
+    //Other
     Route::any('paymentRedirect/{paymentMethod}/{device}',
-        '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); #TODO:Check
+        '\\'.RedirectUserToPaymentPage::class)->name('redirectToBank'); //TODO:Check
     Route::get('user/{user}/dashboard', '\\'.DashboardPageController::class)->name('api.user.dashboard');
     Route::resource('batch-content-insert', '\\'.BatchContentInsertController::class)->only(['index', 'store']);
     Route::get('findByCode', [CouponController::class, 'findByCode'])->name('api.admin.coupon.findByCode');
@@ -456,15 +451,15 @@ Route::prefix('v2')->group(function () {
         [UserController::class, 'redirectToProfile'])->name('redirectToEditProfileRoute');
     Route::get('h', '\\'.VoucherPageController::class)->name('web.voucher.submit.form');
 
-//Study Event
+    //Study Event
     Route::get('b/{studyEventName}', [StudyeventController::class, 'store'])->name('api.barname');
     Route::get('studyevent/{studyevent}/plansOfDate',
         [StudyeventController::class, 'whereIsTaftan'])->name('api.whereIsTaftan');
 
-//ping
+    //ping
     Route::get('php-ping', [HomeController::class, 'phpPing'])->name('api.phpPing');
 
-//submit Konkur Result
+    //submit Konkur Result
     Route::get('96', [UserController::class, 'submitKonkurResult']);
     Route::get('97', [UserController::class, 'submitKonkurResult']);
     Route::get('98', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.98');
@@ -472,14 +467,13 @@ Route::prefix('v2')->group(function () {
     Route::get('1400', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1400');
     Route::get('1401', [UserController::class, 'submitKonkurResult'])->name('api.user.konkurResult.1401');
 
-
-//Live Conductors
+    //Live Conductors
     Route::prefix('live-conductors')->name('live-conductors.')->group(function () {
         Route::get('/', [LiveConductorController::class, 'index'])->name('index');
         Route::post('/report', [LiveConductorController::class, 'report'])->name('report');
     });
 
-//Marketing
+    //Marketing
     Route::group(['prefix' => 'marketing'], function () {
         Route::post('referalCode/use',
             [NetworkMarketingController::class, 'useCode'])->name('api.marketing.useReferalCode');
@@ -490,14 +484,14 @@ Route::prefix('v2')->group(function () {
         Route::get('admin', [MarketingController::class, 'marketingAdmin'])->name('api.admin.marketing');
     });
 
-//translation
+    //translation
     Route::post('transactionToDonate/{transaction}', [TransactionController::class, 'convertToDonate']);
     Route::post('completeTransaction/{transaction}', [TransactionController::class, 'completeTransaction']);
     Route::post('myTransaction/{transaction}', [TransactionController::class, 'limitedUpdate']);
     Route::get('getUnverifiedTransactions',
-        [TransactionController::class, 'getUnverifiedTransactions']); #TODO:Need to check
+        [TransactionController::class, 'getUnverifiedTransactions']); //TODO:Need to check
 
-//Website Setting
+    //Website Setting
     Route::group(['prefix' => 'websiteSetting'], function () {
         Route::get('{Websitesetting}/showFaq',
             [WebsiteSettingController::class, 'showFaq'])->name('api.setting.faq.show');
@@ -509,56 +503,56 @@ Route::prefix('v2')->group(function () {
             [WebsiteSettingController::class, 'destroyFaq'])->name('api.setting.faq.delete');
     });
 
-//Some Resources
+    //Some Resources
 
-// shahr
+    // shahr
     Route::resource('shahr', ShahrController::class)->only('index');
 
-// attributegroup
+    // attributegroup
     Route::resource('attributegroup', AttributegroupController::class)->except(['show', 'create']);
 
-// userupload
+    // userupload
     Route::resource('userupload', UseruploadController::class)->except(['create', 'edit', 'destroy']);
 
-// phone
+    // phone
     Route::resource('phone', PhoneController::class)->only(['store', 'update', 'destroy']);
 
-// productfile
+    // productfile
     Route::resource('productfile', ProductfileController::class)->except(['index', 'destroy', 'show']);
 
-// productphoto
+    // productphoto
     Route::resource('productphoto', ProductphotoController::class)->only(['store', 'destroy']);
 
-// city
+    // city
     Route::resource('city', CityController::class)->only('index');
 
-// file
+    // file
     Route::resource('file', FileController::class)->only(['store', 'destroy']);
 
-// section
+    // section
     Route::resource('section', SectionController::class)->except('create');
 
-// periodDescription
+    // periodDescription
     Route::resource('periodDescription', PeriodDescriptionController::class);
 
-// source
+    // source
     Route::resource('source', SourceController::class)->except('create');
 
-// phonebook
+    // phonebook
     Route::resource('phonebook', PhoneBookController::class)->only(['index', 'store']);
 
-// phonenumber
+    // phonenumber
     Route::resource('phonenumber', PhoneNumberController::class)->only(['index', 'store']);
 
-//List Pending Description
+    //List Pending Description
     Route::get('listPendingDescriptionContents',
         [ContentController::class, 'indexPendingDescriptionContent'])->name('api.c.list.pending.description.content');
 
-//Live
+    //Live
     Route::post('startlive', [LiveController::class, 'startLive'])->name('api.start.live');
     Route::post('endlive', [LiveController::class, 'endLive'])->name('api.end.live');
 
-//SMS
+    //SMS
     Route::post('smsLink', [HomeController::class, 'smsLink'])->name('api.sms.link');
     Route::get('sms/{sms}/resend-bulk-sms',
         [SmsController::class, 'resendUnsuccessfulBulkSms'])->name('resend.unsuccessful.bulk.sms');
@@ -566,40 +560,39 @@ Route::prefix('v2')->group(function () {
     Route::resource('smsUser', '\\'.SmsUserController::class)->only('index');
     Route::get('user/{user}/sms', [UserController::class, 'smsIndex'])->name('user.sms');
 
-//News Letter
+    //News Letter
     Route::resource('newsletter', '\\'.NewsletterController::class)->only(['store']);
 
-//Ajax
+    //Ajax
     Route::group(['prefix' => '/ajax'], routes: function () {
 
         Route::group(['prefix' => 'orderproduct'], function () {
             Route::post('batchExtensionRequest', [
-                OrderproductController::class, 'batchExtensionRequest'
+                OrderproductController::class, 'batchExtensionRequest',
             ])->name('api.ajax.orderproduct.batchExtensionRequest');
             Route::post('batchExtend', [
-                OrderproductController::class, 'batchExtend'
+                OrderproductController::class, 'batchExtend',
             ])->name('api.ajax.orderproduct.batchExtend');
         });
         Route::group(['prefix' => 'product'], function () {
             Route::post('{product}/attachRelation', [
-                AdminProductController::class, 'attachRelation'
+                AdminProductController::class, 'attachRelation',
             ])->name('web.ajax.product.attach.relation');
             Route::delete('{product}/detachRelation', [
-                AdminProductController::class, 'detachRelation'
+                AdminProductController::class, 'detachRelation',
             ])->name('web.ajax.product.detach.relation');
         });
     });
 
-//Analytics
+    //Analytics
     Route::group(['prefix' => 'analytics'], function () {
         Route::get('/abrisham', [AnalyticsController::class, 'abrisham'])->name('api.analytics.abrisham');
     });
 
-//Dana Check Token
+    //Dana Check Token
     Route::get('check-dana-token', [DanaController::class, 'checkDanaToken'])->name('api.checkDanaToken');
 
-//map
+    //map
     Route::get('map', '\\'.MapPageController::class)->name('api.map');
 
 });
-

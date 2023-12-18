@@ -18,7 +18,6 @@ use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\CacheController;
 use Illuminate\Support\Facades\Route;
 
-
 //=================================== Admin Routes ============================================
 Route::prefix('v2')->group(function () {
     Route::group(['middleware' => 'auth:api', 'prefix' => 'admin'], function () {
@@ -57,20 +56,20 @@ Route::prefix('v2')->group(function () {
         Route::patch('/block/{block}/syncContents',
             [AdminBlockController::class, 'syncContents'])->name('syncContents');
 
-// Admin-Content Routes
+        // Admin-Content Routes
         Route::resource('contents', '\\'.AdminContentController::class, ['as' => 'api'])->only([
-            'index', 'show', 'update'
+            'index', 'show', 'update',
         ]);
         Route::get('c', [AdminContentController::class, 'index'])->name('c.index');
         Route::post('contents/destroy', [AdminContentController::class, 'destroy'])->name('content.bulk.destroy');
         Route::post('content/{content}/copy', [AdminContentController::class, 'copy'])->name('content.copy');
 
-// Admin-Set Routes
+        // Admin-Set Routes
         Route::resource('set', '\\'.AdminSetController::class, ['as' => 'api']);
         Route::post('set/{set}/c/attach', [AdminSetController::class, 'attachContents'])->name('set.attachContents');
         Route::get('set/{set}/contents', [AdminSetController::class, 'contents'])->name('set.contents');
 
-// Admin-Product Routes
+        // Admin-Product Routes
         Route::post('product/set-discount',
             [AdminProductController::class, 'setDiscount'])->name('product.set-discount');
         Route::put('product/bulk-update-statuses',
@@ -79,36 +78,35 @@ Route::prefix('v2')->group(function () {
         Route::get('product/{product}/sets', [AdminProductController::class, 'sets'])->name('product.sets');
         Route::post('product/{product}/copy', [AdminProductController::class, 'copy'])->name('product.copy');
 
-// Admin-User Routes
+        // Admin-User Routes
         Route::resource('user', '\\'.AdminUserController::class, ['as' => 'api'])->except(['create', 'edit']);
 
-// Admin-Permission Routes
+        // Admin-Permission Routes
         Route::resource('permission', '\\'.AdminPermissionController::class, ['as' => 'api'])->except([
-            'create', 'edit'
+            'create', 'edit',
         ]);
 
-// Admin-Role Routes
+        // Admin-Role Routes
         Route::resource('role', '\\'.AdminRoleController::class, ['as' => 'api'])->except(['create', 'edit']);
 
-// Admin-Order Routes
+        // Admin-Order Routes
         Route::post('orderBatchTransfer',
             [AdminOrderController::class, 'orderBatchTransfer'])->name('order.batchTransfer');
         Route::resource('order', '\\'.AdminOrderController::class)->except(['create', 'edit']);
 
-// Admin-Employee Schedule Routes
+        // Admin-Employee Schedule Routes
         Route::post('employeeSchedule/batchUpdate',
             [AdminEmployeeScheduleController::class, 'batchUpdate'])->name('employeeSchedule.batchUpdate');
         Route::resource('employeeSchedules', '\\'.AdminEmployeeScheduleController::class)->only(['index', 'store']);
 
-// Admin-Activity Log Routes
+        // Admin-Activity Log Routes
         Route::resource('activityLog', '\\'.AdminActivityLogController::class)->only(['index']);
 
-// Admin-Slideshow Routes
+        // Admin-Slideshow Routes
         Route::resource('slideshow', '\\'.AdminSlideshowController::class)->only(['index']);
 
-// Admin-Abrisham Product Choice Route
+        // Admin-Abrisham Product Choice Route
         Route::get('abrisham/productChoice',
             [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
     });
 });
-
