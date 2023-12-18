@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class DropUnusedTables extends Migration
@@ -16,14 +15,20 @@ class DropUnusedTables extends Migration
         Schema::dropIfExists('afterloginformcontrols');
         Schema::dropIfExists('articles');
         Schema::dropIfExists('articlecategories');
+        Schema::dropIfExists('assignment_major');
         Schema::dropIfExists('assignments');
         Schema::dropIfExists('assignmentstatuses');
+        Schema::dropIfExists('consultant_user');
+        Schema::dropIfExists('consultation_major');
         Schema::dropIfExists('consultations');
         Schema::dropIfExists('consultationstatuses');
+        Schema::dropIfExists('disk_file');
+        Schema::dropIfExists('educationalcontent_file');
         Schema::dropIfExists('files');
         Schema::dropIfExists('temp_bucket_logs');
         Schema::dropIfExists('temp_festival_visits');
         Schema::dropIfExists('temp_oasis_attendants');
+        Schema::dropIfExists('userseensitepages');
         Schema::dropIfExists('websitepages');
     }
 
