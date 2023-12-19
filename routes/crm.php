@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::prefix('v2')->group(function () {
     // Ticket routes
+    Route::resource('ticket', '\\'.TicketController::class)->except(['edit']);
     Route::group(['prefix' => 'ticket'], function () {
-        Route::resource('', '\\'.TicketController::class)->except(['edit']);
         Route::post('{ticket}/sendTicketStatusNotice', [TicketController::class, 'sendTicketStatusChangeNotice']);
         Route::post('{ticket}/assign', [TicketController::class, 'assign']);
         Route::post('{ticket}/rate', [TicketController::class, 'rate']);

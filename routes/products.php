@@ -36,7 +36,7 @@ Route::prefix('v2')->group(function () {
 
     // Block routes
     Route::prefix('block')->name('api.')->group(function () {
-        Route::resource('block', BlockController::class)->only(['show', 'index']);
+        Route::resource('/', BlockController::class)->only(['show', 'index']);
         Route::get('{block}/products', [BlockRelationsController::class, 'products'])->name('block.products');
         Route::post('{block}/products/attach',
             [BlockRelationsController::class, 'attachProducts'])->name('block.attachProducts');
@@ -119,8 +119,8 @@ Route::prefix('v2')->group(function () {
     Route::get('bookmark', '\\'.BookmarkPageV2Controller::class)->name('api.v2.bookmark');
 
     // Time point routes
+    Route::resource('timepoint', '\\'.TimepointController::class)->except(['create', 'edit']);
     Route::group(['prefix' => 'timepoint'], function () {
-        Route::resource('', '\\'.TimepointController::class)->except(['create', 'edit']);
         Route::get('{timepoint}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
             ->name('api.v2.get.user.favorite.content.timepoint');
         Route::post('{timepoint}/favored', [FavorableController::class, 'markFavorableFavorite'])
@@ -130,8 +130,12 @@ Route::prefix('v2')->group(function () {
     });
 
     //Product
+
     Route::group(['prefix' => 'product'], function () {
+        Route::get('{product}', [ProductController::class, 'showV2'])->name('product.show');
+        Route::put('{product}', [ProductController::class, 'updateV2'])->name('api.v2.product.update');
         Route::get('', [ProductController::class, 'index'])->name('api.v2.product.index');
+
         Route::get('{product}/transferToDana',
             [ProductController::class, 'transferToDana'])->name('api.product.transferToDana');
         Route::get('{product}/createConfiguration', [ProductController::class, 'createConfiguration']);
@@ -161,7 +165,7 @@ Route::prefix('v2')->group(function () {
         Route::get('{product}/attribute-value',
             [AttributevalueController::class, 'productAttributeValueIndex'])->name('api.product.attributevalue.index');
         Route::get('lives', [ProductController::class, 'lives'])->name('lives');
-        Route::get('{product}', [ProductController::class, 'showV2'])->name('show');
+
         Route::get('{product}/sample', [ProductController::class, 'sampleVideo'])->name('sample');
         Route::get('{product}/faq', [ProductController::class, 'faq'])->name('faq');
         Route::get('{product}/complimentary', [ProductController::class, 'complimentary'])->name('complimentary');
@@ -179,7 +183,7 @@ Route::prefix('v2')->group(function () {
         Route::post('{product}/unfavored',
             [FavorableController::class, 'markUnFavorableFavorite'])->name('api.v2.mark.unfavorite.product');
         Route::post('create', [ProductController::class, 'storeV2'])->name('api.v2.product.store');
-        Route::put('{product}', [ProductController::class, 'updateV2'])->name('api.v2.product.update');
+
         Route::get('{product}/toWatch', [ProductController::class, 'nextWatchContent'])
             ->name('api.v2.product.nextWatchContent');
         Route::get('{product}/liveInfo', [ProductController::class, 'liveInfo'])
@@ -201,8 +205,8 @@ Route::prefix('v2')->group(function () {
             [SetController::class, 'toggleProductForSet'])->name('api.set.toggleProductForSet');
         Route::get('{setId}/transfer-to-dana-info',
             [SetController::class, 'transferToDanaInfo'])->name('api.set.transferToDanaInfo');
-        Route::get('', [SetController::class, 'index'])->name('index');
-        Route::get('{set}', [SetController::class, 'showV2'])->name('show');
+        Route::get('', [SetController::class, 'index'])->name('set.index');
+        Route::get('{set}', [SetController::class, 'showV2'])->name('set.show');
         Route::get('{set}/contents', [SetController::class, 'contents'])->name('contents');
         Route::get('{set}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])
             ->name('api.v2.get.user.favorite.set');

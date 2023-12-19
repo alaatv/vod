@@ -264,8 +264,8 @@ Route::prefix('v2')->group(function () {
     ]);
 
     // Study Plan routes
+    Route::resource('studyPlan', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
     Route::prefix('studyPlan')->group(function () {
-        Route::resource('/', '\\'.StudyPlanController::class)->only(['index', 'update', 'show']);
         Route::get('planDate/{plan_date}/event/{event}/showByDate',
             [StudyPlanController::class, 'showByDateAndEvent'])->name('api.v2.studyPlan.show.by.date');
         Route::put('planDate/{plan_date}/event/{event}/updateByDate',
