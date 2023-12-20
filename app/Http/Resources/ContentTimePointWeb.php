@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use App\Models\Timepoint;
 use Illuminate\Http\Request;
 
-
 /**
  * Class Timepoint
  *
@@ -31,8 +30,8 @@ class ContentTimePointWeb extends AlaaJsonResource
             'title' => $this->title,
             'time' => $this->time,
             'isFavored' => $isFavored,
-            'favorUrl' => route('web.mark.favorite.content.timepoint', ['timepoint' => $this->resource->id]),
-            'unfavorUrl' => route('web.mark.unfavorite.content.timepoint', ['timepoint' => $this->resource->id]),
+            'favorUrl' => route('api.v2.mark.favorite.content.timepoint', ['timepoint' => $this->resource->id]),
+            'unfavorUrl' => route('api.v2.mark.unfavorite.content.timepoint', ['timepoint' => $this->resource->id]),
         ];
     }
 }
