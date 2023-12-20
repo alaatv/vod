@@ -23,17 +23,11 @@ class FavorableController extends Controller
         $this->callMiddlewares($this->getAuthExceptionArray());
     }
 
-    /**
-     * @param $authException
-     */
     private function callMiddlewares($authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
     }
 
-    /**
-     * @return array
-     */
     private function getAuthExceptionArray(): array
     {
         return ['getUsersThatFavoredThisFavorable'];
@@ -46,7 +40,7 @@ class FavorableController extends Controller
         $user = $request->user();
         if ($request->has('favorable_list_id')) {
             $favorableList = FavorableList::find($request->input('favorable_list_id'));
-            if (!Gate::allows('show-update-delete-favorable-list', $favorableList)) {
+            if (! Gate::allows('show-update-delete-favorable-list', $favorableList)) {
                 return myAbort(Response::HTTP_FORBIDDEN, 'شما فقط مجاز به اضافه کردن به لیست علاقه مندی خود هستید');
             }
         }
@@ -58,6 +52,7 @@ class FavorableController extends Controller
         if ($favorable instanceof Timepoint) {
             Cache::tags(['content_'.optional(optional($favorable)->content)->id.'_timepoints'])->flush();
         }
+
         return response()->json([
             'message' => 'Favorite added successfully',
         ]);
@@ -74,6 +69,7 @@ class FavorableController extends Controller
         if ($favorable instanceof Timepoint) {
             Cache::tags(['content_'.optional(optional($favorable)->content)->id.'_timepoints'])->flush();
         }
+
         return response()->json([
             'message' => 'Favorite removed successfully',
         ]);
@@ -90,5 +86,4 @@ class FavorableController extends Controller
                     ->count();
             });
     }
-
 }
