@@ -132,7 +132,7 @@ Route::prefix('v2')->group(function () {
     //Product
 
     Route::group(['prefix' => 'product'], function () {
-        Route::get('{product}', [ProductController::class, 'showV2'])->name('product.show');
+        Route::get('{product}', [ProductController::class, 'showV2'])->name('api.v2.product.show');
         Route::put('{product}', [ProductController::class, 'updateV2'])->name('api.v2.product.update');
         Route::get('', [ProductController::class, 'index'])->name('api.v2.product.index');
 
@@ -220,26 +220,26 @@ Route::prefix('v2')->group(function () {
 
     //Content
     Route::prefix('c')->group(function () {
-        $controller = ContentController::class;
-        Route::name('c.')->group(function () use ($controller) {
-            Route::get('uploadContent', [$controller, 'uploadContent'])->name('upload.content');
-            Route::get('createArticle', [$controller, 'createArticle'])->name('create.article');
-            Route::post('updateTmpDescription', [$controller, 'createArticle'])->name('update.pending.description');
-            Route::post('{c}/updateSet', [$controller, 'updateSet'])->name('updateSet');
-            Route::post('{c}/copyTmp', [$controller, 'copyTimepoints'])->name('copyTmp');
-            Route::get('{c}/transferToDana', [$controller, 'transferToDana'])->name('transferToDana');
+        Route::name('c.')->group(function () {
+            Route::get('uploadContent', [ContentController::class, 'uploadContent'])->name('upload.content');
+            Route::get('createArticle', [ContentController::class, 'createArticle'])->name('create.article');
+            Route::post('updateTmpDescription',
+                [ContentController::class, 'createArticle'])->name('update.pending.description');
+            Route::post('{c}/updateSet', [ContentController::class, 'updateSet'])->name('updateSet');
+            Route::post('{c}/copyTmp', [ContentController::class, 'copyTimepoints'])->name('copyTmp');
+            Route::get('{c}/transferToDana', [ContentController::class, 'transferToDana'])->name('transferToDana');
             Route::get('{contentId}/transfer-to-dana-info',
-                [$controller, 'transferToDanaInfo'])->name('transferToDanaInfo');
-            Route::get('{c}', [$controller, 'showV2'])->name('api.v2.content.show');
-            Route::get('{c}/products', [$controller, 'products'])->name('api.v2.content.products');
-            Route::put('updateDuration', [$controller, 'updateDuration'])->name('api.v2.content.updateDuration');
+                [ContentController::class, 'transferToDanaInfo'])->name('transferToDanaInfo');
+            Route::get('{c}', [ContentController::class, 'showV2'])->name('api.v2.content.show');
+            Route::get('{c}/products', [ContentController::class, 'products'])->name('api.v2.content.products');
+            Route::put('updateDuration',
+                [ContentController::class, 'updateDuration'])->name('api.v2.content.updateDuration');
         });
     });
-    $controller = ContentController::class;
-    Route::prefix('contents')->group(function () use ($controller) {
-        Route::put('bulk-update', [$controller, 'bulkUpdate'])->name('content.bulk-update');
-        Route::put('bulk-edit-text', [$controller, 'bulkEditText'])->name('content.bulk-edit-text');
-        Route::put('bulk-edit-tags', [$controller, 'bulkEditTags'])->name('content.bulk-edit-tags');
+    Route::prefix('contents')->group(function () {
+        Route::put('bulk-update', [ContentController::class, 'bulkUpdate'])->name('content.bulk-update');
+        Route::put('bulk-edit-text', [ContentController::class, 'bulkEditText'])->name('content.bulk-edit-text');
+        Route::put('bulk-edit-tags', [ContentController::class, 'bulkEditTags'])->name('content.bulk-edit-tags');
     });
     Route::get('content-statuses', [ContentStatusController::class, 'index']);
 

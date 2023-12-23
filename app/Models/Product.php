@@ -2,70 +2,80 @@
 
 namespace App\Models;
 
-use App\Classes\{Advertisable,
-    CacheFlush,
-    FavorableInterface,
-    Pricing\Alaa\AlaaProductPriceCalculator,
-    SEO\SeoInterface,
-    SEO\SeoMetaTagsGenerator,
-    Taggable,
-    Uploader\Uploader};
+use App\Classes\Advertisable;
+use App\Classes\CacheFlush;
+use App\Classes\FavorableInterface;
+use App\Classes\Pricing\Alaa\AlaaProductPriceCalculator;
+use App\Classes\SEO\SeoInterface;
+use App\Classes\SEO\SeoMetaTagsGenerator;
+use App\Classes\Taggable;
+use App\Classes\Uploader\Uploader;
 use App\Collection\ProductCollection;
 use App\Collection\SetCollection;
 use App\Services\TransactionsSerivce;
-use App\Traits\{APIRequestCommon,
-    CommentTrait,
-    DateTrait,
-    favorableTraits,
-    Helper,
-    ModelTrackerTrait,
-    Product\ProductAttributeTrait,
-    Product\ProductBonTrait,
-    Product\ProductPhotoTrait,
-    Product\Resource,
-    Product\TaggableProductTrait,
-    ProductCommon,
-    User\AssetTrait,
-    WatchHistoryTrait};
+use App\Traits\APIRequestCommon;
+use App\Traits\CommentTrait;
+use App\Traits\DateTrait;
+use App\Traits\favorableTraits;
+use App\Traits\Helper;
+use App\Traits\ModelTrackerTrait;
+use App\Traits\Product\ProductAttributeTrait;
+use App\Traits\Product\ProductBonTrait;
+use App\Traits\Product\ProductPhotoTrait;
+use App\Traits\Product\Resource;
+use App\Traits\Product\TaggableProductTrait;
+use App\Traits\ProductCommon;
+use App\Traits\User\AssetTrait;
+use App\Traits\WatchHistoryTrait;
 use Carbon\Carbon;
 use Config;
 use Exception;
-use Illuminate\Database\{Eloquent\Builder, Eloquent\Factories\HasFactory};
-use Illuminate\Support\{Arr, Collection, Facades\Auth, Facades\Cache};
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Purify;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class   Product extends BaseModel implements Advertisable, Taggable, SeoInterface, FavorableInterface
+class Product extends BaseModel implements Advertisable, FavorableInterface, SeoInterface, Taggable
 {
+    use APIRequestCommon;
+    use AssetTrait;
+    use CommentTrait;
+    use DateTrait;
+    use favorableTraits;
+    use HasFactory;
+    use Helper;
+    use LogsActivity;
+    use ModelTrackerTrait;
+    use ProductAttributeTrait;
+    use ProductBonTrait;
+
     /*
     |--------------------------------------------------------------------------
     | Traits
     |--------------------------------------------------------------------------
     */
-//    use Searchable;
+    //    use Searchable;
     use ProductCommon;
-    use APIRequestCommon;
-    use favorableTraits;
-    use ModelTrackerTrait;
-    use ProductAttributeTrait;
-    use ProductBonTrait;
     use ProductPhotoTrait;
-    use TaggableProductTrait;
-    use DateTrait;
-    use AssetTrait;
-    use Helper;
-    use LogsActivity;
-    use CommentTrait;
-    use WatchHistoryTrait;
-    use HasFactory;
     use Resource;
+    use TaggableProductTrait;
+    use WatchHistoryTrait;
 
     public const PHOTO_FIELD = 'image';
+
     public const TRANSMISSION_PRODUCTS = [];
+
     public const YALDA_SUBSCRIPTION = 629;
+
     public const GAMEBEGAME_HENDESEH = 563;
+
     public const GAMEBEGAM_GOSSASTE = 564;
+
     public const GAMBEGAM_HESABAN = 565;
 
     /*
@@ -92,9 +102,12 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ZARBIN_ABRISHAM_TAJROBI_PACK,     //586
         self::ZARBIN_ABRISHAM_OMOOMI_PACK,      //584
     ];
+
     public const TAFTAN1400_RIYAZI_PACKAGE = 527;
+
     // todo: set this const ids plz
     public const TAFTAN1400_TAJROBI_PACKAGE = 528;
+
     public const TAFTAN1401_OMOOMI_PACKAGE = 532;
 
     // todo: check these ids with you database
@@ -107,8 +120,9 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::TAFTAN1401_ZABAN,
         self::TAFTAN1401_DINI,
         self::TAFTAN1401_ADABIYAT,
-        self::TAFTAN1401_ARABI
+        self::TAFTAN1401_ARABI,
     ];
+
     public const TAFTAN1401_TAJROBI_PRODUCTS = [
         self::TAFTAN1401_FIZIK_TAJROBI,
         self::TAFTAN1401_RIYAZI_TAJROBI,
@@ -117,8 +131,9 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::TAFTAN1401_ZABAN,
         self::TAFTAN1401_DINI,
         self::TAFTAN1401_ADABIYAT,
-        self::TAFTAN1401_ARABI
+        self::TAFTAN1401_ARABI,
     ];
+
     public const TAFTAN1401_OMOOMI_PRODUCTS = [530, 529, 526, 525, 524, 523, 522, 402, 401, 397, 396, 392];
 
     //All Packs
@@ -143,119 +158,199 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public const TAFTAN_PRODUCTS_CATEGORY = [
         'ekhtesasi_riyazi' => [
             'user_major_category' => Major::RIYAZI, 'products' => self::TAFTAN1401_RIYAZI_PRODUCTS,
-            'title' => 'اختصاصی ریاضی'
+            'title' => 'اختصاصی ریاضی',
         ],
         'ekhtesasi_tajrobi' => [
             'user_major_category' => Major::TAJROBI, 'products' => self::TAFTAN1401_TAJROBI_PRODUCTS,
-            'title' => 'اختصاصی تجربی'
+            'title' => 'اختصاصی تجربی',
         ],
     ];
-    public const  TAFTAN1401_RIYAZI_PACKAGE = 663;
-    public const  TAFTAN1401_TAJROBI_PACKAGE = 662;
-    public const  TAFTAN1401_ADABIYAT = 648;
-    public const  TAFTAN1401_ARABI = 649;
-    public const  TAFTAN1401_DINI = 650;
-    public const  TAFTAN1401_ZABAN = 651;
-    public const  TAFTAN1401_HESABAN = 652;
-    public const  TAFTAN1401_HENDESE = 653;
-    public const  TAFTAN1401_AMAROEHTEMAL = 654;
-    public const  TAFTAN1401_FIZIK_RIYAZI = 655;
-    public const  TAFTAN1401_SHIMI = 656;
-    public const  TAFTAN1401_ZIST = 657;
-    public const  TAFTAN1401_RIYAZI_TAJROBI = 658;
-    public const  TAFTAN1401_FIZIK_TAJROBI = 659;
+
+    public const TAFTAN1401_RIYAZI_PACKAGE = 663;
+
+    public const TAFTAN1401_TAJROBI_PACKAGE = 662;
+
+    public const TAFTAN1401_ADABIYAT = 648;
+
+    public const TAFTAN1401_ARABI = 649;
+
+    public const TAFTAN1401_DINI = 650;
+
+    public const TAFTAN1401_ZABAN = 651;
+
+    public const TAFTAN1401_HESABAN = 652;
+
+    public const TAFTAN1401_HENDESE = 653;
+
+    public const TAFTAN1401_AMAROEHTEMAL = 654;
+
+    public const TAFTAN1401_FIZIK_RIYAZI = 655;
+
+    public const TAFTAN1401_SHIMI = 656;
+
+    public const TAFTAN1401_ZIST = 657;
+
+    public const TAFTAN1401_RIYAZI_TAJROBI = 658;
+
+    public const TAFTAN1401_FIZIK_TAJROBI = 659;
+
     public const TAFTAN1401_ARABI_ENSANI = 661;
+
     public const TAFTAN1401_FALSAFE = 660;
+
     public const RIAZI_4K = 561;
+
     public const ENSANI_4K = 560;
+
     public const TAJROBI_4K = 559;
+
     public const _3A_JAMBANDI_YAZDAHOM_TAJROBI_MIAN_TERM1_1401 = 602;
+
     public const _3A_JAMBANDI_YAZDAHOM_RIYAZI_MIAN_TERM1_1401 = 603;
+
     public const _3A_JAMBANDI_YAZDAHOM_ENSANI_MIAN_TERM1_1401 = 601;
+
     public const _3A_JAMBANDI_DAVAZDAHOM_TAJROBI_MIAN_TERM1_1401 = 605;
 
     //3A products
     public const _3A_JAMBANDI_DAVAZDAHOM_RIYAZI_MIAN_TERM1_1401 = 606;
+
     public const _3A_JAMBANDI_DAVAZDAHOM_ENSANI_MIAN_TERM1_1401 = 604;
+
     public const _3A_JAMBANDI_DAVAZDAHOM_ENSANI_TERM1_1401 = 632;
+
     public const _3A_JAMBANDI_DAVAZDAHOM_RIYAZI_TERM1_1401 = 630;
+
     public const _3A_JAMBANDI_DAVAZDAHOM_TAJROBI_TERM1_1401 = 631;
+
     public const _3A_JAMBANDI_YAZDAHOM_TAJROBI_MIAN_TERM2_1401 = 666;
+
     public const _3A_JAMBANDI_YAZDAHOM_RIYAZI_MIAN_TERM2_1401 = 664;
+
     public const _3A_JAMBANDI_YAZDAHOM_ENSANI_MIAN_TERM2_1401 = 665;
+
     public const _3A_DAVAZDAHOM_ENSANI_JAMBADNI_PAYE_BA_JOGHRAFI_DAHOM = 633;
+
     public const _3A_DAVAZDAHOM_ENSANI_JAMBADNI_PAYE_BA_JOGHRAFI_YAZDAHOM = 644;
+
     public const _3A_DAVAZDAHOM_RIYAZI_JAMBANDI_PAYE_BA_FIZIK_DAHOM = 635;
+
     public const _3A_DAVAZDAHOM_RIYAZI_JAMBANDI_PAYE_BA_FIZIK_YAZDAHOM = 645;
+
     public const _3A_DAVAZDAHOM_TAJROBI_JAMBANDI_PAYE_BA_FIZIK_DAHOM = 638;
+
     public const _3A_DAVAZDAHOM_TAJROBI_JAMBANDI_PAYE_BA_FIZIK_YAZDAHOM = 646;
+
     public const _3A_DAVAZDAHOM_RIYAZI_JAMBANDI_DAHOM_VA_YAZDAHOM = 668;
 
     // these are use as free items in Api/OrderController@hasFreeStatus
     public const _3A_DAVAZDAHOM_TAJROBI_JAMBANDI_DAHOM_VA_YAZDAHOM = 667;
+
     public const _3A_DAVAZDAHOM_ENSANI_JAMBANDI_DAHOM_VA_YAZDAHOM = 669;
+
     public const DONATE_PRODUCT_5_HEZAR = 180;
+
     public const CUSTOM_DONATE_PRODUCT = 182;
+
     public const ASIATECH_PRODUCT = 224;
+
     public const COUPON_PRODUCT = 434;
+
     public const DONATE_PRODUCT_ARRAY = [
         self::CUSTOM_DONATE_PRODUCT,
         self::DONATE_PRODUCT_5_HEZAR,
     ];
+
     public const SUBSCRIPTION_1_MONTH = 444;
+
     public const SUBSCRIPTION_3_MONTH = 447;
 
     //Donate
     public const SUBSCRIPTION_12_MONTH = 448;
+
     public const SUBSCRIPTION_1_MONTH_TIMEPOINT_ONLY = 472;
+
     public const ONLY_PURCHASE_ONE = [
         self::SUBSCRIPTION_1_MONTH => [self::SUBSCRIPTION_3_MONTH, self::SUBSCRIPTION_12_MONTH],
         self::SUBSCRIPTION_3_MONTH => [self::SUBSCRIPTION_1_MONTH, self::SUBSCRIPTION_12_MONTH],
         self::SUBSCRIPTION_12_MONTH => [self::SUBSCRIPTION_1_MONTH, self::SUBSCRIPTION_3_MONTH],
     ];
+
     public const TIMEPOINT_SUBSCRIPTON_PRODUCTS = [
         Product::SUBSCRIPTION_12_MONTH,
         Product::SUBSCRIPTION_3_MONTH,
         Product::SUBSCRIPTION_1_MONTH,
-        Product::SUBSCRIPTION_1_MONTH_TIMEPOINT_ONLY
+        Product::SUBSCRIPTION_1_MONTH_TIMEPOINT_ONLY,
     ];
+
     public const ARASH_FIZIK_1400 = 410;
 
     //Subscriptions
     public const ARASH_FIZIK_1400_TOLOUYI = 549;
+
     public const ARASH_FIZIK_TETA_1400 = 546;
+
     public const ARASH_RIYAZI_TAJROBI_AMINI = 411;
+
     public const ARASH_ADABIYAT = 412;
+
     public const ARASH_ARABI = 413;
+
     public const ARASH_ZABAN = 414;
 
     //Arash 99
     public const ARASH_RIYAZIYAT_RIYAZI_1400 = 415;
+
     public const ARASH_SHIMI_1400 = 416;
+
     public const ARASH_DINI_1400 = 418;
+
     public const ARASH_RIYAZI_TAJROBI_SABETI = 433;
+
     public const ARASH_OLOOM_FONOON_1400 = 435;
+
     public const ARASH_ADABIYAT_1400 = 547;
+
     public const ARASH_ZIST_1400 = 548;
+
     public const ARASH_ZIST_TETA_1400 = 421;
+
     public const ARASH_PACK_RITAZI_1400 = 555;
+
     public const ARASH_PACK_TAJROBI_1400 = 556;
+
     public const ARASH_PACK_OMOOMI_1400 = 557;
+
     public const ARASH_PACK_ENSANI = 436;
+
     public const ARASH_PACK_RIYAZI = 437;
+
     public const ARASH_PACK_TAJROBI = 438;
+
     public const ARASH_RIYAZI_TAJROBI_1401 = 433;
+
     public const ARASH_RIYAZI_RIYAZI_1401 = 415;
+
     public const ARASH_ZIST_1401 = 548;
+
     public const ARASH_SHIMI_1401 = 416;
+
     public const ARASH_FIZIK_1401_YARI = 693;
+
     public const ARASH_ZABAN_1401 = 696;
+
     public const ARASH_ADABIYAT_1401 = 547;
+
     public const ARASH_ARABI_1401 = 694;
+
     public const ARASH_DINI_1401 = 695;
+
     public const ARASH_PACK_TAJROBI_1401 = 556;
+
     public const ARASH_PACK_RIYAZI_1401 = 555;
+
     public const ARASH_PACK_OMOOMI_1401 = 557;
+
     public const ALL_ARASH_SINGLE_1401 = [
         self::ARASH_RIYAZI_TAJROBI_1401,
         self::ARASH_RIYAZI_RIYAZI_1401,
@@ -267,10 +362,15 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_DINI_1401,
         self::ARASH_FIZIK_1401_YARI,
     ];
+
     public const ARASH_TETA_SHIMI = 731;
+
     public const TETA_ZIST = 421;
+
     public const TETA_FIZIK_1400 = 546;
+
     public const TETA_ADABIAT = 628;
+
     public const ARASH_PRODUCTS_ARRAY = [
         self::ARASH_FIZIK_1400,
         self::ARASH_FIZIK_1400_TOLOUYI,
@@ -294,26 +394,33 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_PACK_RIYAZI,
         self::ARASH_PACK_TAJROBI,
     ];
+
     public const ARASH_PACK_PRODUCTS_ARRAY = [
         self::ARASH_PACK_RITAZI_1400,
         self::ARASH_PACK_TAJROBI_1400,
-        self::ARASH_PACK_OMOOMI_1400
+        self::ARASH_PACK_OMOOMI_1400,
     ];
+
     public const ARASH_PACK_OMOOMI_1400_SUBSET = [
-        Product::ARASH_ZABAN, Product::ARASH_ADABIYAT_1400, Product::ARASH_DINI_1400, Product::ARASH_ARABI
+        Product::ARASH_ZABAN, Product::ARASH_ADABIYAT_1400, Product::ARASH_DINI_1400, Product::ARASH_ARABI,
     ];
+
     public const ARASH_PACK_RIYAZI_1400_SUBSET = [Product::ARASH_SHIMI_1400, Product::ARASH_RIYAZIYAT_RIYAZI_1400];
+
     public const ARASH_PACK_RIYAZI_99_SUBSET = [
         Product::ARASH_SHIMI_1400, Product::ARASH_FIZIK_1400, Product::ARASH_RIYAZIYAT_RIYAZI_1400,
-        Product::ARASH_ZABAN, Product::ARASH_DINI_1400, Product::ARASH_ARABI
+        Product::ARASH_ZABAN, Product::ARASH_DINI_1400, Product::ARASH_ARABI,
     ];
+
     public const ARASH_PACK_TAJROBI_1400_SUBSET = [
-        Product::ARASH_ZIST_1400, Product::ARASH_RIYAZI_TAJROBI_SABETI, Product::ARASH_SHIMI_1400
+        Product::ARASH_ZIST_1400, Product::ARASH_RIYAZI_TAJROBI_SABETI, Product::ARASH_SHIMI_1400,
     ];
+
     public const ARASH_PACK_TAJROBI_99_SUBSET = [
         Product::ARASH_SHIMI_1400, Product::ARASH_FIZIK_1400, Product::ARASH_RIYAZI_TAJROBI_SABETI,
-        Product::ARASH_ZABAN, Product::ARASH_DINI_1400, Product::ARASH_ARABI
+        Product::ARASH_ZABAN, Product::ARASH_DINI_1400, Product::ARASH_ARABI,
     ];
+
     public const ARASH_PRODUCTS_LESSON_NAME = [
         self::ARASH_RIYAZI_TAJROBI_AMINI => 'ریاضی',
         self::ARASH_ADABIYAT_1400 => 'ادبیات',
@@ -327,8 +434,9 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_ZIST_1400 => 'زیست شناسی',
         self::ARASH_RIYAZIYAT_RIYAZI_1400 => 'ریاضی',
         self::TETA_ZIST => 'زیست',
-        self::TETA_FIZIK_1400 => 'فیزیک'
+        self::TETA_FIZIK_1400 => 'فیزیک',
     ];
+
     public const ARASH_PRODUCTS_TEACHER_NAME = [
         self::ARASH_ADABIYAT_1400 => 'آقای حسین خانی',
         self::ARASH_OLOOM_FONOON_1400 => 'آقای صادقی',
@@ -342,20 +450,30 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_RIYAZIYAT_RIYAZI_1400 => 'آقای ثابتی',
         self::ARASH_RIYAZI_TAJROBI_AMINI => 'آقای امینی',
         self::TETA_ZIST => 'آقای موقاری',
-        self::TETA_FIZIK_1400 => 'آقای یاری'
+        self::TETA_FIZIK_1400 => 'آقای یاری',
     ];
+
     public const GODAR_FIZIK_99 = 373;
+
     public const GODAR_FIZIK_1400 = 497;
+
     public const GODAR_RIYAZI_TAJROBI_AMINI = 377;
+
     public const GODAR_GOSASTE = 379;
+
     public const GODAR_HESABAN = 383;
+
     public const GODAR_RIYAZI_TAJROBI_SABETI = 385;
+
     public const GODAR_SHIMI = 387;
 
     // Godar98
     public const GODAR_HENDESE = 381;
+
     public const GODAR_ZIST_99 = 389;
+
     public const GODAR_ZIST_1400 = 496;
+
     public const GODAR_ALL = [
         Product::GODAR_FIZIK_99,
         Product::GODAR_FIZIK_1400,
@@ -366,6 +484,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         Product::GODAR_HENDESE,
         Product::GODAR_ZIST_1400,
     ];
+
     public const GODAR_PRODUCT_NAMES = [
         Product::GODAR_FIZIK_99 => 'محصول همایش گدار فیزیک',
         Product::GODAR_GOSASTE => 'محصول همایش گدار گسسته',
@@ -376,69 +495,130 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         Product::GODAR_FIZIK_1400 => 'محصول همایش گدار فیزیک 1400',
         Product::GODAR_ZIST_1400 => 'محصول همایش گدار زیست 1400',
     ];
+
     public const RAHE_ABRISHAM99_RIYAZIAT_TAJROBI = 347;
+
     public const RAHE_ABRISHAM99_RIYAZIAT_RIYAZI = 439;
+
     public const RAHE_ABRISHAM99_FIZIK_RIYAZI = 440;
+
     public const RAHE_ABRISHAM99_FIZIK_TAJROBI = 441;
+
     public const RAHE_ABRISHAM99_ZIST = 442;
+
     public const RAHE_ABRISHAM99_SHIMI = 443;
+
     public const RAHE_ABRISHAM99_PACK_TAJROBI = 445;
 
     //Abrisham 1400
     public const RAHE_ABRISHAM99_PACK_RIYAZI = 446;
+
     public const RAHE_ABRISHAM1401_PACK_OMOOMI = 573;
+
     public const RAHE_ABRISHAM1401_ZABAN = 569;
+
     public const RAHE_ABRISHAM1401_DINI = 570;
+
     public const RAHE_ABRISHAM1401_ARABI = 571;
+
     public const RAHE_ABRISHAM1401_ADABIYAT = 572;
+
     public const RAHE_ABRISHAM1401_PRO_SHIMI = 751;
+
     public const RAHE_ABRISHAM1401_PRO_ZIST = 750;
+
     public const RAHE_ABRISHAM1401_PRO_FIZIK_KAZERANIAN = 749;
+
     public const RAHE_ABRISHAM1401_PRO_FIZIK_TOLOUYI = 748;
+
     public const RAHE_ABRISHAM1401_PRO_RIYAZIYAT_RIYAZI = 747;
+
     public const RAHE_ABRISHAM1401_PRO_RIYAZI_TAJROBI = 746;
+
     public const RAHE_ABRISHAM1401_PRO_ADABIYAT = 755;
+
     public const RAHE_ABRISHAM1401_PRO_ARABI = 754;
+
     public const RAHE_ABRISHAM1401_PRO_DINI = 753;
+
     public const RAHE_ABRISHAM1401_PRO_ZABAN = 752;
+
     public const RAHE_ABRISHAM1401_PRO_PACK_OMOOMI = 758;
+
     public const RAHE_ABRISHAM1401_PRO_PACK_RIYAZI = 757;
+
     public const RAHE_ABRISHAM1401_PRO_PACK_TAJROBI = 756;
+
     public const RAHE_ABRISHAM1402_RIYAZIAT_TAJROBI_SABETI = 1092;
+
     public const RAHE_ABRISHAM1402_RIYAZIAT_TAJROBI_NABAKHTE = 1100;
+
     public const RAHE_ABRISHAM1402_HESABAN_NABAKHTE = 1090;
+
     public const RAHE_ABRISHAM1402_HESABAN_SABETI = 1101;
+
     public const RAHE_ABRISHAM1402_PACK_TAJROBI = 1096;
+
     public const RAHE_ABRISHAM1402_PACK_RIYAZI = 1097;
+
     public const RAHE_ABRISHAM1402_GOSASTE_AMAR_EHTEMAL = 1099;
+
     public const RAHE_ABRISHAM1402_RIYAZI_ENSANI = 1098;
+
     public const RAHE_ABRISHAM1402_SHIMI = 1095;
+
     public const RAHE_ABRISHAM1402_FIZIK = 1094;
+
     public const RAHE_ABRISHAM1402_ZIST = 1093;
+
     public const RAHE_ABRISHAM1402_HENDESE = 1091;
+
     public const RAHE_ABRISHAM1402_HESABAN = 1090;
+
     public const HAMAYESH_RIAZI_TAK_PACK_HESABAN = 781;
+
     public const HAMAYESH_RIAZI_TAK_PACK_HENDESE = 782;
+
     public const HAMAYESH_RIAZI_TAK_PACK_GOSASTE = 783;
+
     public const HAMAYESH_RIAZI_TAK_PACK_FIZIK = 784;
+
     public const HAMAYESH_RIAZI_TAK_PACK_SHIMI = 786;
+
     public const HAMAYESH_TAJROBI_TAK_PACK_FIZIK = 785;
+
     public const HAMAYESH_TAJROBI_TAK_PACK_SHIMI = 786;
+
     public const HAMAYESH_TAJROBI_TAK_PACK_RIAZI = 787;
+
     public const HAMAYESH_TAJROBI_TAK_PACK_ZIST = 788;
+
     public const HAMAYESH_TAJROBI_TAK_PACK_ZAMIN = 789;
+
     public const HAMAYESH_ENSANI_TAK_PACK_RIAZI = 790;
+
     public const HAMAYESH_ENSANI_TAK_PACK_FALSAFE = 791;
+
     public const HAMAYESH_ENSANI_TAK_PACK_ADABIAT = 792;
+
     public const HAMAYESH_ENSANI_TAK_PACK_RAVANSHENASI = 796;
+
     public const HAMAYESH_ENSANI_TAK_PACK_EGHTESAD = 797;
+
     public const HAMAYESH_ENSANI_TAK_PACK_JAMESHENASI = 798;
+
     public const HAMAYESH_ENSANI_TAK_PACK_JAMESHENASI110 = 799;
+
     public const HAMAYESH_ENSANI_TAK_PACK_ARABI = 800;
+
     public const HAMAYESH_ENSANI_TAK_PACK_TARIKH_JOGHRAFI = 951;
+
     public const HAMAYESH_BUNDLES_ENSANI = 793;
+
     public const HAMAYESH_BUNDLES_TAJROBI = 794;
+
     public const HAMAYESH_BUNDLES_RIAZI = 795;
+
     public const ALL_FORIAT_ENSANI_PRODUCTS = [
         self::HAMAYESH_ENSANI_TAK_PACK_RIAZI => ['color' => '#FB8C00', 'lesson_name' => 'ریاضی'],
         self::HAMAYESH_ENSANI_TAK_PACK_FALSAFE => ['color' => '#FB8C00', 'lesson_name' => 'فلسفه و منطق'],
@@ -449,6 +629,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::HAMAYESH_ENSANI_TAK_PACK_ARABI => ['color' => '#FB8C00', 'lesson_name' => 'عربی'],
         self::HAMAYESH_ENSANI_TAK_PACK_TARIKH_JOGHRAFI => ['color' => '#FB8C00', 'lesson_name' => 'تاریخ و جغرافیا'],
     ];
+
     public const ALL_ABRISHAM_PRODUCTS = [
         self::RAHE_ABRISHAM99_RIYAZIAT_RIYAZI => ['color' => '#FB8C00', 'lesson_name' => 'ریاضیات ریاضی'],
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI => ['color' => '#81D4FA', 'lesson_name' => 'فیزیک'],
@@ -464,6 +645,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM1401_ARABI => ['color' => '#5F432D', 'lesson_name' => 'عربی'],
         self::RAHE_ABRISHAM1401_ADABIYAT => ['color' => '#FF776D', 'lesson_name' => 'ادبیات'],
     ];
+
     public const ALL_CHATR_NEJAT2_PRODUCTS = [
         self::CHATR_NEJAT2_GOSASTE => ['color' => '#FB8C00', 'lesson_name' => 'گسسته'],
         self::CHATR_NEJAT2_HENDESE => ['color' => '#FB8C00', 'lesson_name' => 'هندسه'],
@@ -485,23 +667,27 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::CHATR_NEJAT2_ADABIYAT => ['color' => '#FF776D', 'lesson_name' => 'ادبیات'],
         self::CHATR_NEJAT2_TARIKH_JOGHRAFI => ['color' => '#009688', 'lesson_name' => 'جغرافی'],
     ];
+
     public const ALL_ABRISHAM_PRODUCTS_OMOOMI = [
         self::RAHE_ABRISHAM1401_ZABAN,      // 569
         self::RAHE_ABRISHAM1401_DINI,       // 570
         self::RAHE_ABRISHAM1401_ARABI,      // 571
         self::RAHE_ABRISHAM1401_ADABIYAT,   // 572
     ];
+
     public const ALL_ABRISHAM_PRODUCTS_EKHTESASI_RIYAZI = [
         self::RAHE_ABRISHAM99_SHIMI,            // 443
         self::RAHE_ABRISHAM99_RIYAZIAT_RIYAZI,  // 439
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI,     // 440
     ];
+
     public const ALL_ABRISHAM_PRODUCTS_EKHTESASI_TAJROBI = [
         self::RAHE_ABRISHAM99_SHIMI,            // 443
         self::RAHE_ABRISHAM99_RIYAZIAT_TAJROBI, // 347
         self::RAHE_ABRISHAM99_FIZIK_TAJROBI,    // 441
         self::RAHE_ABRISHAM99_ZIST,             // 442
     ];
+
     public const ALL_ABRISHAM_PRO_PRODUCTS = [
         self::RAHE_ABRISHAM1401_PRO_SHIMI => ['color' => '#FB8C00', 'lesson_name' => 'شیمی'],
         self::RAHE_ABRISHAM1401_PRO_ZIST => ['color' => '#81D4FA', 'lesson_name' => 'زیست شناسی'],
@@ -517,6 +703,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM1401_PRO_PACK_RIYAZI => ['color' => '#5F432D', 'lesson_name' => 'پک اختصاصی ریاضی'],
         self::RAHE_ABRISHAM1401_PRO_PACK_TAJROBI => ['color' => '#FF776D', 'lesson_name' => 'پک اختصاصی تجربی'],
     ];
+
     public const  ALL_ABRISHAM_PRO_TABDIL = [
         771,
         770,
@@ -532,47 +719,53 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         760,
         759,
     ];
+
     public const ALL_ABRISHAM_PRO_PRODUCTS_OMOOMI = [
         self::RAHE_ABRISHAM1401_PRO_ADABIYAT,
         self::RAHE_ABRISHAM1401_PRO_ARABI,
         self::RAHE_ABRISHAM1401_PRO_DINI,
         self::RAHE_ABRISHAM1401_PRO_ZABAN,
     ];
+
     public const ALL_ABRISHAM_PRO_PRODUCTS_EKHTESASI_RIYAZI = [
         self::RAHE_ABRISHAM1401_PRO_SHIMI,
         self::RAHE_ABRISHAM1401_PRO_FIZIK_TOLOUYI,
         self::RAHE_ABRISHAM1401_PRO_RIYAZIYAT_RIYAZI,
     ];
+
     public const ALL_ABRISHAM_PRO_PRODUCTS_EKHTESASI_TAJROBI = [
         self::RAHE_ABRISHAM1401_PRO_SHIMI,
         self::RAHE_ABRISHAM1401_PRO_ZIST,
         self::RAHE_ABRISHAM1401_PRO_FIZIK_KAZERANIAN,
         self::RAHE_ABRISHAM1401_PRO_RIYAZI_TAJROBI,
     ];
+
     public const ABRISHAM_PRODUCTS_CATEGORY = [
         'omoomi' => ['user_major_category' => -1, 'products' => self::ALL_ABRISHAM_PRODUCTS_OMOOMI, 'title' => 'عمومی'],
         'ekhtesasi_riyazi' => [
             'user_major_category' => Major::RIYAZI, 'products' => self::ALL_ABRISHAM_PRODUCTS_EKHTESASI_RIYAZI,
-            'title' => 'اختصاصی ریاضی'
+            'title' => 'اختصاصی ریاضی',
         ],
         'ekhtesasi_tajrobi' => [
             'user_major_category' => Major::TAJROBI, 'products' => self::ALL_ABRISHAM_PRODUCTS_EKHTESASI_TAJROBI,
-            'title' => 'اختصاصی تجربی'
+            'title' => 'اختصاصی تجربی',
         ],
     ];
+
     public const ABRISHAM_PRO_PRODUCTS_CATEGORY = [
         'omoomi' => [
-            'user_major_category' => -1, 'products' => self::ALL_ABRISHAM_PRO_PRODUCTS_OMOOMI, 'title' => 'عمومی'
+            'user_major_category' => -1, 'products' => self::ALL_ABRISHAM_PRO_PRODUCTS_OMOOMI, 'title' => 'عمومی',
         ],
         'ekhtesasi_riyazi' => [
             'user_major_category' => Major::RIYAZI, 'products' => self::ALL_ABRISHAM_PRO_PRODUCTS_EKHTESASI_RIYAZI,
-            'title' => 'اختصاصی ریاضی'
+            'title' => 'اختصاصی ریاضی',
         ],
         'ekhtesasi_tajrobi' => [
             'user_major_category' => Major::TAJROBI, 'products' => self::ALL_ABRISHAM_PRO_PRODUCTS_EKHTESASI_TAJROBI,
-            'title' => 'اختصاصی تجربی'
+            'title' => 'اختصاصی تجربی',
         ],
     ];
+
     public const ALL_CHATR_NEJAT_PRODUCTS_ENSANI = [
         self::CHATR_NEJAT2_RIYAZI_ENSANI,
         self::CHATR_NEJAT2_FALSAFE_MANTEGH,
@@ -582,6 +775,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::CHATR_NEJAT2_ARABI_ENSANI,
         self::CHATR_NEJAT2_TARIKH_JOGHRAFI,
     ];
+
     public const ALL_CHATR_NEJAT2_PRODUCTS_EKHTESASI_RIYAZI = [
         self::CHATR_NEJAT2_HENDESE,
         self::CHATR_NEJAT2_HESABAN,
@@ -590,6 +784,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::CHATR_NEJAT2_SHIMI,
         self::CHATR_NEJAT2_ADABIYAT,
     ];
+
     public const ALL_CHATR_NEJAT2_PRODUCTS_EKHTESASI_TAJROBI = [
         self::CHATR_NEJAT2_SHIMI,
         self::CHATR_NEJAT2_RIYAZI_TAJROBI,
@@ -598,17 +793,19 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::CHATR_NEJAT2_ADABIYAT,
         self::CHATR_NEJAT2_FIZIK,
     ];
+
     public const CHATR_NEJAT2_PRODUCTS_CATEGORY = [
-//        'omoomi'            => ['user_major_category' => -1, 'products' => self::ALL_CHATR_NEJAT_PRODUCTS_ENSANI, 'title' => 'انسانی'],
+        //        'omoomi'            => ['user_major_category' => -1, 'products' => self::ALL_CHATR_NEJAT_PRODUCTS_ENSANI, 'title' => 'انسانی'],
         'ekhtesasi_riyazi' => [
             'user_major_category' => Major::RIYAZI, 'products' => self::ALL_CHATR_NEJAT2_PRODUCTS_EKHTESASI_RIYAZI,
-            'title' => 'اختصاصی ریاضی'
+            'title' => 'اختصاصی ریاضی',
         ],
         'ekhtesasi_tajrobi' => [
             'user_major_category' => Major::TAJROBI, 'products' => self::ALL_CHATR_NEJAT2_PRODUCTS_EKHTESASI_TAJROBI,
-            'title' => 'اختصاصی تجربی'
+            'title' => 'اختصاصی تجربی',
         ],
     ];
+
     public const ARASH_1400_PACKS = [
         self::ARASH_PACK_RITAZI_1400,
         self::ARASH_PACK_TAJROBI_1400,
@@ -618,27 +815,46 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_PACK_RIYAZI_1401,
         self::ARASH_PACK_TAJROBI_1401,
     ];
+
     public const CHATR_NEJAT2_HENDESE = 981;
+
     public const CHATR_NEJAT2_HESABAN = 980;
+
     public const CHATR_NEJAT2_GOSASTE = 979;
+
     public const CHATR_NEJAT2_FIZIK = 978;
+
     public const CHATR_NEJAT2_SHIMI = 976;
+
     public const CHATR_NEJAT2_RIYAZI_TAJROBI = 975;
 
     // Note: پک های آرش 1400 (تجربی، ریاضی)
     public const CHATR_NEJAT2_ZIST = 974;
+
     public const CHATR_NEJAT2_ZAMIN_SHENASI = 973; //Riyazi
+
     public const CHATR_NEJAT2_RIYAZI_ENSANI = 972; //Riyazi
+
     public const CHATR_NEJAT2_FALSAFE_MANTEGH = 971; //Riyazi
+
     public const CHATR_NEJAT2_ADABIYAT = 970; //Riyazi
+
     public const CHATR_NEJAT2_RAVANSHENASI = 966; //Riyazi , Tajrobi
+
     public const CHATR_NEJAT2_EGHTESAD = 965; //Tajrobi
+
     public const CHATR_NEJAT2_JAMEE_SHENASI = 964; //Tajrobi
+
     public const CHATR_NEJAT2_ARABI_ENSANI = 963; //Tajrobi
+
     public const CHATR_NEJAT2_TARIKH_JOGHRAFI = 962; //Ensani
+
     public const CHATR_NEJAT2_PACK_ENSANI = 969; //Ensani
+
     public const CHATR_NEJAT2_PACK_TAJROBI = 968; // Riyazi , Tajrobi
+
     public const CHATR_NEJAT2_PACK_RIYAZI = 967; //Ensani
+
     public const ALL_CHATR_NEJAT2_ENSANI_PRODUCTS =
         [
             self::CHATR_NEJAT2_RIYAZI_ENSANI,
@@ -648,28 +864,40 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             self::CHATR_NEJAT2_JAMEE_SHENASI,
             self::CHATR_NEJAT2_ARABI_ENSANI,
             self::CHATR_NEJAT2_TARIKH_JOGHRAFI,
-        ]; //Ensani
+        ];
+
+    //Ensani
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_EKHTESASI = [
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI,
         self::RAHE_ABRISHAM99_FIZIK_TAJROBI,
-    ]; //Ensani
+    ];
+
+    //Ensani
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_PRO_EKHTESASI = [
         self::RAHE_ABRISHAM1401_PRO_FIZIK_KAZERANIAN,
         self::RAHE_ABRISHAM1401_PRO_FIZIK_TOLOUYI,
-    ]; //Ensani
+    ];
+
+    //Ensani
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM2_TAJROBI = [
         self::RAHE_ABRISHAM1402_RIYAZIAT_TAJROBI_SABETI,
         self::RAHE_ABRISHAM1402_RIYAZIAT_TAJROBI_NABAKHTE,
-    ]; //Ensani
+    ];
+
+    //Ensani
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM2_RIYAZI = [
         self::RAHE_ABRISHAM1402_HESABAN_SABETI,
         self::RAHE_ABRISHAM1402_HESABAN_NABAKHTE,
-    ]; //Pack
+    ];
+
+    //Pack
     public const USER_RECEIVABLE_PRODUCTS_ARASH_EKHTESASI = [
         self::ARASH_FIZIK_1400,
         self::ARASH_FIZIK_1400_TOLOUYI,
         self::ARASH_FIZIK_1401_YARI,
-    ]; //Pack
+    ];
+
+    //Pack
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_EKHTESASI_AND_ARASH_1400_SINBLES = [
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI => self::USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_EKHTESASI,
         self::RAHE_ABRISHAM99_FIZIK_TAJROBI => self::USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_EKHTESASI,
@@ -682,7 +910,9 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM1402_RIYAZIAT_TAJROBI_NABAKHTE => self::USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM2_TAJROBI,
         self::RAHE_ABRISHAM1402_HESABAN_SABETI => self::USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM2_RIYAZI,
         self::RAHE_ABRISHAM1402_HESABAN_NABAKHTE => self::USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM2_RIYAZI,
-    ]; //Pack
+    ];
+
+    //Pack
     public const USER_RECEIVABLE_PRODUCTS_RAHE_ABRISHAM_EKHTESASI_AND_ARASH_1400_PACKS = [
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI => self::RAHE_ABRISHAM_EKHTESASI_PACKS,
         self::RAHE_ABRISHAM99_FIZIK_TAJROBI => self::RAHE_ABRISHAM_EKHTESASI_PACKS,
@@ -690,7 +920,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_FIZIK_1400_TOLOUYI => self::ARASH_1400_PACKS,
         self::ARASH_FIZIK_1401_YARI => [
             self::ARASH_TITAN_PACK_TAJROBI, self::ARASH_TITAN_FIZIK, self::ARASH_TITAN_PACK_RIYAZI,
-            self::ARASH_PACK_RIYAZI_1401, self::ARASH_PACK_TAJROBI_1401
+            self::ARASH_PACK_RIYAZI_1401, self::ARASH_PACK_TAJROBI_1401,
         ],
         self::RAHE_ABRISHAM1401_PRO_FIZIK_KAZERANIAN => self::RAHE_ABRISHAM1401_PRO_EKHTESASI_PACKS,
         self::RAHE_ABRISHAM1401_PRO_FIZIK_TOLOUYI => self::RAHE_ABRISHAM1401_PRO_EKHTESASI_PACKS,
@@ -709,6 +939,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM99_SHIMI,
         self::RAHE_ABRISHAM99_RIYAZIAT_TAJROBI,
     ];
+
     public const ALL_SINGLE_ABRISHAM_PRODUCTS = [
         self::RAHE_ABRISHAM99_RIYAZIAT_RIYAZI,
         self::RAHE_ABRISHAM99_FIZIK_RIYAZI,
@@ -721,16 +952,19 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM1401_ARABI,
         self::RAHE_ABRISHAM1401_ADABIYAT,
     ];
+
     public const RAHE_ABRISHAM_EKHTESASI_PACKS = [
         self::RAHE_ABRISHAM99_PACK_TAJROBI,
         self::RAHE_ABRISHAM99_PACK_RIYAZI,
         self::ZARBIN_ABRISHAM_REYAZI_PACK,
         self::ZARBIN_ABRISHAM_TAJROBI_PACK,
     ];
+
     public const RAHE_ABRISHAM1401_PRO_EKHTESASI_PACKS = [
         self::RAHE_ABRISHAM1401_PRO_PACK_RIYAZI,
         self::RAHE_ABRISHAM1401_PRO_PACK_TAJROBI,
     ];
+
     public const ALL_PACK_ABRISHAM_PRODUCTS = [
         self::RAHE_ABRISHAM99_PACK_TAJROBI,
         self::RAHE_ABRISHAM99_PACK_RIYAZI,
@@ -742,30 +976,54 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     // Note: محصولاتی که کاربر باید از قبل خریده باشد تا بتواند محصول مورد نظر را به سفارشش اضافه کنیم
     public const TOOR_ABRISHAM_1400_TAJROBRI = 608;
+
     public const RAHE_ABRISHAM_RIYAZI_PASS_AZMOON = 611;
+
     public const RAHE_ABRISHAM_TAJROBI_PASS_AZMOON = 612;
+
     // Note: پک های راه ابریشم 1399 (تجربی، ریاضی)
     public const TITAN_AMAR_1400 = 545;
+
     public const TITAN_HENDESE_1400 = 544;
+
     public const TITAN_HESABAN_1400 = 543;
+
     public const TITAN_ZIST_1400 = 542;
+
     public const TITAN_RIYAZI_TAJROBI_1400 = 541;
+
     public const TITAN_ZABAN_1400 = 539;
+
     public const TITAN_ARABI_1400 = 537;
+
     public const TITAN_DINI_1400 = 538;
+
     public const TITAN_ADABIYAT_1400 = 536;
+
     public const TITAN_FIZIK_1400 = 534;
+
     public const TITAN_SHIMI_1400 = 535;
+
     public const TITAN_RIYAZI_TAJROBI_1401 = 713;
+
     public const TITAN_ZIST_1401 = 712;
+
     public const TITAN_ZABAN_1401 = 539;
+
     public const TITAN_ADABIYAT_1401 = 536;
+
     public const TITAN_ARABI_1401 = 537;
+
     public const TITAN_DINI_1401 = 715;
+
     public const TITAN_HESABAN_1401 = 714;
+
     public const TITAN_PACK_RIYAZI_1401 = 709;
+
     public const TITAN_PACK_TAJROBI_1401 = 708;
+
     public const TITAN_PACK_OMOOMI_1401 = 707;
+
     public const ALL_TITAN_SINGLE_1401 = [
         self::TITAN_AMAR_1400,
         self::TITAN_HENDESE_1400,
@@ -779,12 +1037,14 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::TITAN_FIZIK_1400,
         self::TITAN_SHIMI_1400,
     ];
+
     public const TITAN_OMOOMI_PRODUCTS = [
         self::TITAN_ADABIYAT_1400,
         self::TITAN_ARABI_1400,
         self::TITAN_DINI_1400,
         self::TITAN_ZABAN_1400,
     ];
+
     public const TITAN_EKHTESASI_PRODUCTS = [
         self::TITAN_FIZIK_1400,
         self::TITAN_RIYAZI_TAJROBI_1400,
@@ -793,28 +1053,37 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::TITAN_HENDESE_1400,
         self::TITAN_AMAR_1400,
     ];
+
     public const SHOROO_AZ_NO = 684;
+
     public const AMOUNT_LIMIT = [
         'نامحدود',
         'محدود',
     ];
+
     public const ENABLE_STATUS = [
         'غیرفعال',
         'فعال',
     ];
+
     public const DISPLAY_STATUS = [
         'عدم نمایش',
         'نمایش',
     ];
+
     public const RECOMMENDER_CONTENTS_BUCKET = 'rp';
+
     public const SAMPLE_CONTENTS_BUCKET = 'relatedproduct';
+
     public const ARASH_RIYAZI_SPECIFIC = [
-        Product::ARASH_PACK_RIYAZI, Product::ARASH_PACK_RITAZI_1400, Product::ARASH_RIYAZIYAT_RIYAZI_1400
+        Product::ARASH_PACK_RIYAZI, Product::ARASH_PACK_RITAZI_1400, Product::ARASH_RIYAZIYAT_RIYAZI_1400,
     ];
+
     public const ARASH_TAJROBI_SPECIFIC = [
         Product::ARASH_PACK_TAJROBI, Product::ARASH_PACK_TAJROBI_1400, Product::ARASH_ZIST_1400,
-        Product::ARASH_RIYAZI_TAJROBI_AMINI, Product::ARASH_RIYAZI_TAJROBI_SABETI, Product::ARASH_ZIST_TETA_1400
+        Product::ARASH_RIYAZI_TAJROBI_AMINI, Product::ARASH_RIYAZI_TAJROBI_SABETI, Product::ARASH_ZIST_TETA_1400,
     ];
+
     public const USER_PRODUCTS_PANEL_EXCLUDE_PRODUCTS = [
         self::ARASH_PACK_RITAZI_1400,
         self::ARASH_PACK_TAJROBI_1400,
@@ -855,21 +1124,37 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::RAHE_ABRISHAM1402_PACK_TAJROBI,
         self::RAHE_ABRISHAM1402_PACK_RIYAZI,
     ];
+
     public const ZARBIN_ABRISHAM_REYAZI_PACK = 585;
+
     public const ZARBIN_ABRISHAM_TAJROBI_PACK = 586;
+
     public const ZARBIN_ABRISHAM_OMOOMI_PACK = 584;
+
     public const ARASH_TITAN_RIYAZI_TAJORBI = 697;
+
     public const ARASH_TITAN_ZIST = 698;
+
     public const ARASH_TITAN_RIYAZI_RIYAZI = 699;
+
     public const ARASH_TITAN_SHIMI = 700;
+
     public const ARASH_TITAN_FIZIK = 701;
+
     public const ARASH_TITAN_ARABI = 702;
+
     public const ARASH_TITAN_ZABAN = 703;
+
     public const ARASH_TITAN_ADABIYAT = 704;
+
     public const ARASH_TITAN_PACK_TAJROBI = 705;
+
     public const ARASH_TITAN_PACK_RIYAZI = 706;
+
     public const ARASH_TITAN_PACK_OMOOMI = 710;
+
     public const ARASH_TITAN_DINI = 711;
+
     public const ALL_ARASH_TITAN = [
         self::ARASH_TITAN_RIYAZI_TAJORBI,
         self::ARASH_TITAN_ZIST,
@@ -881,6 +1166,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         self::ARASH_TITAN_ADABIYAT,
         self::ARASH_TITAN_DINI,
     ];
+
     public const ALL_NAHAYI_1402_PRODUCTS = [
         Product::EMTEHAN_NAHAYI_1402_SHIMI => ['color' => '#FB8C00', 'lesson_name' => ''],
         Product::EMTEHAN_NAHAYI_1402_FIZIK => ['color' => '#FB8C00', 'lesson_name' => ''],
@@ -895,6 +1181,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         Product::EMTEHAN_NAHAYI_1402_ADABIYAT => ['color' => '#FB8C00', 'lesson_name' => ''],
 
     ];
+
     public const ALL_NAHAYI_1402_PRODUCTS_EKHTESASI_TAJROBI = [
         Product::EMTEHAN_NAHAYI_1402_SHIMI,
         Product::EMTEHAN_NAHAYI_1402_FIZIK,
@@ -905,6 +1192,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         Product::EMTEHAN_NAHAYI_1402_ARABI,
         Product::EMTEHAN_NAHAYI_1402_ADABIYAT,
     ];
+
     public const ALL_NAHAYI_1402_PRODUCTS_EKHTESASI_RIYAZI = [
         Product::EMTEHAN_NAHAYI_1402_SHIMI,
         Product::EMTEHAN_NAHAYI_1402_FIZIK,
@@ -916,9 +1204,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         Product::EMTEHAN_NAHAYI_1402_ARABI,
         Product::EMTEHAN_NAHAYI_1402_ADABIYAT,
     ];
+
     public const ALL_FORIYAT_110_PRODUCTS = [
         983, 951, 800, 798, 797, 796, 795, 794, 793, 792, 791, 790, 789, 788, 787, 786, 785, 784, 782, 781, 783,
     ];
+
     public const EMTEHAN_NAHAYI_1401 = [
         0 => 717,
         10 => 718,
@@ -928,6 +1218,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         150 => 721,
         200 => 722,
     ];
+
     public const TAHLIL_KONKUT_1401 = [
         0 => 739,
         10 => 740,
@@ -937,22 +1228,36 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         150 => 744,
         200 => 745,
     ];
+
     public const EMTEHAN_NAHAYI_1402_SHIMI = 995;
+
     public const EMTEHAN_NAHAYI_1402_FIZIK = 996;
+
     public const EMTEHAN_NAHAYI_1402_ZIST = 997;
+
     public const EMTEHAN_NAHAYI_1402_ADABIYAT = 998;
+
     public const EMTEHAN_NAHAYI_1402_ZABAN = 999;
 
     //keus are cost of products
     public const EMTEHAN_NAHAYI_1402_HENDESE = 1000;
+
     public const EMTEHAN_NAHAYI_1402_ARABI = 1001;
+
     public const EMTEHAN_NAHAYI_1402_GOSASTE = 1002;
+
     public const EMTEHAN_NAHAYI_1402_DINI = 1003;
+
     public const EMTEHAN_NAHAYI_1402_RIYAZIYAT_TAJROBI = 1004;
+
     public const EMTEHAN_NAHAYI_1402_HESABAN = 1005;
+
     public const EMTEHAN_NAHAYI_1402_RIYAZI_PACK = 1009;
+
     public const EMTEHAN_NAHAYI_1402_TAJROBI_PACK = 1008;
+
     public const EMTEHAN_NAHAYI_1402_FULL_PACK = 1007;
+
     public const ALL_EMTEHAN_NAHAYI_NOHOM_1402 = [
         1058,
         1059,
@@ -961,15 +1266,25 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         1062,
         1063,
     ];
+
     public const YEKROOZE_FIZIK_1401 = 736;
+
     public const YEKROOZE_RIYAZI_1401 = 737;
+
     public const TAFTAN_PRODUCT_CATEGORY = 'همایش/تفتان';
+
     public const GODAR_PRODUCT_CATEGORY = 'همایش/گدار';
+
     public const ARASH_PRODUCT_CATEGORY = 'همایش/آرش';
+
     public const TETA_PRODUCT_CATEGORY = 'همایش/تتا'; // 2 RESHTE
+
     public const TITAN_PRODUCT_CATEGORY = 'همایش/تایتان';
+
     public const ABRISHAM_PRODUCT_CATEGORY = 'VIP';
+
     protected const PURIFY_NULL_CONFIG = ['HTML.Allowed' => ''];
+
     public const   ABRISHAM_2_DATA = [
         1094 => [
             'color' => '#76BDFF',
@@ -1017,25 +1332,36 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             'majorIds' => [2],
         ],
     ];
+
     public const ENTEKHAB_RESHTE_IDS = [
         1239, 1240, 1241, 1242, 1243,
     ];
+
     public const MOSHAVERE_ENTEKHAB_RESHTE = 1238;
+
     public const INDEX_PAGE_NAME = 'productPage';
+
     protected static $recordEvents = ['updated', 'created', 'replicating', 'deleted'];
+
     protected static $console_description = ' from console';
+
     public bool $logFillable = true;
+
     public string $disk;
+
     public $draftAbles = [
         'shortDescription',
         'longDescription',
         'specialDescription',
     ];
+
     /**
      * @var array|mixed
      */
     protected $discount_ammount_cache;
+
     protected $price_cache;
+
     protected $fillable = [
         'name',
         'shortName',
@@ -1066,18 +1392,20 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         'prerequisite_description',
         'usage_description',
         'objective_description',
-        'wide_image'
+        'wide_image',
     ];
+
     protected $cachedMethods = [
         'getPriceAttribute',
         'getMajorsAttribute',
-        'getHoursAttribute'
+        'getHoursAttribute',
     ];
 
     protected $appends = [
         'price',
-        'instalmentsPrice'
+        'instalmentsPrice',
     ];
+
     protected $hidden = [
         'gifts',
         'basePrice',
@@ -1102,6 +1430,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         'metaTitle',
         'metaDescription',
     ];
+
     /**
      * All of the relationships to be touched.
      *
@@ -1116,16 +1445,18 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     ];
 
     protected $casts = [
-        'instalments' => 'array'
+        'instalments' => 'array',
     ];
 
     protected $with = [
         'producttype',
         'attributeset',
         'children',
-        'bons'
+        'bons',
     ];
+
     protected $major_cache;
+
     protected $hours_cache;
 
     /*
@@ -1137,7 +1468,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Gets specific number of products
      *
-     * @param $number
      *
      * @return $this
      */
@@ -1156,9 +1486,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * @param  array  $excluded
      * @param  string  $orderBy
      * @param  string  $orderMethod
-     *
      * @param  array  $included
-     *
      * @return $this|Product|Builder
      */
     public static function getProducts(
@@ -1182,11 +1510,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             $products = $products->enable();
         }
 
-        if (!empty($excluded)) {
+        if (! empty($excluded)) {
             $products->whereNotIn('id', $excluded);
         }
 
-        if (!empty($included)) {
+        if (! empty($included)) {
             $products->whereIn('id', $included);
         }
 
@@ -1204,12 +1532,10 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return $products;
     }
 
-    /**
-     * @return ProductCollection
-     */
     public static function getProductsHaveBestOffer(): ProductCollection
     {
         return new ProductCollection();
+
         return Product::find([
             294,
             330,
@@ -1240,10 +1566,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getActivitylogOptions(): LogOptions
     {
         $model = explode('\\', self::class)[1];
+
         return LogOptions::defaults()
             ->logFillable()
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName
+            ->setDescriptionForEvent(fn (string $eventName
             ) => (auth()->check()) ? $eventName : $eventName.self::$console_description)
             ->useLogName("{$model}");
     }
@@ -1251,7 +1578,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Create a new Eloquent Collection instance.
      *
-     * @param  array  $models
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -1262,8 +1588,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Converts content's validUntil to Jalali
-     *
-     * @return string
      */
     public function validUntil_Jalali($withTime = true): string
     {
@@ -1276,7 +1600,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include active Products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeActive($query)
@@ -1290,7 +1613,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include enable(or disable) Products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeEnable($query)
@@ -1302,7 +1624,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include configurable Products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeConfigurable($query)
@@ -1314,7 +1635,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include simple Products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeSimple($query)
@@ -1351,7 +1671,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include valid Products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeValid($query)
@@ -1372,7 +1691,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include product without redirect url.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeMain($query)
@@ -1389,7 +1707,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include displayable products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeDisplay($query)
@@ -1406,7 +1723,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include displayable products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeBelongsToAbrishamProducts($query)
@@ -1418,7 +1734,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Scope a query to only include soalaa products.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeSoalaaProducts($query, bool $onlyGrand = false)
@@ -1435,14 +1750,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Makes product's title
-     *
-     * @return string
      */
     public function title(): string
     {
-        if (!(isset($this->slogan) && strlen($this->slogan) > 0)) {
+        if (! (isset($this->slogan) && strlen($this->slogan) > 0)) {
             return $this->name;
         }
+
         return $this->name.':'.$this->slogan;
     }
 
@@ -1450,13 +1764,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Gets product's tags
      *
      * @param $value
-     *
      * @return mixed
      */
-
     public function getInstalmentsDetailAttribute()
     {
-        if (!$this->has_instalment_option) {
+        if (! $this->has_instalment_option) {
             return null;
         }
         $instalments = [];
@@ -1466,6 +1778,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             $data['date'] = now()->addMonths($i);
             $instalments[] = $data;
         }
+
         return $instalments;
     }
 
@@ -1477,7 +1790,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Gets product's tags
      *
-     * @param $value
      *
      * @return mixed
      */
@@ -1489,7 +1801,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Gets product's tags
      *
-     * @param $value
      *
      * @return mixed
      */
@@ -1500,12 +1811,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getRedirectUrlAttribute($value)
     {
-        if (!isset($value)) {
+        if (! isset($value)) {
             return null;
         }
 
         $value = json_decode($value);
         $url = parse_url($value->url);
+
         return [
             'url' => url($url['path']),
             'code' => $value->code,
@@ -1514,13 +1826,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function setRedirectUrlAttribute($value)
     {
-        $this->attributes['redirectUrl'] = !isset($value) ? null : json_encode($value);
+        $this->attributes['redirectUrl'] = ! isset($value) ? null : json_encode($value);
     }
 
     /**
      * @param  User|null  $user
-     *
-     * @return array
      */
     public function getPriceTextAttribute(): array
     {
@@ -1548,8 +1858,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * @param  User|null  $user
-     *
-     * @return array
      */
     public function getPriceTextForInstalmentAttribute(): array
     {
@@ -1580,7 +1888,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      */
     public function getPriceAttribute()
     {
-        if (!is_null($this->price_cache)) {
+        if (! is_null($this->price_cache)) {
             return $this->price_cache;
         }
         $costArray = $this->calculatePayablePrice();
@@ -1588,7 +1896,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         $cost = $costArray['cost'];
         $customerPrice = $costArray['customerPrice'];
         $customerInstalmentallyPrice = $costArray['customerPriceInstalmentally'];
-        if (!isset($cost)) {
+        if (! isset($cost)) {
             return [
                 'base' => null,
                 'discount' => null,
@@ -1604,6 +1912,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             'final' => $customerPrice,
             'final_instalmentally' => $customerInstalmentallyPrice,
         ];
+
         return $this->price_cache;
     }
 
@@ -1639,7 +1948,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Obtains product's cost
      *
      * @param  User|null  $user
-     *
      * @return mixed
      */
     private function obtainCostInfo()
@@ -1651,6 +1959,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return Cache::tags($cacheTags)
             ->remember($key, config('constants.CACHE_60'), function () {
                 $cost = new AlaaProductPriceCalculator($this);
+
                 return json_decode($cost->getPrice());
             });
     }
@@ -1666,13 +1975,14 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         $costArray = $this->calculatePayablePriceForInstalmentPurchase($user);
         $cost = $costArray['cost'];
         $customerPrice = $costArray['customerPrice'];
-        if (!isset($cost)) {
+        if (! isset($cost)) {
             return [
                 'base' => null,
                 'discount' => null,
                 'final' => null,
             ];
         }
+
         return [
             'base' => $cost,
             'discount' => $cost - $customerPrice,
@@ -1684,15 +1994,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Get the content's meta title .
      *
      * @param $value
-     *
-     * @return string
      */
     public function getMetaTitleAttribute(): string
     {
         $text = $this->getCleanTextForMetaTags($this->name);
+
         return mb_substr($text, 0, config('constants.META_TITLE_LIMIT'), 'utf-8');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1701,8 +2009,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     */
 
     /**
-     * @param  string  $text
-     *
      * @return mixed
      */
     private function getCleanTextForMetaTags(string $text)
@@ -1724,23 +2030,25 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                 return $costInfo;
             }
 
-
             $key = 'getShowDiscountAttribute:'.$user->id.'-product:'.$this->id;
             $tags = ['getShowDiscountAttribute:'.$user->id, CacheFlush::YALDA_1400_TAG.$user->id];
             $result = Cache::tags($tags)->remember($key, config('constants.CACHE_5'), function () use ($user) {
                 /** @var User $user */
                 if (isset($user) && in_array($this->id, array_keys(self::ALL_ABRISHAM_PRODUCTS))) {
                     $openOrder = $user->getOpenOrderOrCreate();
+
                     return $openOrder->couponDiscount / 100;
                 }
+
                 return 0;
             });
             $costInfo = $result;
             Config::set($tempKey, $costInfo);
+
             return $result;
         }
-        return 0;
 
+        return 0;
 
     }
 
@@ -1748,19 +2056,16 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      * Get the content's meta description .
      *
      * @param $value
-     *
-     * @return string
      */
     public function getMetaDescriptionAttribute(): string
     {
         $text = $this->getCleanTextForMetaTags($this->shortDescription.' '.$this->longDescription);
+
         return mb_substr($text, 0, config('constants.META_DESCRIPTION_LIMIT'), 'utf-8');
     }
 
     /**
      * Gets product's meta tags array
-     *
-     * @return array
      */
     public function getMetaTags(): array
     {
@@ -1805,7 +2110,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                 $metaTitle = 'همایش جمع‌بندی '.$lessonName.' کنکور آرش آلاء';
                 if (in_array($this->id, [
                     self::TETA_FIZIK_1400, self::ARASH_FIZIK_1400, self::ARASH_RIYAZI_TAJROBI_SABETI,
-                    self::ARASH_RIYAZI_TAJROBI_AMINI
+                    self::ARASH_RIYAZI_TAJROBI_AMINI,
                 ])) {
                     $metaTitle .= ' - '.Arr::get(self::ARASH_PRODUCTS_TEACHER_NAME, $this->id);
                 }
@@ -1829,6 +2134,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             default:
                 $lessonName = Arr::get(self::ARASH_PRODUCTS_LESSON_NAME, $this->id);
                 $teacherName = Arr::get(self::ARASH_PRODUCTS_TEACHER_NAME, $this->id);
+
                 return 'همایش جمع بندی صفر تا صد '.$lessonName.' '.$teacherName.' کنکور آرش آلاء، شامل جمع بندی کامل '.$lessonName.' به صورت نکته و تست همراه با درسنامه و تحلیل کامل سوالات کنکور 98و99';
                 break;
         }
@@ -1836,7 +2142,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for limit
      *
-     * @param $value
      */
     public function setAmountAttribute($value): void
     {
@@ -1849,7 +2154,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for discount
      *
-     * @param $value
      */
     public function setDiscountAttribute($value): void
     {
@@ -1862,7 +2166,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for discount
      *
-     * @param $value
      */
     public function setShortDescriptionAttribute($value): void
     {
@@ -1875,7 +2178,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for discount
      *
-     * @param $value
      */
     public function setLongDescriptionAttribute($value): void
     {
@@ -1888,7 +2190,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for discount
      *
-     * @param $value
      */
     public function setSpecialDescriptionAttribute($value): void
     {
@@ -1901,7 +2202,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** Setter mutator for order
      *
-     * @param $value
      */
     public function setOrderAttribute($value = null): void
     {
@@ -1915,14 +2215,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Set the content's tag.
      *
-     * @param  array  $value
      *
      * @return void
      */
     public function setTagsAttribute(array $value = null)
     {
         $tags = null;
-        if (!empty($value)) {
+        if (! empty($value)) {
             $tags = json_encode([
                 'bucket' => 'content',
                 'tags' => $value,
@@ -1935,14 +2234,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Set the content's tag.
      *
-     * @param  array  $value
      *
      * @return void
      */
     public function setSampleContentsAttribute(array $value = null)
     {
         $tags = null;
-        if (!empty($value)) {
+        if (! empty($value)) {
             $tags = json_encode([
                 'bucket' => 'relatedproduct',
                 'tags' => $value,
@@ -1953,16 +2251,12 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     }
 
     /**
-     *
-     *
-     * @param  array  $value
-     *
      * @return void
      */
     public function setRecommenderContentsAttribute(array $value = null)
     {
         $tags = null;
-        if (!empty($value)) {
+        if (! empty($value)) {
             $tags = json_encode([
                 'bucket' => self::RECOMMENDER_CONTENTS_BUCKET,
                 'recommenders' => $value,
@@ -1975,7 +2269,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * Set the product's thumbnail.
      *
-     * @param  Collection  $input
      *
      * @return void
      */
@@ -2046,7 +2339,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return $this->belongsToMany(Product::class, 'product_product', 'p1_id', 'p2_id')
             ->whereIn('relationtype_id', [
                 config('constants.PRODUCT_INTERRELATION_GIFT'),
-                config('constants.PRODUCT_INTERRELATION_ITEM')
+                config('constants.PRODUCT_INTERRELATION_ITEM'),
             ])
             ->withPivot(['relationtype_id', 'choiceable', 'required_when']);
     }
@@ -2058,7 +2351,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function blocks()
     {
-        return $this->belongsToMany(Block::Class)
+        return $this->belongsToMany(Block::class)
             ->withPivot('order', 'enable')
             ->withTimestamps()
             ->orderBy('order');
@@ -2066,7 +2359,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function contracts()
     {
-        return $this->hasMany(Contract::Class);
+        return $this->hasMany(Contract::class);
     }
 
     public function livedescriptions()
@@ -2081,7 +2374,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function descriptionWithPeriod()
     {
-        return $this->hasMany(Descriptionwithperiod::Class, 'product_id', 'id');
+        return $this->hasMany(Descriptionwithperiod::class, 'product_id', 'id');
     }
 
     public function productfiles()
@@ -2091,7 +2384,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function faqs()
     {
-        return $this->hasMany(Faq::Class);
+        return $this->hasMany(Faq::class);
     }
 
     public function grandsChildren()
@@ -2101,12 +2394,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function isChildOfGrandChild()
     {
-        if (!empty($this->grand)) {
+        if (! empty($this->grand)) {
             $product = $this->grand;
-            if (!empty($product->grand)) {
+            if (! empty($product->grand)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -2132,7 +2426,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
         return Cache::tags(['product', 'product_'.$this->id, 'productGift', 'gift'])
             ->remember($key, config('constants.CACHE_60'), function () {
-                return ($this->gifts->isEmpty() ? false : true);
+                return $this->gifts->isEmpty() ? false : true;
             });
     }
 
@@ -2148,7 +2442,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
         return Cache::tags(['product', 'product_'.$this->id, 'validFiles', 'file'])
             ->remember($key, config('constants.CACHE_60'), function () use ($fileType) {
-                return !$this->validProductfiles($fileType)
+                return ! $this->validProductfiles($fileType)
                     ->get()
                     ->isEmpty();
             });
@@ -2157,8 +2451,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /**
      * @param  string  $fileType
      * @param  int  $getValid
-     *
-     * @return
      */
     public function validProductfiles($fileType = '', $getValid = 1)
     {
@@ -2180,6 +2472,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         }
 
         $files->orderBy('order');
+
         return $files;
     }
 
@@ -2195,8 +2488,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether the product is active or not .
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
@@ -2205,8 +2496,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether the product is enable or not .
-     *
-     * @return bool
      */
     public function isEnable(): bool
     {
@@ -2215,28 +2504,26 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether the product is valid or not .
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
-//        if (($this->validSince < Carbon::createFromFormat('Y-m-d H:i:s',
-//                    Carbon::now())
-//                    ->timezone('Asia/Tehran') || $this->validSince === null) && ($this->validUntil > Carbon::createFromFormat('Y-m-d H:i:s',
-//                    Carbon::now())
-//                    ->timezone('Asia/Tehran') || $this->validUntil === null)) {
-//            return true;
-//        }
-//
-//        return false;
+        //        if (($this->validSince < Carbon::createFromFormat('Y-m-d H:i:s',
+        //                    Carbon::now())
+        //                    ->timezone('Asia/Tehran') || $this->validSince === null) && ($this->validUntil > Carbon::createFromFormat('Y-m-d H:i:s',
+        //                    Carbon::now())
+        //                    ->timezone('Asia/Tehran') || $this->validUntil === null)) {
+        //            return true;
+        //        }
+        //
+        //        return false;
 
         // TODO: I think the following code is better than the above code.
         return ($this->validSince < Carbon::now('Asia/Tehran') || is_null($this->validSince)) &&
             ($this->validUntil > Carbon::now('Asia/Tehran') || is_null($this->validUntil));
 
         // TODO: I think the following code is better than two above codes for api.
-//        return ($this->validSince < Carbon::now('Asia/Tehran')->format('Y-m-d H:i:s') || is_null($this->validSince)) &&
-//            ($this->validUntil > Carbon::now('Asia/Tehran')->format('Y-m-d H:i:s') || is_null($this->validUntil));
+        //        return ($this->validSince < Carbon::now('Asia/Tehran')->format('Y-m-d H:i:s') || is_null($this->validSince)) &&
+        //            ($this->validUntil > Carbon::now('Asia/Tehran')->format('Y-m-d H:i:s') || is_null($this->validUntil));
     }
 
     public function isRoot(): bool
@@ -2250,7 +2537,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
         return Cache::tags([
             'product', 'parentProduct', 'productGrandParent', 'product_'.$this->id, 'product_'.$this->id.'_parents',
-            'product_'.$this->id.'_grandParents'
+            'product_'.$this->id.'_grandParents',
         ])
             ->remember($key, config('constants.CACHE_60'), function () {
                 $parentsArray = $this->getAllParents();
@@ -2284,8 +2571,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /** Determines whether this product has parent or not
      *
      * @param  int  $depth
-     *
-     * @return bool
      */
     public function hasParents($depth = 1): bool
     {
@@ -2302,9 +2587,10 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                     $myParent = $myParent->parents->first();
                     $counter++;
                 }
-                if (!isset($myParent) || $counter != $depth) {
+                if (! isset($myParent) || $counter != $depth) {
                     return false;
                 }
+
                 return true;
             });
     }
@@ -2315,7 +2601,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
         return Cache::tags([
             'product', 'parentProduct', 'productGrandParent', 'product_'.$this->id, 'product_'.$this->id.'_parents',
-            'product_'.$this->id.'_grandParents'
+            'product_'.$this->id.'_grandParents',
         ])
             ->remember($key, config('constants.CACHE_60'), function () {
                 return $this->grand;
@@ -2355,8 +2641,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether the product is in stock or not .
-     *
-     * @return bool
      */
     public function isInStock(): bool
     {
@@ -2398,13 +2682,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getApiUrlAttribute($value): array
     {
         return [
-            'v1' => route('api.v2.product.show', $this),
+            'v2' => route('api.v2.product.show', $this),
         ];
     }
 
     public function getApiUrlV1Attribute()
     {
-        return route('api.v1.product.show', $this);
+        return route('api.v2.product.show', $this);
     }
 
     public function getApiUrlV2Attribute($value)
@@ -2429,7 +2713,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function validateProduct()
     {
-        if (!$this->enable) {
+        if (! $this->enable) {
             return 'محصول مورد نظر غیر فعال است';
         }
 
@@ -2470,8 +2754,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether the product is 3a exam or not .
-     *
-     * @return bool
      */
     public function is3aExam(): bool
     {
@@ -2504,15 +2786,15 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                     return true;
                 }
                 $grandParent = $this->grandParent;
-                if (isset($grandParent) && !$grandParent->enable) {
+                if (isset($grandParent) && ! $grandParent->enable) {
                     return false;
                 }
 
-                if ($this->hasParents() && !$this->parents()->first()->enable) {
+                if ($this->hasParents() && ! $this->parents()->first()->enable) {
                     return false;
                 }
 
-                if (!$this->enable) {
+                if (! $this->enable) {
                     return false;
                 }
 
@@ -2524,8 +2806,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         return $this->belongsToMany(Product::class, 'childproduct_parentproduct', 'child_id', 'parent_id')
             ->withPivot('isDefault', 'control_id',
-                'description')//                    ->with('parents')
-            ;
+                'description'); //                    ->with('parents')
     }
 
     public function isSimple(): bool
@@ -2578,12 +2859,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         foreach ($keys as $key) {
             unset($array[$key]);
         }
-        if (!$this->isActive() || isset($this->redirectUrl)) {
+        if (! $this->isActive() || isset($this->redirectUrl)) {
             foreach ($array as $key => $value) {
 
                 $array[$key] = null;
             }
         }
+
         return $array;
     }
 
@@ -2598,7 +2880,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     }
 
     /**
-     * @return Collection
      * @throws Exception
      */
     public function getAddItems(): Collection
@@ -2607,9 +2888,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         throw new Exception('product Advertisable should be impediment');
     }
 
-    /**
-     * @return Collection
-     */
     public function productFileTypesOrder(): collection
     {
         $defaultProductFileOrders = collect();
@@ -2641,7 +2919,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
      */
     public function equalizingChildrenPrice(): void
     {
-        if (!$this->hasChildren()) {
+        if (! $this->hasChildren()) {
             return;
         }
         foreach ($this->children as $child) {
@@ -2671,16 +2949,14 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                     $myChildren = $myChildren->children->first();
                     $counter++;
                 }
-                if (!isset($myChildren) || $counter != $depth) {
+                if (! isset($myChildren) || $counter != $depth) {
                     return false;
                 }
+
                 return true;
             });
     }
 
-    /**
-     * @return string
-     */
     public function makeProductLink(): string
     {
         $key = 'product:makeProductLink:'.$this->cacheKey();
@@ -2706,8 +2982,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     /** Makes an array of files with specific type
      *
      * @param  string  $type
-     *
-     * @return array
      */
     public function makeFileArray($type): array
     {
@@ -2727,8 +3001,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Checks whether this product is free or not
-     *
-     * @return bool
      */
     public function isFree(): bool
     {
@@ -2752,12 +3024,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Gets a collection containing all of product children
-     *
-     * @param  bool  $enableChildren
-     *
-     * @param  bool  $loadSets
-     *
-     * @return Collection
      */
     public function getAllChildren(bool $enableChildren = false, bool $loadSets = false): Collection
     {
@@ -2767,7 +3033,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return Cache::tags(['product', 'childProduct', 'product_'.$this->id, 'product_'.$this->id.'_children'])
             ->remember($key, config('constants.CACHE_600'), function () use ($enableChildren, $loadSets) {
                 $children = collect();
-                if (!$this->hasChildren()) {
+                if (! $this->hasChildren()) {
 
                     return $children;
                 }
@@ -2780,7 +3046,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                 foreach ($thisChildren as $child) {
                     $children = $children->merge($child->getAllChildren());
                 }
-
 
                 return $children;
             });
@@ -2817,7 +3082,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function determineDiscount(string $discountFieldName)
     {
         $discount = 0;
-        if (!$this->isRoot()) {
+        if (! $this->isRoot()) {
             $grandParent = $this->grandParent;
             $grandParentProductType = $grandParent->producttype_id;
             if ($grandParentProductType == config('constants.PRODUCT_TYPE_CONFIGURABLE')) {
@@ -2836,6 +3101,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         } else {
             $discount = $this->$discountFieldName;
         }
+
         return $discount;
     }
 
@@ -2896,8 +3162,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Obtains product's discount amount in cash
-     *
-     * @return int
      */
     public function obtainDiscountAmount(): int
     {
@@ -2905,7 +3169,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
         if (is_null($this->discount_ammount_cache)) {
             $this->discount_ammount_cache = Cache::tags([
-                'product', 'discount', 'product_'.$this->id, 'product_'.$this->id.'_discount'
+                'product', 'discount', 'product_'.$this->id, 'product_'.$this->id.'_discount',
             ])
                 ->remember($key, config('constants.CACHE_10'), function () {
                     $discountAmount = 0;
@@ -2914,22 +3178,23 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                     }
                     $grandParent = $this->grandParent;
                     $grandParentProductType = $grandParent->producttype_id;
-                    if (!($grandParentProductType == config('constants.PRODUCT_TYPE_SELECTABLE') && $this->basePrice == 0)) {
+                    if (! ($grandParentProductType == config('constants.PRODUCT_TYPE_SELECTABLE') && $this->basePrice == 0)) {
                         return $discountAmount;
                     }
                     $children = $this->children;
                     foreach ($children as $child) {
                         $discountAmount += ($child->discount / 100) * $child->basePrice;
                     }
+
                     return $discountAmount;
                 });
         }
+
         return $this->discount_ammount_cache;
     }
 
     /**
      * Disables the product
-     *
      */
     public function setDisable(): void
     {
@@ -2938,7 +3203,6 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /**
      * Enables the product
-     *
      */
     public function setEnable(): void
     {
@@ -2947,11 +3211,10 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     /** edit amount of product
      *
-     * @param  int  $value
      */
     public function decreaseProductAmountWithValue(int $value): void
     {
-        if (!(isset($this->amount) && $this->amount > 0)) {
+        if (! (isset($this->amount) && $this->amount > 0)) {
             return;
         }
         if ($this->amount < $value) {
@@ -2971,17 +3234,20 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         if (Carbon::parse($this->validSince)->lte($now) && Carbon::parse($this->validUntil)->gte($now)) {
             return true;
         }
+
         return false;
     }
 
     public function getSetsAttribute()
     {
         $key = 'product:sets:'.$this->cacheKey();
+
         return Cache::tags(['product', 'set', 'product_'.$this->id, 'product_'.$this->id.'_sets'])
             ->remember($key, config('constants.CACHE_600'), function () {
                 /** @var SetCollection $sets */
                 $sets = $this->sets()->active()
                     ->get();
+
                 return $sets;
             });
     }
@@ -3008,7 +3274,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getEnableAttribute($value)
     {
         //ToDo
-//        if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS')))
+        //        if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS')))
         return $value;
     }
 
@@ -3016,16 +3282,17 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         $product = $this;
         $key = 'product:attributeset:'.$product->cacheKey();
+
         return Cache::tags(['product', 'attributeset', 'product_'.$this->id, 'product_'.$this->id.'_attributesets'])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 //ToDo
-//                if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS')))
+                //                if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS')))
                 return optional($product->attributeset()
                     ->first())->setVisible([
-                    'name',
-                    'description',
-                    'order',
-                ]);
+                        'name',
+                        'description',
+                        'order',
+                    ]);
 
             });
     }
@@ -3039,13 +3306,15 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         $product = $this;
         $key = 'product:jalaliValidSince:'.$product->cacheKey();
+
         return Cache::tags([
-            'product', 'jalaliValidSince', 'product_'.$this->id, 'product_'.$this->id.'_jalaliValidSince'
+            'product', 'jalaliValidSince', 'product_'.$this->id, 'product_'.$this->id.'_jalaliValidSince',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS'))) {
                     return $this->convertDate($product->validSince, 'toJalali');
                 }
+
                 return null;
             });
     }
@@ -3054,13 +3323,15 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         $product = $this;
         $key = 'product:jalaliValidUntil:'.$product->cacheKey();
+
         return Cache::tags([
-            'product', 'jalaliValidUntil', 'product_'.$this->id, 'product_'.$this->id.'_jalaliValidUntil'
+            'product', 'jalaliValidUntil', 'product_'.$this->id, 'product_'.$this->id.'_jalaliValidUntil',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS'))) {
                     return $this->convertDate($product->validUntil, 'toJalali');
                 }
+
                 return null;
             });
     }
@@ -3069,13 +3340,15 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         $product = $this;
         $key = 'product:jalaliCreatedAt:'.$product->cacheKey();
+
         return Cache::tags([
-            'product', 'jalaliCreatedAt', 'product_'.$this->id, 'product_'.$this->id.'_jalaliCreatedAt'
+            'product', 'jalaliCreatedAt', 'product_'.$this->id, 'product_'.$this->id.'_jalaliCreatedAt',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 if (hasAuthenticatedUserPermission(config('constants.SHOW_PRODUCT_ACCESS'))) {
                     return $this->convertDate($product->created_at, 'toJalali');
                 }
+
                 return null;
             });
     }
@@ -3084,8 +3357,9 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     {
         $product = $this;
         $key = 'product:jalaliUpdatedAt:'.$product->cacheKey();
+
         return Cache::tags([
-            'product', 'jalaliUpdatedAt', 'product_'.$this->id, 'product_'.$this->id.'_jalaliUpdatedAt'
+            'product', 'jalaliUpdatedAt', 'product_'.$this->id, 'product_'.$this->id.'_jalaliUpdatedAt',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 return $this->convertDate($product->updated_at, 'toJalali');
@@ -3110,13 +3384,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         return null;
     }
 
-
     public function getChildrenAttribute()
     {
         $product = $this;
         $key = 'product:children:'.$product->cacheKey();
+
         return Cache::tags(['product', 'childProduct', 'product_'.$this->id, 'product_'.$this->id.'_children'])
-            ->remember($key, config('constants.CACHE_600'), function () use ($product) {
+            ->remember($key, config('constants.CACHE_600'), function () {
                 return $this->children()
                     ->get();
             });
@@ -3137,6 +3411,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                 ['cost' => $this->basePrice, 'instalmentQty' => $this->instalments],
             ])->pluck('cost');
         }
+
         return null;
     }
 
@@ -3150,14 +3425,14 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         $intro = json_decode($intro);
 
         $intro_videos = Arr::get($intro, '0');
-        if (!isset($intro_videos) || !isset($intro_videos->video)) {
+        if (! isset($intro_videos) || ! isset($intro_videos->video)) {
             return null;
         }
 
         $videos = $intro_videos->video;
 
         $firstQuality = Arr::get($videos, 0);
-        if (!isset($firstQuality) || !isset($firstQuality->fileName)) {
+        if (! isset($firstQuality) || ! isset($firstQuality->fileName)) {
             return null;
         }
 
@@ -3180,13 +3455,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
         $intro = json_decode($intro);
 
         $intro_videos = Arr::get($intro, '0');
-        if (!isset($intro_videos) || !isset($intro_videos->thumbnail)) {
+        if (! isset($intro_videos) || ! isset($intro_videos->thumbnail)) {
             return null;
         }
 
         $thumbnail = $intro_videos->thumbnail;
 
-        if (!isset($thumbnail) || !isset($thumbnail->fileName)) {
+        if (! isset($thumbnail) || ! isset($thumbnail->fileName)) {
             return null;
         }
 
@@ -3205,13 +3480,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getIsFavoredAttribute()
     {
         $authUser = auth()->user();
-        if (!isset($authUser)) {
+        if (! isset($authUser)) {
             return false;
         }
 
         return Cache::tags([
             'favorite', 'user', 'user_'.$authUser->id, 'user_'.$authUser->id.'_favorites',
-            'user_'.$authUser->id.'_favoriteProducts'
+            'user_'.$authUser->id.'_favoriteProducts',
         ])
             ->remember('user:'.$authUser->id.':hasFavored:product:'.$this->cacheKey(), config('constants.CACHE_10'),
                 function () use ($authUser) {
@@ -3228,7 +3503,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getIsPurchaseBtnShowableAttribute()
     {
-        return !in_array($this->id, [self::RIAZI_4K, self::TAJROBI_4K, self::ENSANI_4K]);
+        return ! in_array($this->id, [self::RIAZI_4K, self::TAJROBI_4K, self::ENSANI_4K]);
     }
 
     // return major of product
@@ -3245,12 +3520,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                     return $this->attributevalues->where('attribute_id', $attribute->id)->pluck('name')->toArray();
                 });
         }
+
         return [];
     }
 
     public function getMajorsAttribute(): array
     {
-        if (!is_null($this->major_cache)) {
+        if (! is_null($this->major_cache)) {
             return $this->major_cache;
         }
         $attribute = Cache::tags(['attribute', 'attribute_major'])->remember('attribute:major',
@@ -3258,16 +3534,17 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
                 return Attribute::where('name', 'major')->first();
             });
 
-        if (!isset($attribute)) {
+        if (! isset($attribute)) {
             return [];
         }
 
         $this->major_cache = Cache::tags([
-            'product', 'product_'.$this->id
+            'product', 'product_'.$this->id,
         ])->remember('product:getMajorsAttribute:'.$this->id, config('constants.CACHE_600'),
             function () use ($attribute) {
                 return $this->attributevalues->where('attribute_id', $attribute->id)->pluck('name')->toArray();
             });
+
         return $this->major_cache;
     }
 
@@ -3275,7 +3552,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
 
     public function getHoursAttribute(): string
     {
-        if (!is_null($this->hours_cache)) {
+        if (! is_null($this->hours_cache)) {
             return $this->hours_cache;
         }
         $attribute = Cache::tags(['attribute', 'attribute_hours'])->remember('attribute:hours',
@@ -3284,6 +3561,7 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
             });
         $this->hours_cache = $this->attributevalues->where('attribute_id',
             $attribute->id)->pluck('name')->toArray()[0] ?? '';
+
         return $this->hours_cache;
     }
 
@@ -3307,11 +3585,11 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getIsPurchasedAttribute(): bool
     {
         $authUser = auth()->user();
-        if (!isset($authUser)) {
+        if (! isset($authUser)) {
             return false;
         }
         $orderProduct = $authUser->getPurchasedOrderproduct($this->id);
-        if (!is_null($orderProduct)) {
+        if (! is_null($orderProduct)) {
             return true;
         } else {
             return false;
@@ -3321,13 +3599,13 @@ class   Product extends BaseModel implements Advertisable, Taggable, SeoInterfac
     public function getIsOrderedAttribute(): bool
     {
         $authUser = auth()->user();
-        if (!isset($authUser)) {
+        if (! isset($authUser)) {
             return false;
         }
 
         $productIds = [$this->id];
         $orderProduct = $authUser->getOrderedOrderproduct($productIds);
-        if (!is_null($orderProduct)) {
+        if (! is_null($orderProduct)) {
             return true;
         } else {
             return false;
