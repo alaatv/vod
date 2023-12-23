@@ -9,13 +9,18 @@
 namespace App\Traits\User;
 
 use App\Collection\ProductCollection;
+use App\Models\Content;
+use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Product;
+use App\Models\User;
 use App\Repositories\OrderproductRepo;
 use App\Repositories\OrderRepo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-
 
 trait AssetTrait
 {
@@ -25,18 +30,12 @@ trait AssetTrait
 
     /**  Determines whether user has this content or not
      *
-     * @param  Content  $content
-     *
-     * @return bool
      */
     public function hasContent(Content $content): bool
     {
         return count(array_intersect($this->getUserProductsId(), $this->getContentProductsId($content))) > 0;
     }
 
-    /**
-     * @return array
-     */
     public function getUserProductsId(): array
     {
         return $this->products()
@@ -44,15 +43,14 @@ trait AssetTrait
             ->toArray();
     }
 
-    /**
-     * @return ProductCollection
-     */
     public function products(): ProductCollection
     {
         $key = 'userProducts:'.$this->cacheKey();
+
         return Cache::tags(['userAsset', 'userAsset_'.$this->id])
             ->remember($key, config('constants.CACHE_60'), function () {
                 $result = $this->productsQuery()->get();
+
                 return Product::hydrate($result->toArray());
             });
     }
@@ -93,11 +91,6 @@ trait AssetTrait
         return $result;
     }
 
-    /**
-     * @param  Content  $content
-     *
-     * @return array
-     */
     private function getContentProductsId(Content $content): array
     {
         return $content->allProducts()
@@ -122,6 +115,7 @@ trait AssetTrait
             if ($category != 'all') {
                 $eloquent_builder->where('products.category', $category);
             }
+
             return $eloquent_builder->paginate($limit)->withQueryString();
         }
 
@@ -133,24 +127,17 @@ trait AssetTrait
                     if ($category != 'all') {
                         $eloquent_builder->where('products.category', $category);
                     }
+
                     return $eloquent_builder->orderBy('orders.completed_at',
                         $sortByOrderCompleted_at)->paginate($limit)->withQueryString();
                 });
     }
 
-    /**
-     * @param  array  $products
-     *
-     * @return bool
-     */
     public function userHasAnyOfTheseProducts(array $products): bool
     {
         return count(array_intersect($this->getUserProductsId2(), $products));
     }
 
-    /**
-     * @return array
-     */
     public function getUserProductsId2(): array
     {
         return $this->products2()
@@ -161,6 +148,7 @@ trait AssetTrait
     public function products2(): ProductCollection
     {//only if he has paid for it
         $key = 'userProducts2:'.$this->cacheKey();
+
         return Cache::tags(['userAsset', 'userAsset_'.$this->id])
             ->remember($key, config('constants.CACHE_60'), function () {
                 $result = DB::table('products')
@@ -206,9 +194,9 @@ trait AssetTrait
     public function canSeeContent(Content $content): bool
     {
         //ToDo : Does not work !!!
-//        return $this->can(config('constants.WATCH_ALAA_CONTENTS')) || $this->isContentReleased($content);
+        //        return $this->can(config('constants.WATCH_ALAA_CONTENTS')) || $this->isContentReleased($content);
         return $this->isContentReleased($content);
-//        return $this->hasAnyRole() || $this->hasContent($content);
+        //        return $this->hasAnyRole() || $this->hasContent($content);
     }
 
     public function isContentReleased(Content $content)
@@ -217,7 +205,8 @@ trait AssetTrait
             return $this->is_content_released_cache;
         }*/
         $cache_key = "isContentReleased:user-{$this->id}:content-{$content->id}";
-//        $this->is_content_released_cache =
+
+        //        $this->is_content_released_cache =
         return Cache::tags([$cache_key, 'userAsset_'.$this->id])->remember($cache_key, config('constants.CACHE_600'),
             function () use ($content) {
                 /// get products tha have $content
@@ -228,7 +217,7 @@ trait AssetTrait
                 }
                 /// get user orderProducts that product_id is one of $productsOfContent
                 $userOrderProducts = collect();
-                $userOrders->each(fn($order) => $userOrderProducts->push($order->orderProducts->whereIn('product_id',
+                $userOrders->each(fn ($order) => $userOrderProducts->push($order->orderProducts->whereIn('product_id',
                     $content->productsIdArray())->load('order')));
                 $userOrderProducts = $userOrderProducts->flatten();
                 if ($userOrderProducts->whereNull('expire_at')->isEmpty()) {
@@ -244,13 +233,13 @@ trait AssetTrait
                         '2022-07-09 00:00:00')->isNotEmpty() ||
                     $userOrders->where('paymentstatus_id',
                         config('constants.PAYMENT_STATUS_PAID'))->where('orderstatus_id',
-                        config('constants.ORDER_STATUS_CLOSED'))->isNotEmpty()) {
+                            config('constants.ORDER_STATUS_CLOSED'))->isNotEmpty()) {
                     return true;
                 }
 
                 if ($userOrders->where('paymentstatus_id',
                     config('constants.PAYMENT_STATUS_PAID'))->where('orderstatus_id',
-                    config('constants.ORDER_STATUS_CLOSED'))->isNotEmpty()) {
+                        config('constants.ORDER_STATUS_CLOSED'))->isNotEmpty()) {
                     return true;
                 }
 
@@ -261,9 +250,10 @@ trait AssetTrait
                         return true;
                     }
                 }
+
                 return false;
             });
-//        return $this->is_content_released_cache;
+        //        return $this->is_content_released_cache;
     }
 
     public function canUserUseCoupon(Coupon $coupon, User $user): bool
@@ -304,6 +294,7 @@ trait AssetTrait
         }
 
         $key = 'searchProductInUserAssetsCollection:'.$product->cacheKey().'-'.$user->cacheKey();
+
         return Cache::tags(['searchInUserAsset', 'searchInUserAsset_'.$user->id, 'userAsset', 'userAsset_'.$user->id])
             ->remember($key, config('constants.CACHE_60'), function () use ($user, $product) {
 
@@ -323,6 +314,7 @@ trait AssetTrait
         }
 
         $key = 'searchProductInUserAssetsCollection2:'.$product->cacheKey().'-'.$user->cacheKey();
+
         return Cache::tags(['searchInUserAsset', 'searchInUserAsset_'.$user->id, 'userAsset', 'userAsset_'.$user->id])
             ->remember($key, config('constants.CACHE_60'), function () use ($user, $product) {
 
@@ -344,6 +336,7 @@ trait AssetTrait
         }
 
         $key = 'searchProductTreeInUserAssetsCollection:'.$product->cacheKey().'-'.$user->cacheKey();
+
         return Cache::tags(['searchInUserAsset', 'searchInUserAsset_'.$user->id, 'userAsset', 'userAsset_'.$user->id])
             ->remember($key, config('constants.CACHE_60'), function () use ($user, $product, $purchasedProductIdArray) {
 
@@ -371,7 +364,7 @@ trait AssetTrait
             $grandChildren = $product->getAllChildren();
             $hasBoughtEveryChild = $grandChildren->isEmpty() ? false : true;
             foreach ($grandChildren as $grandChild) {
-                if (!in_array($grandChild->id, $userAssetsArray)) {
+                if (! in_array($grandChild->id, $userAssetsArray)) {
                     $hasBoughtEveryChild = false;
                     break;
                 }
