@@ -46,5 +46,7 @@ Route::prefix('v2')->group(function () {
         Route::get('/{referralCode}', [ReferralCodesController::class, 'show'])->name('show');
         Route::post('/batch-store', [ReferralCodesController::class, 'batchStore'])->name('batch-store');
         Route::post('/{referralCode}/assign', [ReferralCodesController::class, 'assign'])->name('assign');
+        Route::get('/{referralCode}/photo',
+            [ReferralCodesController::class, 'showImage'])->name('api.referralCode.show');
     });
 });

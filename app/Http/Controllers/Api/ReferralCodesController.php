@@ -23,7 +23,7 @@ class ReferralCodesController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.GENERATE_GIFT_CARD_PANEL'), ['only' => ['batchStore'],]);
+        $this->middleware('permission:'.config('constants.GENERATE_GIFT_CARD_PANEL'), ['only' => ['batchStore']]);
     }
 
     public function index(Request $request)
@@ -33,29 +33,30 @@ class ReferralCodesController extends Controller
         });
         $builder->when(
             $request->has('is_assigned_unused') && $request->query('is_assigned_unused') == 1,
-            function ($query) use ($request) {
+            function ($query) {
                 $query->assigned(1)->used(0);
             }
         );
         $builder->when(
             $request->has('is_used_and_paid') && $request->query('is_used_and_paid') == 1,
-            function ($query) use ($request) {
+            function ($query) {
                 $query->used(1)->sold();
             }
         );
         $builder->when(
             $request->has('is_used_and_unpaid') && $request->query('is_used_and_unpaid') == 1,
-            function ($query) use ($request) {
+            function ($query) {
                 $query->used(1)->notSold();
             }
         );
         $builder->when(
             $request->has('is_unassigned') && $request->query('is_unassigned') == 1,
-            function ($query) use ($request) {
+            function ($query) {
                 $query->assigned(0)->used(0);
             }
         );
         $referralCodes = $builder->paginate(5);
+
         return ReferralCodeResource::collection($referralCodes);
     }
 
@@ -76,12 +77,14 @@ class ReferralCodesController extends Controller
         if ($viaSMS) {
             $request->user()->notify(new ReferralCodeAssigned($referralCode->id));
         }
+
         return response()->json(['data' => $referralCode->isAssigned]);
     }
 
     public function showImage(ReferralCode $referralCode)
     {
         $giftCartCode = $referralCode->code;
+
         return view('pages/showGiftCard', compact('giftCartCode'));
     }
 
@@ -89,11 +92,11 @@ class ReferralCodesController extends Controller
     {
         $perPage = $request->get('per_page', 5);
         $orderProducts =
-            Billing::where('is_donate', 0)->wherehas('order.referralCode', function ($query) use ($perPage) {
+            Billing::where('is_donate', 0)->wherehas('order.referralCode', function ($query) {
                 $query->wherehas('referralRequest', function ($query) {
                     $query->where('owner_id', auth()->id());
                 });
-            })->wherehas('order', function ($query) use ($perPage) {
+            })->wherehas('order', function ($query) {
                 $query->paidAndClosed();
             })->with('order.user', 'order.referralCode', 'order.transactions', 'product')->paginate($perPage);
 
@@ -120,14 +123,15 @@ class ReferralCodesController extends Controller
                 });
         })->get();
         $walletPaidOrderProducts = $orderProducts->filter(
-            fn($orderProduct) => $orderProduct->order
-                ->transactions->filter(fn($transaction) => $transaction->wallet_id != null)
+            fn ($orderProduct) => $orderProduct->order
+                ->transactions->filter(fn ($transaction) => $transaction->wallet_id != null)
                 ->count()
         );
         $underLimitCostOrderProducts = $orderProducts->filter(function ($orderProduct) {
             return $orderProduct->order->totalCost() < 100000;
         });
         $noneProfitableOrderProducts = $walletPaidOrderProducts->merge($underLimitCostOrderProducts);
+
         return OrderTransactionCommissionResource::collection($noneProfitableOrderProducts->paginate($perPage));
     }
 
@@ -135,7 +139,7 @@ class ReferralCodesController extends Controller
     {
         $inputs = $request->validated();
         $user = User::where('mobile', $inputs['mobile'])->where('nationalCode', $inputs['nationalCode'])->first();
-        if (!isset($user)) {
+        if (! isset($user)) {
             $user = User::create([
                 'firstName' => $inputs['firstName'],
                 'lastName' => $inputs['lastName'],
@@ -150,6 +154,7 @@ class ReferralCodesController extends Controller
         $this->createReferralCodes($referralRequest, $inputs['number_of_codes']);
         ActivityLogRepo::referralCodesGenerated(auth()->user(), $referralRequest);
         $user->notify(new ReferralCodeGenerate($referralRequest, route('web.giftCards')));
+
         return new \App\Http\Resources\User($user);
     }
 }

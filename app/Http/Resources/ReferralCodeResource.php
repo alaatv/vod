@@ -2,10 +2,8 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JsonSerializable;
 
 class ReferralCodeResource extends JsonResource
 {
@@ -13,7 +11,7 @@ class ReferralCodeResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     * @return array|Arrayable|JsonSerializable
+     * @return array
      */
     public function toArray($request)
     {
@@ -25,7 +23,7 @@ class ReferralCodeResource extends JsonResource
             'isAssigned' => $this->isAssigned,
             'discount' => $this->referralRequest?->discount,
             'created_at' => $this->created_at,
-            'url' => route('web.referralCode.show', $this->id),
+            'url' => route('api.v2.referral-code.api.referralCode.show', $this->id),
             'used_at' => $this->used_at,
         ];
     }
