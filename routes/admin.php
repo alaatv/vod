@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\AttributeController;
 use App\Http\Controllers\Api\Admin\AttributeSetController;
 use App\Http\Controllers\Api\Admin\BlockController as AdminBlockController;
 use App\Http\Controllers\Api\Admin\ContentController as AdminContentController;
+use App\Http\Controllers\Api\Admin\CouponController;
 use App\Http\Controllers\Api\Admin\EmployeeScheduleController as AdminEmployeeScheduleController;
 use App\Http\Controllers\Api\Admin\FaqController as AdminFaqController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
@@ -85,6 +86,15 @@ Route::prefix('v2')->group(function () {
         Route::resource('permission', '\\'.AdminPermissionController::class, ['as' => 'api'])->except([
             'create', 'edit',
         ]);
+
+        // Coupon Routes
+        Route::group(['prefix' => 'coupon', 'as' => 'coupon.'], function () {
+            Route::resource('', '\\'.CouponController::class)->except(['create', 'edit']);
+            Route::get('findByCode', [CouponController::class, 'findByCode'])->name('findByCode');
+            Route::post('generateMassiveRandomCoupon',
+                [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
+        });
+        Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
 
         // Admin-Role Routes
         Route::resource('role', '\\'.AdminRoleController::class, ['as' => 'api'])->except(['create', 'edit']);

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\Admin\CouponController;
 use App\Http\Controllers\Api\ReferralCodesController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TicketDepartmentController;
@@ -27,15 +26,6 @@ Route::prefix('v2')->group(function () {
     Route::resource('ticketPriority', '\\'.TicketPriorityController::class)->only(['index']);
     Route::resource('ticketDepartment', '\\'.TicketDepartmentController::class, ['as' => 'api'])->only(['index']);
     Route::resource('ticketMessage', '\\'.TicketMessageController::class)->except(['create', 'edit']);
-
-    // Coupon Routes
-    Route::group(['prefix' => 'coupon', 'as' => 'coupon.'], function () {
-        Route::resource('', '\\'.CouponController::class)->except(['create', 'edit']);
-        Route::get('findByCode', [CouponController::class, 'findByCode'])->name('findByCode');
-        Route::post('generateMassiveRandomCoupon',
-            [CouponController::class, 'generateMassiveRandomCoupon'])->name('massive.random');
-    });
-    Route::post('/savePenaltyCoupon', [CouponController::class, 'savePenaltyCoupon'])->name('save.penalty.coupon');
 
     // Referral Code routes
     Route::prefix('referral-code')->name('api.v2.referral-code.')->group(function () {
