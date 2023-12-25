@@ -10,10 +10,9 @@ use App\Models\Faq;
 
 class FaqController extends Controller
 {
-
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.FAQS'), ['only' => ['store', 'edit', 'delete'],]);
+        //        $this->middleware('permission:'.config('constants.FAQS'), ['only' => ['store', 'edit', 'delete'],]);
 
     }
 
@@ -52,5 +51,4 @@ class FaqController extends Controller
 
         return FaqResource::collection($faqs);
     }
-
 }
