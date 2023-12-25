@@ -13,28 +13,20 @@ use Illuminate\Support\Facades\Cache;
 
 class TimepointController extends Controller
 {
-
     public function __construct()
     {
         $authException = $this->getAuthExceptionArray();
         $this->callMiddlewares($authException);
     }
 
-    /**
-     * @return array
-     */
     private function getAuthExceptionArray(): array
     {
         return [];
     }
 
-    /**
-     * @param $authException
-     */
     private function callMiddlewares(array $authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
-        $this->middleware('permission:'.config('constants.INSERT_CONENT_TIMEPOINT'), ['only' => 'store']);
     }
 
     public function index()
@@ -45,7 +37,6 @@ class TimepointController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
      *
      * @return JsonResponse
      */
@@ -57,6 +48,7 @@ class TimepointController extends Controller
         if (isset($timepoint)) {
             $content = $timepoint->content;
             Cache::tags(['content_'.$content->id.'_timepoints'])->flush();
+
             return ContentTimePointWeb::collection($content->times)->response();
         }
 
@@ -66,7 +58,6 @@ class TimepointController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Timepoint  $timepoint
      *
      * @return JsonResponse
      */
@@ -78,8 +69,6 @@ class TimepointController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  Timepoint  $timepoint
      *
      * @return JsonResponse
      */
@@ -89,6 +78,7 @@ class TimepointController extends Controller
         if ($updateResult) {
             $content = $timepoint->content;
             Cache::tags(['content_'.$content->id.'_timepoints'])->flush();
+
             return ContentTimePointWeb::collection($content->times)->response();
         }
 
@@ -98,9 +88,9 @@ class TimepointController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Timepoint  $timepoint
      *
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(Timepoint $timepoint)
@@ -109,6 +99,7 @@ class TimepointController extends Controller
         if ($deleteResult) {
             $content = $timepoint->content;
             Cache::tags(['content_'.$content->id.'_timepoints'])->flush();
+
             return ContentTimePointWeb::collection($content->times)->response();
         }
 
