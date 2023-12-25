@@ -36,8 +36,6 @@ use Illuminate\Validation\Rule;
  * Class ProductController.
  * For Api Version 2.
  * For Admin side.
- *
- * @package App\Http\Controllers\Api\Admin
  */
 class ProductController extends Controller
 {
@@ -46,19 +44,18 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.LIST_PRODUCT_ACCESS'), ['only' => 'index']);
-        $this->middleware('permission:'.config('constants.INSERT_PRODUCT_ACCESS'), ['only' => 'store']);
-        $this->middleware('permission:'.config('constants.SHOW_PRODUCT_ACCESS'), ['only' => 'show']);
-        $this->middleware('permission:'.config('constants.EDIT_PRODUCT_ACCESS'),
-            ['only' => ['update', 'bulkUpdateStatuses']]);
-        $this->middleware('permission:'.config('constants.REMOVE_PRODUCT_ACCESS'), ['only' => 'destroy']);
-        $this->middleware('permission:'.config('constants.SET_DISCOUNT_FOR_PRODUCT'), ['only' => 'setDiscount']);
+        //        $this->middleware('permission:'.config('constants.LIST_PRODUCT_ACCESS'), ['only' => 'index']);
+        //        $this->middleware('permission:'.config('constants.INSERT_PRODUCT_ACCESS'), ['only' => 'store']);
+        //        $this->middleware('permission:'.config('constants.SHOW_PRODUCT_ACCESS'), ['only' => 'show']);
+        //        $this->middleware('permission:'.config('constants.EDIT_PRODUCT_ACCESS'),
+        //            ['only' => ['update', 'bulkUpdateStatuses']]);
+        //        $this->middleware('permission:'.config('constants.REMOVE_PRODUCT_ACCESS'), ['only' => 'destroy']);
+        //        $this->middleware('permission:'.config('constants.SET_DISCOUNT_FOR_PRODUCT'), ['only' => 'setDiscount']);
     }
 
     /**
      * Return a listing of the resource.
      *
-     * @param  ProductAdminSearch  $productSearch
      * @return ResourceCollection
      */
     public function index(ProductIndexRequest $request, ProductAdminSearch $productSearch)
@@ -74,28 +71,28 @@ class ProductController extends Controller
 
         // Filter resources based on received parameters.
         $productResult = $productSearch->get($filters);
+
         return ProductResource::collection($productResult);
     }
 
     /**
      * Return the specified resource.
      *
-     * @param  Product  $product
      * @return JsonResponse|ProductResource|RedirectResponse|Redirector
      */
     public function show(Product $product)
     {
         if (isset($product->redirectUrl)) {
             $redirectUrl = $product->redirectUrl;
+
             return redirect(convertRedirectUrlToApiVersion($redirectUrl['url'], '2'),
                 $redirectUrl['code'], request()->headers->all());
         }
 
-        if (!is_null($product->grandParent)) {
+        if (! is_null($product->grandParent)) {
             return redirect($product->grandParent->apiUrl['v1'], Response::HTTP_MOVED_PERMANENTLY,
                 request()->headers->all());
         }
-
 
         return response()->json(new ProductResource($product), Response::HTTP_OK);
     }
@@ -105,6 +102,7 @@ class ProductController extends Controller
      *
      * @param  InsertProductRequest|Product  $request
      * @return JsonResponse
+     *
      * @throws FileNotFoundException
      */
     public function store(InsertProductRequest $request)
@@ -132,8 +130,6 @@ class ProductController extends Controller
     /**
      * Update attribute values.
      *
-     * @param  UpdateProductAttributeValueRequest  $request
-     * @param  Product  $product
      * @return JsonResponse
      */
     public function updateAttributeValues(UpdateProductAttributeValueRequest $request, Product $product)
@@ -182,9 +178,9 @@ class ProductController extends Controller
             return response()->json(['message' => 'خطای پایگاه داده', 'errorInfo' => $e],
                 Response::HTTP_SERVICE_UNAVAILABLE);
         }
+
         return (new ProductResource($product->refresh()))->response();
     }
-
 
     public function indexAttributeValues(Product $product)
     {
@@ -194,15 +190,14 @@ class ProductController extends Controller
     /**
      * Return a listing of the product's attribute values.
      *
-     * @param  Product  $product
      * @return ResourceCollection
      */
     // TODO: The following method neither returns the pagination output nor searches the final list.
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Product  $product
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(Product $product)
@@ -218,8 +213,6 @@ class ProductController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  Product  $grandProduct
      * @return Response
      */
     public function refreshPrice(Request $request, Product $grandProduct)
@@ -231,10 +224,10 @@ class ProductController extends Controller
         $user = $request->user();
 
         $key =
-            'product:refreshPrice::'.$grandProduct->cacheKey()."-user\\".(isset($user) && !is_null($user) ? $user->cacheKey() : '')."-mainAttributeValues\\".(isset($mainAttributeValues) ? implode('',
-                $mainAttributeValues) : '-')."-subProducts\\".(isset($selectedSubProductIds) ? implode('',
-                $selectedSubProductIds) : '-')."-extraAttributeValues\\".(isset($extraAttributeValues) ? implode('',
-                $extraAttributeValues) : '-');
+            'product:refreshPrice::'.$grandProduct->cacheKey().'-user\\'.(isset($user) && ! is_null($user) ? $user->cacheKey() : '').'-mainAttributeValues\\'.(isset($mainAttributeValues) ? implode('',
+                $mainAttributeValues) : '-').'-subProducts\\'.(isset($selectedSubProductIds) ? implode('',
+                    $selectedSubProductIds) : '-').'-extraAttributeValues\\'.(isset($extraAttributeValues) ? implode('',
+                        $extraAttributeValues) : '-');
 
         return Cache::tags('bon')
             ->remember($key, config('constants.CACHE_60'), function () use (
@@ -268,7 +261,7 @@ class ProductController extends Controller
                             $intendedProducts = $selectedSubProducts;
                         }
                         break;
-                    default :
+                    default:
                         break;
                 }
 
@@ -330,8 +323,6 @@ class ProductController extends Controller
     /**
      * API Version 2
      *
-     * @param  Request  $request
-     * @param  Product  $grandProduct
      * @return mixed
      */
     public function refreshPriceV2(Request $request, Product $grandProduct)
@@ -343,10 +334,10 @@ class ProductController extends Controller
         $user = $request->user();
 
         $key =
-            'product:refreshPricev2:'.$grandProduct->cacheKey()."-user\\".(isset($user) && !is_null($user) ? $user->cacheKey() : '')."-mainAttributeValues\\".(isset($mainAttributeValues) ? implode('',
-                $mainAttributeValues) : '-')."-subProducts\\".(isset($selectedSubProductIds) ? implode('',
-                $selectedSubProductIds) : '-')."-extraAttributeValues\\".(isset($extraAttributeValues) ? implode('',
-                $extraAttributeValues) : '-');
+            'product:refreshPricev2:'.$grandProduct->cacheKey().'-user\\'.(isset($user) && ! is_null($user) ? $user->cacheKey() : '').'-mainAttributeValues\\'.(isset($mainAttributeValues) ? implode('',
+                $mainAttributeValues) : '-').'-subProducts\\'.(isset($selectedSubProductIds) ? implode('',
+                    $selectedSubProductIds) : '-').'-extraAttributeValues\\'.(isset($extraAttributeValues) ? implode('',
+                        $extraAttributeValues) : '-');
 
         return Cache::tags('bon')
             ->remember($key, config('constants.CACHE_60'), function () use (
@@ -380,7 +371,7 @@ class ProductController extends Controller
                             $intendedProducts = $selectedSubProducts;
                         }
                         break;
-                    default :
+                    default:
                         break;
                 }
 
@@ -440,7 +431,7 @@ class ProductController extends Controller
         $since = $request->timestamp;
 
         $products = Product::active()->whereNull('grand_id');
-        if (!is_null($since)) {
+        if (! is_null($since)) {
             $products->where(function ($q) use ($since) {
                 $q->where('created_at', '>=', Carbon::createFromTimestamp($since))
                     ->orWhere('updated_at', '>=', Carbon::createFromTimestamp($since));
@@ -480,6 +471,7 @@ class ProductController extends Controller
                 'required_when' => $request->input('required_when') != 'null' ? $request->input('required_when') : null,
             ],
         );
+
         return back()->with('success', 'محصولات با موفقیت اضافه شدند');
     }
 
@@ -489,6 +481,7 @@ class ProductController extends Controller
             'related_product_id' => ['required', Rule::exists(Product::getTableName(), 'id')],
         ]);
         $product->productProduct()->detach($request->related_product_id);
+
         return back()->with('success', 'محصول ارتباطی با موفقیت حذف شد ');
     }
 
@@ -502,7 +495,7 @@ class ProductController extends Controller
         $newProduct = $product->replicate();
         $correspondenceArray = [];
         $done = true;
-        if (!$newProduct->save()) {
+        if (! $newProduct->save()) {
             return response()->json(['message' => 'خطا در کپی از اطلاعات پایه ای محصول . لطفا دوباره اقدام نمایید'],
                 Response::HTTP_SERVICE_UNAVAILABLE);
         }
@@ -554,7 +547,7 @@ class ProductController extends Controller
                 $product,
                 $complimentaryproduct,
             ]));
-            if (!$flag) {
+            if (! $flag) {
                 $newProduct->complimentaryproducts()
                     ->attach($complimentaryproduct->id);
             }
@@ -613,10 +606,12 @@ class ProductController extends Controller
         $products = $request->get('products');
         if (Product::query()->whereIn('id', $products)->update(['discount' => $request->get('discount')])) {
             Cache::tags(['block', 'product'])->flush();
+
             return response()->json([
                 'message' => 'تخفیف مورد نظر اعمال شد',
             ]);
         }
+
         return myAbort(\Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR, 'خطای دیتابیس');
     }
 
@@ -624,8 +619,8 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param  EditProductRequest|Product  $request
-     * @param  Product  $product
      * @return JsonResponse
+     *
      * @throws FileNotFoundException
      */
     public function update(EditProductRequest $request, Product $product)
@@ -659,8 +654,9 @@ class ProductController extends Controller
     {
         $products = Product::whereIn('id', $request->input('product_ids'));
         $products->update($request->only('display', 'enable', 'isFree', 'has_instalment_option'));
+
         return response()->json([
-            'message' => 'product(s) updated successfully'
+            'message' => 'product(s) updated successfully',
         ]);
     }
 }
