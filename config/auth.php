@@ -38,15 +38,15 @@ return [
     */
 
     'guards' => [
-//        'web' => [
-//            'driver' => 'session',
-//            'provider' => 'users',
-//        ],
-//
-//        'api' => [
-//            'driver' => 'passport',
-//            'provider' => 'users',
-//        ],
+        //        'web' => [
+        //            'driver' => 'session',
+        //            'provider' => 'users',
+        //        ],
+        //
+        'api' => [
+            'driver' => 'alaatv',
+            'provider' => 'users',
+        ],
 
         'alaatv' => [
             'driver' => 'alaatv',
