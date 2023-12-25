@@ -19,16 +19,16 @@ use Symfony\Component\HttpFoundation\Response;
 class BlockController extends Controller
 {
     use FileCommon;
-    use RequestCommon;
     use ProductCommon;
+    use RequestCommon;
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.LIST_BLOCK_ACCESS'))->only(['index', 'show']);
-        $this->middleware('permission:'.config('constants.EDIT_BLOCK_ACCESS'))->only(['update']);
-        $this->middleware('permission:'.config('constants.INSERT_BLOCK_ACCESS'))->only([
-            'store', 'syncProducts', 'syncSets', 'syncBanners', 'syncContents'
-        ]);
+        //        $this->middleware('permission:'.config('constants.LIST_BLOCK_ACCESS'))->only(['index', 'show']);
+        //        $this->middleware('permission:'.config('constants.EDIT_BLOCK_ACCESS'))->only(['update']);
+        //        $this->middleware('permission:'.config('constants.INSERT_BLOCK_ACCESS'))->only([
+        //            'store', 'syncProducts', 'syncSets', 'syncBanners', 'syncContents'
+        //        ]);
     }
 
     public function index()
@@ -44,12 +44,14 @@ class BlockController extends Controller
     public function store(SaveNewBlockRequest $request)
     {
         $block = Block::create($request->validated());
+
         return new BlockResource($block);
     }
 
     public function update(UpdateBlockRequest $request, Block $block)
     {
         $block->update($request->validated());
+
         return new BlockInAdmin($block);
     }
 
@@ -67,6 +69,7 @@ class BlockController extends Controller
         $setsId = $request->get('block-sets', []);
         $block->attachSets($setsId, shouldLog: true);
         $block->updateBlockableOrder(Arr::get($request->get('blockable_orders'), 'sets'), ['sets']);
+
         return new BlockResource($block->refresh());
     }
 
@@ -75,6 +78,7 @@ class BlockController extends Controller
         $slideId = $request->get('block-slides', []);
         $block->attachBanners($slideId, shouldLog: true);
         $block->updateBlockableOrder(Arr::get($request->get('blockable_orders'), 'banners'), ['banners']);
+
         return new BlockResource($block->fresh());
     }
 
@@ -83,12 +87,14 @@ class BlockController extends Controller
         $contentsId = $request->get('block-contents');
         $block->attachContents($contentsId, shouldLog: true);
         $block->updateBlockableOrder(Arr::get($request->get('blockable_orders'), 'contents'), ['contents']);
+
         return new BlockResource($block->fresh());
     }
 
     public function destroy(Block $block)
     {
         $block->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
