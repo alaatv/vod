@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Collection\TransactionCollection;
-use Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 
 class Transaction extends BaseModel
 {
@@ -57,7 +57,6 @@ class Transaction extends BaseModel
     /**
      * Create a new Eloquent Collection instance.
      *
-     * @param  array  $models
      *
      * @return TransactionCollection
      */
@@ -150,6 +149,7 @@ class Transaction extends BaseModel
         if (empty($parentsArray)) {
             return false;
         }
+
         return Arr::last($parentsArray);
     }
 
@@ -157,7 +157,7 @@ class Transaction extends BaseModel
     {
         $counter = 0;
         $myTransaction = $this;
-        while (!$myTransaction->parents->isEmpty()) {
+        while (! $myTransaction->parents->isEmpty()) {
             if ($counter >= $depth) {
                 break;
             }
@@ -167,6 +167,7 @@ class Transaction extends BaseModel
         if ($myTransaction->id == $this->id || $counter != $depth) {
             return false;
         }
+
         return true;
     }
 
@@ -184,13 +185,12 @@ class Transaction extends BaseModel
         if (isset($this->paycheckNumber)) {
             return 'شماره چک: '.$this->paycheckNumber;
         }
+
         return false;
     }
 
     /**
      * @param  Builder  $query
-     * @param  string  $authority
-     *
      * @return Builder
      */
     public function scopeAuthority($query, string $authority)
@@ -200,7 +200,6 @@ class Transaction extends BaseModel
 
     /**
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeWalletMethod($query)
@@ -227,6 +226,7 @@ class Transaction extends BaseModel
     {
         $bankAccountId ? $query->where('destinationBankAccount_id',
             $bankAccountId) : $query->whereNotNull('destinationBankAccount_id');
+
         return $query->whereNotNull('wallet_id')->whereNull('order_id');
     }
 
@@ -259,10 +259,10 @@ class Transaction extends BaseModel
     {
         return optional($this->transactiongateway()
             ->first())->setVisible([
-            'name',
-            'displayName',
-            'description',
-        ]);
+                'name',
+                'displayName',
+                'description',
+            ]);
     }
 
     public function transactiongateway()
@@ -274,10 +274,10 @@ class Transaction extends BaseModel
     {
         return optional($this->paymentmethod()
             ->first())->setVisible([
-            'name',
-            'displayName',
-            'description',
-        ]);
+                'name',
+                'displayName',
+                'description',
+            ]);
     }
 
     public function paymentmethod()
@@ -289,6 +289,7 @@ class Transaction extends BaseModel
     {
         $transaction = $this;
         $key = 'transaction:jalaliCompletedAt:'.$transaction->cacheKey();
+
         return Cache::tags(['transaction'])
             ->remember($key, config('constants.CACHE_600'), function () use ($transaction) {
                 if (isset($transaction->completed_at)) {
@@ -303,6 +304,7 @@ class Transaction extends BaseModel
     {
         $transaction = $this;
         $key = 'transaction:jalaliDeadlineAt:'.$transaction->cacheKey();
+
         return Cache::tags(['transaction'])
             ->remember($key, config('constants.CACHE_600'), function () use ($transaction) {
                 if (isset($transaction->deadline_at)) {
@@ -317,6 +319,7 @@ class Transaction extends BaseModel
     {
         $transaction = $this;
         $key = 'transaction:jalaliCreatedAt:'.$transaction->cacheKey();
+
         return Cache::tags(['transaction'])
             ->remember($key, config('constants.CACHE_600'), function () use ($transaction) {
                 if (isset($transaction->created_at)) {
