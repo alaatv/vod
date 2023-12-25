@@ -30,17 +30,14 @@ class MapDetailController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.INSERT_MAP_DETAIL'),
-            ['only' => 'store', 'update', 'destroy']);
+        //        $this->middleware('permission:'.config('constants.INSERT_MAP_DETAIL'),
+        //            ['only' => 'store', 'update', 'destroy']);
     }
-
 
     /**
      * Display a listing of the resource.
      *
      * @param  Request  $request
-     * @param  MapDetailSearch  $mapDetailSearch
-     *
      * @return JsonResponse
      */
     public function index(MapDetailRequest $request, MapDetailSearch $mapDetailSearch)
@@ -50,13 +47,13 @@ class MapDetailController extends Controller
         }
 
         $mapDetails = $mapDetailSearch->get($request->all());
+
         return MapDetailResource::collection($mapDetails)->response();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  InsertMapDetailRequest  $request
      *
      * @return JsonResponse
      */
@@ -72,9 +69,10 @@ class MapDetailController extends Controller
             match ($request->input('type_id')) {
                 1 => $this->updateOrCreateMarkerMapDetailLatLngs($request, $mapDetail),
                 2 => $this->updateOrCreatePolylineMapDetailLatLngs($request, $mapDetail),
-                default => fn() => null,
+                default => fn () => null,
             };
             DB::commit();
+
             return (new MapDetailResource($mapDetail))->response();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -84,7 +82,7 @@ class MapDetailController extends Controller
 
     private function refineRequest(FormRequest $request, MapDetail $mapDetail = null)
     {
-        if (!$request->has('enable')) {
+        if (! $request->has('enable')) {
             $request->offsetSet('enable', 1);
         }
 
@@ -123,14 +121,13 @@ class MapDetailController extends Controller
             ', json_encode($data));
         }
 
-
         $entityId = $request->get('entity_id');
         $entityIdCondition = (isset($entityId) && strlen($entityId) > 0 && $$entityId !== 'null');
 
         $entityType = $request->get('entity_type');
         $entityTypeCondition = (isset($entityType) && strlen($entityType) > 0 && $$entityType !== 'null');
 
-        if (!($request->has('action') && $entityIdCondition && $entityTypeCondition)) {
+        if (! ($request->has('action') && $entityIdCondition && $entityTypeCondition)) {
             return;
         }
         $entityId = $request->get('entity_id');
@@ -184,7 +181,6 @@ class MapDetailController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  MapDetail  $mapDetail
      *
      * @return JsonResponse
      */
@@ -196,8 +192,6 @@ class MapDetailController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  EditMapDetailRequest  $request
-     * @param  MapDetail  $mapDetail
      *
      * @return JsonResponse
      */
@@ -213,9 +207,10 @@ class MapDetailController extends Controller
             match ($request->input('type_id')) {
                 1 => $this->updateOrCreateMarkerMapDetailLatLngs($request, $mapDetail),
                 2 => $this->updateOrCreatePolylineMapDetailLatLngs($request, $mapDetail),
-                default => fn() => null,
+                default => fn () => null,
             };
             DB::commit();
+
             return (new MapDetailResource($mapDetail->fresh()))->response();
         } catch (Exception $exception) {
             DB::rollBack();
@@ -226,16 +221,16 @@ class MapDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  MapDetail  $mapDetail
      *
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(MapDetail $mapDetail)
     {
         $result = $mapDetail->delete();
 
-        if (!$result) {
+        if (! $result) {
             return response()->json(['message' => 'خطای پایگاه داده'], Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
