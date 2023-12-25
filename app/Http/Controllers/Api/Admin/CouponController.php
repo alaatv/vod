@@ -27,8 +27,6 @@ use Illuminate\Routing\Redirector;
  * Class CouponController.
  * For Api Version 2.
  * For Admin side.
- *
- * @package App\Http\Controllers\Api\Admin
  */
 class CouponController extends Controller
 {
@@ -36,16 +34,15 @@ class CouponController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.LIST_COUPON_ACCESS'), ['only' => 'index']);
-        $this->middleware('permission:'.config('constants.INSERT_COUPON_ACCESS'), ['only' => 'store', 'update']);
-        $this->middleware('permission:'.config('constants.REMOVE_COUPON_ACCESS'), ['only' => 'destroy']);
-        $this->middleware('permission:'.config('constants.SHOW_COUPON_ACCESS'), ['only' => 'show']);
+        //        $this->middleware('permission:'.config('constants.LIST_COUPON_ACCESS'), ['only' => 'index']);
+        //        $this->middleware('permission:'.config('constants.INSERT_COUPON_ACCESS'), ['only' => 'store', 'update']);
+        //        $this->middleware('permission:'.config('constants.REMOVE_COUPON_ACCESS'), ['only' => 'destroy']);
+        //        $this->middleware('permission:'.config('constants.SHOW_COUPON_ACCESS'), ['only' => 'show']);
     }
 
     /**
      * Return a listing of the resource.
      *
-     * @param  CouponSearch  $couponSearch
      * @return ResourceCollection
      */
     public function index(CouponSearch $couponSearch)
@@ -64,25 +61,24 @@ class CouponController extends Controller
     /**
      * Return the specified resource.
      *
-     * @param  Coupon  $coupon
      * @return JsonResponse|CouponResource|RedirectResponse|Redirector
      */
     public function show(Coupon $coupon)
     {
-        return (new CouponResource($coupon));
+        return new CouponResource($coupon);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  InsertCouponRequest  $request
      * @return CouponResource|JsonResponse
+     *
      * @throws Exception
      */
     public function store(InsertCouponRequest $request)
     {
         // set coupon random code
-        if (!isset($request->code)) {
+        if (! isset($request->code)) {
             $threshold = Coupon::GENERATE_RANDOM_CODE_THRESHOLD;
             $coupons = Coupon::all();
             do {
@@ -95,7 +91,7 @@ class CouponController extends Controller
         }
 
         // set coupon type
-        $couponType = $request->has('products') && !empty($request->get('products'))
+        $couponType = $request->has('products') && ! empty($request->get('products'))
             ? Coupontype::ATTRIBUTE_TYPE_PARTIAL_ID
             : Coupontype::ATTRIBUTE_TYPE_OVERALL_ID;
         $request->offsetSet('coupontype_id', $couponType);
@@ -116,7 +112,7 @@ class CouponController extends Controller
         if ($coupon->maxCost == '') {
             $coupon->maxCost = null;
         }
-        if (!$coupon->save()) {
+        if (! $coupon->save()) {
             return response()->json([
                 'message' => 'خطا در درج کد',
             ], Response::HTTP_SERVICE_UNAVAILABLE);
@@ -125,14 +121,13 @@ class CouponController extends Controller
         $coupon->products()->sync($request->input('products', []));
         ActivityLogRepo::LogCouponCreation($request->user(), $coupon, $request->input('products', []));
 
-        return (new CouponResource($coupon->refresh()));
+        return new CouponResource($coupon->refresh());
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  EditCouponRequest|Coupon  $request
-     * @param  Coupon  $coupon
      * @return JsonResponse
      */
     public function update(EditCouponRequest $request, Coupon $coupon)
@@ -154,7 +149,6 @@ class CouponController extends Controller
      * Fill the model object to be stored or updated in database.
      *
      * @param  array|Request  $inputData
-     * @param  Coupon  $coupon
      */
     private function fillCouponFromRequest(array $inputData, Coupon $coupon): void
     {
@@ -164,8 +158,8 @@ class CouponController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Coupon  $coupon
      * @return Exception|JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(Coupon $coupon)
@@ -193,12 +187,13 @@ class CouponController extends Controller
         ]);
 
         $coupons = Coupon::where('code', 'like', "%{$request->code}%")->get();
+
         return CouponLightResource::collection($coupons);
     }
 
     /**
-     * @param  CreateRandomMassiveCouponRequest  $request
      * @return JsonResponse|ResourceCollection
+     *
      * @throws Exception
      */
     public function generateMassiveRandomCoupon(CreateRandomMassiveCouponRequest $request)
@@ -237,6 +232,7 @@ class CouponController extends Controller
             }
             $coupons->push($coupon);
         }
+
         return CouponResource::collection($coupons);
     }
 
@@ -249,5 +245,4 @@ class CouponController extends Controller
         });
         Coupon::insert($coupons);
     }
-
 }
