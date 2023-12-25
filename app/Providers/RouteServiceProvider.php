@@ -2,49 +2,49 @@
 
 namespace App\Providers;
 
-use App\Models\{Afterloginformcontrol,
-    Article,
-    Articlecategory,
-    Assignment,
-    Attribute,
-    Attributegroup,
-    Attributeset,
-    Attributevalue,
-    Category,
-    City,
-    Consultation,
-    Contact,
-    Content,
-    Contentset,
-    Coupon,
-    Descriptionwithperiod,
-    Employeetimesheet,
-    Eventresult,
-    Faq,
-    LiveDescription,
-    Map,
-    MapDetail,
-    MapDetailType,
-    Mbtianswer,
-    Order,
-    Orderproduct,
-    Phone,
-    Product,
-    Productfile,
-    Productphoto,
-    Productvoucher,
-    Section,
-    Slideshow,
-    Source,
-    Studyevent,
-    Ticket,
-    TicketMessage,
-    Timepoint,
-    User,
-    Userbon,
-    Userupload,
-    Wallet,
-    Websitesetting};
+use App\Models\Afterloginformcontrol;
+use App\Models\Article;
+use App\Models\Articlecategory;
+use App\Models\Assignment;
+use App\Models\Attribute;
+use App\Models\Attributegroup;
+use App\Models\Attributeset;
+use App\Models\Attributevalue;
+use App\Models\Category;
+use App\Models\City;
+use App\Models\Consultation;
+use App\Models\Contact;
+use App\Models\Content;
+use App\Models\Contentset;
+use App\Models\Coupon;
+use App\Models\Descriptionwithperiod;
+use App\Models\Employeetimesheet;
+use App\Models\Eventresult;
+use App\Models\Faq;
+use App\Models\LiveDescription;
+use App\Models\Map;
+use App\Models\MapDetail;
+use App\Models\MapDetailType;
+use App\Models\Mbtianswer;
+use App\Models\Order;
+use App\Models\Orderproduct;
+use App\Models\Phone;
+use App\Models\Product;
+use App\Models\Productfile;
+use App\Models\Productphoto;
+use App\Models\Productvoucher;
+use App\Models\Section;
+use App\Models\Slideshow;
+use App\Models\Source;
+use App\Models\Studyevent;
+use App\Models\Ticket;
+use App\Models\TicketMessage;
+use App\Models\Timepoint;
+use App\Models\User;
+use App\Models\Userbon;
+use App\Models\Userupload;
+use App\Models\Wallet;
+use App\Models\Websitesetting;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -98,12 +98,14 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/orders.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/admin.php'));
         });
     }
 
-    /**
-     *
-     */
     private function modelBinding()
     {
         Route::bind('user', function ($value) {
