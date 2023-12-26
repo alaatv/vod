@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Application;
@@ -285,27 +286,31 @@ class Order extends BaseModel implements GiveGift
     /**
      * Determines this order's coupon discount type
      * Note: In case it has any coupons returns false
-     *
-     * @return array|bool
      */
-    public function getCouponDiscountTypeAttribute()
+    public function couponDiscountType(): Attribute
     {
-        if ($this->couponDiscount == 0 & $this->couponDiscountAmount == 0) {
-            return false;
-        }
-        if ($this->couponDiscount > 0) {
-            return [
-                'type' => config('constants.DISCOUNT_TYPE_PERCENTAGE'),
-                'typeHint' => 'percentage',
-                'discount' => $this->couponDiscount,
-            ];
-        }
+        $order = $this;
 
-        return [
-            'type' => config('constants.DISCOUNT_TYPE_COST'),
-            'typeHint' => 'amount',
-            'discount' => $this->couponDiscountAmount,
-        ];
+        return Attribute::make(
+            get: function () use ($order) {
+                if ($order->couponDiscount == 0 & $order->couponDiscountAmount == 0) {
+                    return false;
+                }
+                if ($order->couponDiscount > 0) {
+                    return [
+                        'type' => config('constants.DISCOUNT_TYPE_PERCENTAGE'),
+                        'typeHint' => 'percentage',
+                        'discount' => $order->couponDiscount,
+                    ];
+                }
+
+                return [
+                    'type' => config('constants.DISCOUNT_TYPE_COST'),
+                    'typeHint' => 'amount',
+                    'discount' => $order->couponDiscountAmount,
+                ];
+            }
+        )->withoutObjectCaching();
     }
 
     /**
@@ -378,9 +383,16 @@ class Order extends BaseModel implements GiveGift
         return isset($this->referralCode->id);
     }
 
-    public function getNumberOfProductsAttribute()
+    public function numberOfProducts(): Attribute
     {
-        return $this->orderproducts->filterNoneDonation()->count();
+        $order = $this;
+
+        return Attribute::make(
+            get: function () use ($order) {
+                return $order->orderproducts->filterNoneDonation()->count();
+            }
+        )->withoutObjectCaching();
+
     }
 
     /**
@@ -854,32 +866,37 @@ class Order extends BaseModel implements GiveGift
         return $this->belongsTo(Paymentstatus::class);
     }
 
-    public function getCouponInfoAttribute()
+    public function getCouponInfoAttribute(): Attribute
     {
         $order = $this;
-        $key = 'order:coupon:'.$order->cacheKey();
 
-        return Cache::tags([
-            'coupon', 'order', 'order_'.$this->id, 'order_'.$this->id.'_coupon', 'order_'.$this->id.'_couponInfo',
-            'coupon_user_'.$this->user_id,
-        ])
-            ->remember($key, config('constants.CACHE_10'), function () use ($order) {
-                $coupon = $order->coupon()
-                    ->first();
-                if (! isset($coupon)) {
-                    return null;
-                }
+        return Attribute::make(
+            get: function () use ($order) {
+                $key = 'order:coupon:'.$order->cacheKey();
 
-                $coupon->setVisible([
-                    'name',
-                    'code',
-                    //                 'discountType',
-                ]);
+                return Cache::tags([
+                    'coupon', 'order', 'order_'.$this->id, 'order_'.$this->id.'_coupon', 'order_'.$this->id.'_couponInfo',
+                    'coupon_user_'.$this->user_id,
+                ])
+                    ->remember($key, config('constants.CACHE_10'), function () use ($order) {
+                        $coupon = $order->coupon()
+                            ->first();
+                        if (! isset($coupon)) {
+                            return null;
+                        }
 
-                $discountType = $this->coupon_discount_type;
+                        $coupon->setVisible([
+                            'name',
+                            'code',
+                            //                 'discountType',
+                        ]);
 
-                return array_merge($coupon->toArray(), ($discountType === false) ? [] : $discountType);
-            });
+                        $discountType = $this->coupon_discount_type;
+
+                        return array_merge($coupon->toArray(), ($discountType === false) ? [] : $discountType);
+                    });
+            }
+        )->withoutObjectCaching();
     }
 
     public function coupon()
