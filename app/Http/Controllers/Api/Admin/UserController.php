@@ -21,23 +21,20 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-
     use SearchCommon;
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.LIST_USER_ACCESS'), ['only' => 'index']);
-        $this->middleware('permission:'.config('constants.INSERT_USER_ACCESS'), ['only' => 'store']);
-        $this->middleware('permission:'.config('constants.SHOW_USER_ACCESS'), ['only' => 'show']);
-        $this->middleware('permission:'.config('constants.EDIT_USER_ACCESS'), ['only' => 'update']);
-        $this->middleware('permission:'.config('constants.REMOVE_USER_ACCESS'), ['only' => 'destroy']);
+        //        $this->middleware('permission:'.config('constants.LIST_USER_ACCESS'), ['only' => 'index']);
+        //        $this->middleware('permission:'.config('constants.INSERT_USER_ACCESS'), ['only' => 'store']);
+        //        $this->middleware('permission:'.config('constants.SHOW_USER_ACCESS'), ['only' => 'show']);
+        //        $this->middleware('permission:'.config('constants.EDIT_USER_ACCESS'), ['only' => 'update']);
+        //        $this->middleware('permission:'.config('constants.REMOVE_USER_ACCESS'), ['only' => 'destroy']);
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @param  Request  $request
-     * @param  UserSearchWithoutTrashed  $userSearch
      * @return JsonResponse
      */
     public function index(Request $request, UserSearchWithoutTrashed $userSearch)
@@ -51,18 +48,16 @@ class UserController extends Controller
         return \App\Http\Resources\User::collection($mapDetails);
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  CreateUserApiRequest  $request
      * @return JsonResponse
      */
     public function store(CreateUserApiRequest $request)
     {
         $validated = $request->validated();
 
-        if (!$request->input('password')) {
+        if (! $request->input('password')) {
             $validated['password'] = bcrypt($request->input('nationalCode'));
         } else {
             $validated['password'] = bcrypt($request->input('password'));
@@ -81,7 +76,6 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  User  $user
      * @return JsonResponse
      */
     public function show(User $user)
@@ -92,8 +86,6 @@ class UserController extends Controller
     /**
      * Display list of soft delete users
      *
-     * @param  Request  $request
-     * @param  UserSearchOnlyTrashed  $userSearch
      * @return JsonResponse
      */
     public function trashedListUsers(Request $request, UserSearchOnlyTrashed $userSearch)
@@ -109,12 +101,9 @@ class UserController extends Controller
         return \App\Http\Resources\User::collection($mapDetails)->response();
     }
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param  EditUserApiRequest  $request
-     * @param  User  $user
      * @return JsonResponse
      */
     public function update(EditUserApiRequest $request, User $user)
@@ -140,8 +129,8 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  User  $user
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(User $user)
@@ -156,27 +145,25 @@ class UserController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-//    /**
-//     * restore user
-//     *
-//     * @param RestoreUserApiRequest $request
-//     * @return JsonResponse
-//     */
-//    public function restore(RestoreUserApiRequest $request)
-//    {
-//        //ToDo restore all relations for this model
-//        // todo cache
-//        $user = User::withTrashed()->firstWhere('id', $request->input('user_id'));
-//        $user->restore();
-//
-//        return new \App\Http\Resources\User($user);
-//    }
+    //    /**
+    //     * restore user
+    //     *
+    //     * @param RestoreUserApiRequest $request
+    //     * @return JsonResponse
+    //     */
+    //    public function restore(RestoreUserApiRequest $request)
+    //    {
+    //        //ToDo restore all relations for this model
+    //        // todo cache
+    //        $user = User::withTrashed()->firstWhere('id', $request->input('user_id'));
+    //        $user->restore();
+    //
+    //        return new \App\Http\Resources\User($user);
+    //    }
 
     /**
      * show roles a user
      *
-     * @param  SyncRoleUserApiRequest  $request
-     * @param  User  $user
      * @return JsonResponse
      */
     public function syncRoles(SyncRoleUserApiRequest $request, User $user)
@@ -194,7 +181,6 @@ class UserController extends Controller
     /**
      * show roles a user
      *
-     * @param  User  $user
      * @return JsonResponse
      */
     public function roles(User $user)
@@ -206,7 +192,6 @@ class UserController extends Controller
     /**
      * show permission a user
      *
-     * @param  User  $user
      * @return JsonResponse
      */
     public function permission(User $user)
@@ -218,8 +203,6 @@ class UserController extends Controller
     /**
      * show permission a user
      *
-     * @param  SyncPermissionUserApiRequest  $request
-     * @param  User  $user
      * @return JsonResponse
      */
     public function syncPermission(SyncPermissionUserApiRequest $request, User $user)
