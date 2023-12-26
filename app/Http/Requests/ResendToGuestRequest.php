@@ -24,7 +24,7 @@ class ResendToGuestRequest extends FormRequest
     public function rules()
     {
         return [
-            'mobile' => ['required', 'digits:11', 'phone:AUTO,IR',],
+            'mobile' => ['required', 'digits:11', 'phone:AUTO,IR'],
         ];
     }
 }

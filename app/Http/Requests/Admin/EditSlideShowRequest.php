@@ -35,14 +35,14 @@ class EditSlideShowRequest extends FormRequest
         if ($ns && isset($input['validSinceDate'])) {
             $input['validSince'] = $input['validSinceDate'].' '.($input['validSinceTime'] ?? '00:00:00');
         }
-        if (!$os && !$ns) {
+        if (! $os && ! $ns) {
             $input['validSince'] = null;
         }
 
         if ($nu && isset($input['validUntilDate'])) {
             $input['validUntil'] = $input['validUntilDate'].' '.($input['validUntilTime'] ?? '00:00:00');
         }
-        if (!$ou && !$nu) {
+        if (! $ou && ! $nu) {
             $input['validUntil'] = null;
         }
 

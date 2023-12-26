@@ -18,7 +18,6 @@ class InsertTicketRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Request  $request
      *
      * @return bool
      */
@@ -28,7 +27,7 @@ class InsertTicketRequest extends FormRequest
 
         $this->user = $request->user();
         $requestUserId = Arr::get($input, 'user_id');
-        if (!optional($this->user)->isAbleTo(config('constants.INSERT_TICKET_ACCESS')) || !isset($requestUserId)) {
+        if (! optional($this->user)->isAbleTo(config('constants.INSERT_TICKET_ACCESS')) || ! isset($requestUserId)) {
             $input['user_id'] = $this->user->id;
         }
 

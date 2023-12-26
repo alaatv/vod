@@ -25,7 +25,7 @@ class VerifyGuestRequest extends FormRequest
     public function rules()
     {
         return [
-            'mobile' => ['required', 'digits:11', 'phone:AUTO,IR',],
+            'mobile' => ['required', 'digits:11', 'phone:AUTO,IR'],
             'code' => ['required', 'digits:6', new validateGuestCode()],
         ];
     }

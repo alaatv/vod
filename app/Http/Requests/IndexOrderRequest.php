@@ -19,16 +19,16 @@ class IndexOrderRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param  Request  $request
      *
      * @return array
      */
     public function rules(Request $request)
     {
-        if (!$request->user()->hasRole(config('constants.ROLE_FINANCE_EMPLOYEE'))) {
+        if (! $request->user()->hasRole(config('constants.ROLE_FINANCE_EMPLOYEE'))) {
 
             return [];
         }
+
         return [
             'mobile' => 'required_without_all:nationalCode,firstName,lastName,coupons',
             'nationalCode' => 'required_without_all:mobile,firstName,lastName,coupons',

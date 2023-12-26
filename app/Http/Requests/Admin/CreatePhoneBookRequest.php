@@ -24,7 +24,7 @@ class CreatePhoneBookRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'unique:phone_books']
+            'title' => ['required', 'unique:phone_books'],
         ];
     }
 }

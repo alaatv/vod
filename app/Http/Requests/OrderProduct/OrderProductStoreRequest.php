@@ -9,7 +9,6 @@ use App\Rules\ProductBelongsSeller;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-
 class OrderProductStoreRequest extends FormRequest
 {
     private $product;
@@ -34,6 +33,7 @@ class OrderProductStoreRequest extends FormRequest
                 new HasExamAndAbrishamPro($this->product, $this->user()),
             ];
         }
+
         return [
             'order_id' => 'required|int|min:0',
             'has_instalment_option' => 'boolean',
@@ -52,11 +52,12 @@ class OrderProductStoreRequest extends FormRequest
 
     public function prepareForValidation()
     {
-        $array = ['has_instalment_option' => $this->has_instalment_option ? 1 : 0,];
+        $array = ['has_instalment_option' => $this->has_instalment_option ? 1 : 0];
         if ($this->has('product_id')) {
             $this->product = Product::find($this->product_id);
-            $array += ['product' => $this->product,];
+            $array += ['product' => $this->product];
         }
+
         return $this->merge($array);
     }
 }

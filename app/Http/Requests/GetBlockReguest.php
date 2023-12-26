@@ -25,7 +25,7 @@ class GetBlockReguest extends FormRequest
     {
         return [
             'type' => 'required|int|exists:block_types,id',
-            'blockable_type' => 'sometimes|string'
+            'blockable_type' => 'sometimes|string',
         ];
     }
 }

@@ -19,14 +19,13 @@ class IndexShahrRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param  Request  $request
      *
      * @return array
      */
     public function rules(Request $request)
     {
         return [
-            'ostan_id' => 'integer|min:1|exists:ostan,id'
+            'ostan_id' => 'integer|min:1|exists:ostan,id',
         ];
     }
 }

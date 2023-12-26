@@ -19,7 +19,6 @@ class IndexBlockRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param  Request  $request
      *
      * @return array
      */
@@ -28,11 +27,11 @@ class IndexBlockRequest extends FormRequest
         return [
             'title' => 'nullable|string|min:2',
             'tags' => 'nullable|string|min:2',
-//                'without_tags' => 'nullable|accepted',
+            //                'without_tags' => 'nullable|accepted',
             'customUrl' => 'nullable|url',
-//                'without_customUrl' => 'nullable|accepted',
+            //                'without_customUrl' => 'nullable|accepted',
             'class_field' => 'nullable|string|min:2',
-//                'without_class' => 'nullable|accepted',
+            //                'without_class' => 'nullable|accepted',
             'active_status' => 'nullable|boolean',
             'types' => 'nullable|array',
             'types.*' => 'integer|min:1|exists:block_types,id,deleted_at,NULL',

@@ -8,7 +8,6 @@ use Illuminate\Validation\Rule;
 
 class FilterReportRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;
@@ -19,13 +18,13 @@ class FilterReportRequest extends FormRequest
         return [
             'creator' => ['sometimes', Rule::when($this->creator != 'all', Rule::exists('users', 'id'))],
             'month' => [
-                'sometimes', Rule::in(array_merge(array_column(config('constants.JALALI_CALENDER'), 'month'), ['all']))
+                'sometimes', Rule::in(array_merge(array_column(config('constants.JALALI_CALENDER'), 'month'), ['all'])),
             ],
-//            'order' => ['sometimes', Rule::in(array_merge(array_keys(Report::AUDIT_ORDERS), ['all']))],
+            //            'order' => ['sometimes', Rule::in(array_merge(array_keys(Report::AUDIT_ORDERS), ['all']))],
             'type' => ['sometimes', Rule::when($this->type != 'all', Rule::exists('report_types', 'id'))],
             'gateway' => ['sometimes', Rule::when($this->gateway != 'all', Rule::exists('transactiongateways', 'id'))],
             'report_status' => [
-                'sometimes', Rule::when($this->report_status != 'all', Rule::exists('report_statuses', 'id'))
+                'sometimes', Rule::when($this->report_status != 'all', Rule::exists('report_statuses', 'id')),
             ],
         ];
     }
@@ -35,7 +34,7 @@ class FilterReportRequest extends FormRequest
         $accessibleTypes = Report::getAccessibleTypes();
         $typeFromRequest = $this->type ? [$this->type] : [];
         $this->merge([
-            'type' => array_merge($typeFromRequest, $accessibleTypes)
+            'type' => array_merge($typeFromRequest, $accessibleTypes),
         ]);
     }
 }

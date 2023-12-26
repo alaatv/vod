@@ -24,7 +24,7 @@ class SettingFileRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|mimes:png,jpg,jpeg,pdf|max:5000'
+            'file' => 'required|mimes:png,jpg,jpeg,pdf|max:5000',
         ];
     }
 }

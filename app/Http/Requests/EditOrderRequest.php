@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class EditOrderRequest
- * @package App\Http\Requests
+ *
  * @mixin Order
  */
 class EditOrderRequest extends FormRequest
@@ -26,9 +26,10 @@ class EditOrderRequest extends FormRequest
     {
         // TODO: The following code doesn't appear to be needed. On the other hand, the following code has encountered an error.
         //  For this reason, I commented it for future reviews.
-//        $this->id = $_REQUEST["id"];
+        //        $this->id = $_REQUEST["id"];
 
         $transactionMaxStr = isset($request->transactionstatus_id) && $request->transactionstatus_id != config('constants.TRANSACTION_STATUS_SUCCESSFUL') ? '|max:0' : '';
+
         return [
             // Order table fields
             'user_id' => 'nullable|integer|min:1|exists:users,id,deleted_at,NULL',

@@ -24,7 +24,7 @@ class CopyTimepointsRequest extends FormRequest
     public function rules()
     {
         return [
-            'content_id' => 'required|integer|exists:educationalcontents,id'
+            'content_id' => 'required|integer|exists:educationalcontents,id',
         ];
     }
 }

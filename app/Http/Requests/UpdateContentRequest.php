@@ -39,12 +39,13 @@ class UpdateContentRequest extends FormRequest
             'order' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
-                    if (is_numeric($value) || 'last' === $value) {
+                    if (is_numeric($value) || $value === 'last') {
                         return true;
                     }
+
                     return $fail($attribute.' is invalid.');
                 },
-            ]
+            ],
         ];
     }
 }

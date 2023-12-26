@@ -24,7 +24,7 @@ class ContentInComeCalculateRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => 'required|string|date_format:Y-m-d'
+            'date' => 'required|string|date_format:Y-m-d',
         ];
     }
 }

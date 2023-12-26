@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RestoreUserApiRequest extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,7 +24,7 @@ class RestoreUserApiRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|numeric|exists:users,id'
+            'user_id' => 'required|numeric|exists:users,id',
         ];
     }
 }

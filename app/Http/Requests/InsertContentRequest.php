@@ -14,7 +14,6 @@ class InsertContentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param  Request  $request
      *
      * @return array
      */
@@ -22,7 +21,7 @@ class InsertContentRequest extends FormRequest
     {
         if ($request->get('contenttype_id') == config('constants.CONTENT_TYPE_ARTICLE')) {
             $rules = [
-//                'order'          => 'numeric',
+                //                'order'          => 'numeric',
                 'name' => 'required',
                 'context' => 'required',
                 'contenttype_id' => 'required|exists:contenttypes,id',

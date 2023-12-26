@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditContentRequest extends FormRequest
@@ -31,7 +30,7 @@ class EditContentRequest extends FormRequest
 
         if (isset($this->request->redirectUrl)) {
             $rules['redirectCode'] = 'required|integer|in:'.implode(',',
-                    array_keys(config('constants.REDIRECT_HTTP_RESPONSE_TYPES')));
+                array_keys(config('constants.REDIRECT_HTTP_RESPONSE_TYPES')));
         }
 
         return $rules;

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 /**
  * Class EditOrderRequest
- * @package App\Http\Requests
+ *
  * @mixin Order
  */
 class CreateUserRequest extends FormRequest

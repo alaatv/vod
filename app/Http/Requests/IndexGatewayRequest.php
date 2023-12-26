@@ -25,7 +25,7 @@ class IndexGatewayRequest extends FormRequest
     {
         return [
             'gateway' => 'array',
-            'gateway.*' => 'string'
+            'gateway.*' => 'string',
         ];
     }
 }

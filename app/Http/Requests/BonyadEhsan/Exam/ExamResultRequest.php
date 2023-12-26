@@ -35,8 +35,8 @@ class ExamResultRequest extends FormRequest
             'national_code' => ['bail', 'nullable'],
             'action' => [
                 'bail', 'nullable', Rule::in(['show-networks', 'show-subnetworks', 'show-moshavers', 'show-students']),
-                new ShowLevelAccess($this->user())
-            ]
+                new ShowLevelAccess($this->user()),
+            ],
         ];
     }
 }

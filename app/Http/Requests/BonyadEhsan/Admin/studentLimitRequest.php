@@ -21,13 +21,14 @@ class studentLimitRequest extends FormRequest
         $rolesKey = collect(array_keys($roles));
         $authUserRoles = $authUser->roles()->pluck('name');
         $userRole = $rolesKey->intersect($authUserRoles)->first();
-        if (is_null($userRole) or !UserRepo::userAccess($authUser->id, (int) $this->user_id, $roles[$userRole])) {
+        if (is_null($userRole) or ! UserRepo::userAccess($authUser->id, (int) $this->user_id, $roles[$userRole])) {
             return false;
         }
 
         if (User::find($this->user_id)->roles()->pluck('name')->contains(config('constants.ROLE_BONYAD_EHSAN_USER'))) {
             return false;
         }
+
         return true;
     }
 
@@ -40,7 +41,7 @@ class studentLimitRequest extends FormRequest
     {
         return [
             'user_id' => ['required', 'exists:users,id'],
-            'student_register_limit' => ['required', 'int']
+            'student_register_limit' => ['required', 'int'],
         ];
     }
 }

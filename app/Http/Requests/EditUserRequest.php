@@ -34,7 +34,6 @@ class EditUserRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Request  $request
      *
      * @return bool
      */
@@ -44,15 +43,14 @@ class EditUserRequest extends FormRequest
         $this->userId = $this->getUserIdFromRequestBody($request)->getValue(false);
 
         $this->updateType = $request->get('updateType', self::USER_UPDATE_TYPE_PROFILE);
-        if (!in_array($this->updateType, [
+        if (! in_array($this->updateType, [
             self::USER_UPDATE_TYPE_TOTAL, self::USER_UPDATE_TYPE_PROFILE, self::USER_UPDATE_TYPE_ATLOGIN,
-            self::USER_UPDATE_TYPE_PASSWORD, self::USER_UPDATE_TYPE_PHOTO
+            self::USER_UPDATE_TYPE_PASSWORD, self::USER_UPDATE_TYPE_PHOTO,
         ])) {
             return false;
         }
 
-        if ($this->isHeUpdatingHisOwnProfile($this->userId, $authenticatedUser))//He is updating his own profile
-        {
+        if ($this->isHeUpdatingHisOwnProfile($this->userId, $authenticatedUser)) {//He is updating his own profile
             return true;
         }
 
@@ -63,23 +61,11 @@ class EditUserRequest extends FormRequest
         return false;
     }
 
-
-    /**
-     * @param      $userId
-     * @param  User  $authenticatedUser
-     *
-     * @return bool
-     */
     private function isHeUpdatingHisOwnProfile($userId, User $authenticatedUser): bool
     {
-        return !$userId || $userId !== $authenticatedUser->id;
+        return ! $userId || $userId !== $authenticatedUser->id;
     }
 
-    /**
-     * @param  User  $authenticatedUser
-     *
-     * @return bool
-     */
     private function hasUserAuthorityForEditAction(User $authenticatedUser): bool
     {
         return $authenticatedUser->isAbleTo(config('constants.EDIT_USER_ACCESS'));
@@ -184,9 +170,6 @@ class EditUserRequest extends FormRequest
         return $rules;
     }
 
-    /**
-     * @return array
-     */
     private function getAfterLoginFields(): array
     {
         $afterLoginFields = Afterloginformcontrol::getFormFields()
@@ -202,7 +185,7 @@ class EditUserRequest extends FormRequest
         $input = $this->request->all();
 
         foreach ($input as $key => $value) {
-            if (!in_array($key, $baseFields) && $value != self::USER_UPDATE_TYPE_ATLOGIN) {
+            if (! in_array($key, $baseFields) && $value != self::USER_UPDATE_TYPE_ATLOGIN) {
                 Arr::pull($input, $key);
             }
         }

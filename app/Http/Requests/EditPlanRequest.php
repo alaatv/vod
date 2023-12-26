@@ -38,7 +38,7 @@ class EditPlanRequest extends FormRequest
             'contents' => 'array',
             'contents.*.content_id' => 'numeric|exists:educationalcontents,id',
             'contents.*.type_id' => 'numeric|exists:educationalcontent_of_plan_types,id',
-//            'contents.*.title' => 'string|max:190',
+            //            'contents.*.title' => 'string|max:190',
         ];
     }
 }

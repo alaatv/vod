@@ -9,8 +9,6 @@ class PresignedRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -19,8 +17,6 @@ class PresignedRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -32,7 +28,7 @@ class PresignedRequest extends FormRequest
     public function messages()
     {
         return [
-            'key.regex' => 'از کاراکترهای فارسی و فاصله استفاده نکنید'
+            'key.regex' => 'از کاراکترهای فارسی و فاصله استفاده نکنید',
         ];
     }
 }

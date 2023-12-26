@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAdRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;

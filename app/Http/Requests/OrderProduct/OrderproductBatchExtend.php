@@ -23,5 +23,4 @@ class OrderproductBatchExtend extends FormRequest
             ],
         ];
     }
-
 }

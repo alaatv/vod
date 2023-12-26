@@ -12,9 +12,7 @@ class ListTicketRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Request  $request
      *
-     * @param  TicketDepartmentSearch  $departmentSearch
      *
      * @return bool
      */
@@ -28,7 +26,7 @@ class ListTicketRequest extends FormRequest
 
         $input = $this->input();
 
-        if (!optional($user)->isAbleTo(config('constants.INDEX_TICKET_ACCESS'))) {
+        if (! optional($user)->isAbleTo(config('constants.INDEX_TICKET_ACCESS'))) {
 
             $input['user_id'] = $user->id;
             $this->replace($input);
@@ -47,9 +45,9 @@ class ListTicketRequest extends FormRequest
 
         $input['department_id'] = $ticketDepartments;
         $this->replace($input);
+
         return true;
     }
-
 
     public function prepareForValidation()
     {

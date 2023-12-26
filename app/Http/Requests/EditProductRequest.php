@@ -37,14 +37,13 @@ class EditProductRequest extends FormRequest
                     if ($this->has_instalment_option && (int) array_sum($value) != 100) {
                         $fail('مجموع درصد اقساط باید برابر با ۱۰۰ باشد');
                     }
-                }
+                },
             ],
         ];
 
-
         if (isset($this->request->redirectUrl)) {
             $rules['redirectCode'] = 'required|integer|in:'.implode(',',
-                    array_keys(config('constants.REDIRECT_HTTP_RESPONSE_TYPES')));
+                array_keys(config('constants.REDIRECT_HTTP_RESPONSE_TYPES')));
         }
 
         return $rules;

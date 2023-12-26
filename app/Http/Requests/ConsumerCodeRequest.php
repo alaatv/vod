@@ -27,10 +27,8 @@ class ConsumerCodeRequest extends FormRequest
     {
         return [
             'code' => [
-                'required', 'string', Rule::exists('referral_codes', 'code'), new YaldaReferralCode(request()->user())
-            ]
+                'required', 'string', Rule::exists('referral_codes', 'code'), new YaldaReferralCode(request()->user()),
+            ],
         ];
     }
-
-
 }

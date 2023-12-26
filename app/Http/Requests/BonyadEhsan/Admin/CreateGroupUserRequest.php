@@ -16,6 +16,7 @@ class CreateGroupUserRequest extends FormRequest
     public function authorize()
     {
         $user = auth('api')->user();
+
         return match ($this->type) {
             'network' => $user->hasPermission(config('constants.BONYAD_EHSAN_INSERT_NETWORK')),
             'subnetwork' => $user->hasPermission(config('constants.BONYAD_EHSAN_INSERT_SUB_NETWORK')),
@@ -39,7 +40,7 @@ class CreateGroupUserRequest extends FormRequest
             'users.*.firstName' => ['required', 'max:255'],
             'users.*.lastName' => ['required', 'max:255'],
             'users.*.mobile' => ['required', 'digits:11', 'phone:AUTO,IR', new BonyadUserUnique()],
-            'users.*.nationalCode' => ['required', 'digits:10', 'validate:nationalCode',/*'unique:users'*/],
+            'users.*.nationalCode' => ['required', 'digits:10', 'validate:nationalCode'/*'unique:users'*/],
             'users.*.shahr_id' => ['required', 'integer', 'min:1', 'exists:shahr,id'],
             'users.*.gender_id' => ['required', 'integer', 'min:1', 'exists:genders,id'],
         ];
@@ -59,6 +60,7 @@ class CreateGroupUserRequest extends FormRequest
                 ]);
             }
         }
+
         return $rules;
     }
 }

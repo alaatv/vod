@@ -6,12 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVoucherRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;
     }
-
 
     public function rules()
     {
@@ -23,7 +21,7 @@ class StoreVoucherRequest extends FormRequest
             'contractor_id' => 'required',
             'description' => 'nullable|max:200',
             'package_name' => 'nullable|max:50',
-            'coupon_id' => ['required', 'exists:coupons,id']
+            'coupon_id' => ['required', 'exists:coupons,id'],
         ];
     }
 }

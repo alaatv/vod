@@ -26,6 +26,7 @@ class UserOrdersRequest extends FormRequest
     public function rules()
     {
         $paymentStatusIds = Paymentstatus::all()->pluck('id');
+
         return [
             'since' => 'nullable|date',
             'till' => 'nullable|date',

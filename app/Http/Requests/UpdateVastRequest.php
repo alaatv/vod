@@ -5,9 +5,8 @@ namespace App\Http\Requests;
 use App\Rules\GetAtlesatOneQuailyVastRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class   UpdateVastRequest extends FormRequest
+class UpdateVastRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;

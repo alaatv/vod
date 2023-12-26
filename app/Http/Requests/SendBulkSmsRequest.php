@@ -32,12 +32,12 @@ class SendBulkSmsRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if (!is_array($this->get('user_id')) && $this->get('user_id')) {
+        if (! is_array($this->get('user_id')) && $this->get('user_id')) {
             $userIds = explode(',', $this->get('user_id'));
-            $userIds = array_map(fn($userId) => trim($userId), $userIds);
+            $userIds = array_map(fn ($userId) => trim($userId), $userIds);
 
             $this->merge([
-                'user_id' => $userIds
+                'user_id' => $userIds,
             ]);
         }
 

@@ -16,9 +16,9 @@ class ProductConfigRequest extends FormRequest
     public function rules()
     {
         return [
-            'products' => ['required', Rule::when(!in_array(0, $this->get('products', [])), 'exists:products,id')],
+            'products' => ['required', Rule::when(! in_array(0, $this->get('products', [])), 'exists:products,id')],
             'enable' => ['boolean'],
-            'display' => ['boolean']
+            'display' => ['boolean'],
         ];
     }
 

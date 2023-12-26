@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class InsertOrderRequest
- * @package App\Http\Requests
+ *
  * @mixin Order
  */
 class InsertOrderRequest extends FormRequest
@@ -27,13 +27,14 @@ class InsertOrderRequest extends FormRequest
     {
         // TODO: The following code doesn't appear to be needed. On the other hand, the following code has encountered an error.
         //  For this reason, I commented it for future reviews. عماد نعیمی فر
-//        $this->id = $_REQUEST["id"];
+        //        $this->id = $_REQUEST["id"];
 
         $estimatedCreationDateTime = Carbon::now()->format('Y-m-d H:i:s');
         $transactionMaxStr = $request->transactionstatus_id != config('constants.TRANSACTION_STATUS_SUCCESSFUL') ? '|max:0' : '';
+
         return [
             'user_id' => 'nullable|integer|min:1|exists:users,id',
-//            'insertor_id' => 'nullable|integer|min:1|exists:users,id',
+            //            'insertor_id' => 'nullable|integer|min:1|exists:users,id',
             'orderstatus_id' => 'nullable|integer|min:1|exists:orderstatuses,id',
             'paymentstatus_id' => 'nullable|integer|min:1|exists:paymentstatuses,id',
             'coupon_id' => 'nullable|integer|min:1|exists:coupons,id',

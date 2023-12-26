@@ -44,6 +44,7 @@ class SettingRequest extends FormRequest
                 })->ignore($this->route('setting')),
             ];
         }
+
         return $rules;
     }
 }

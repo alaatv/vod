@@ -24,7 +24,7 @@ class InsertCouponRequest extends FormRequest
             'code' => 'nullable|string|min:1|alpha_dash|unique:coupons,code',
             'discount' => 'sometimes|required|numeric|between:0,100',
             // Notice: The usageNumber field shouldn't be specified for store mode.
-//            'usageNumber' => '',
+            //            'usageNumber' => '',
             'usageLimit' => 'nullable|integer|min:0',
             'discounttype_id' => 'integer|min:1|exists:discounttypes,id',
             'enable' => 'sometimes|required|boolean',
@@ -40,7 +40,7 @@ class InsertCouponRequest extends FormRequest
             'unrequired_products' => 'nullable|array',
             'unrequired_products.*' => 'nullable|integer|exists:products,id',
             'number_of_code_digits' => 'integer|min:1',
-            'prefix' => 'string|min:1'
+            'prefix' => 'string|min:1',
         ];
     }
 
@@ -61,11 +61,11 @@ class InsertCouponRequest extends FormRequest
             }
         }
 
-        if (!is_null($input['validSince'])) {
+        if (! is_null($input['validSince'])) {
             $date = explode('T', $input['validSince']);
             $input['validSince'] = $date[0];
         }
-        if (!is_null($input['validUntil'])) {
+        if (! is_null($input['validUntil'])) {
             $date = explode('T', $input['validUntil']);
             $input['validUntil'] = $date[0];
         }

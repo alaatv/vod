@@ -29,7 +29,7 @@ class ReceiveSMSRequest extends FormRequest
                 'phone:AUTO,IR',
             ],
             'msg' => 'required',
-            'to' => 'required'
+            'to' => 'required',
         ];
     }
 }

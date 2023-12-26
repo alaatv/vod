@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Class EditOrderRequest
- * @package App\Http\Requests
+ *
  * @mixin Order
  */
 class EditUserRequest extends FormRequest
@@ -23,7 +23,9 @@ class EditUserRequest extends FormRequest
     use RequestCommon;
 
     public const PHOTO_RULE = '|image|mimes:jpeg,jpg,png|max:512';
+
     protected $id;
+
     private $userId;
 
     public function authorize(\App\Http\Requests\Request $request)
@@ -34,7 +36,7 @@ class EditUserRequest extends FormRequest
         $rolesKey = collect(array_keys($roles));
         $authUserRoles = $authUser->roles()->pluck('name');
         $userRole = $rolesKey->intersect($authUserRoles)->first();
-        if (is_null($userRole) or !UserRepo::userAccess($authUser->id, (int) $this->userId, $roles[''.$userRole])) {
+        if (is_null($userRole) or ! UserRepo::userAccess($authUser->id, (int) $this->userId, $roles[''.$userRole])) {
             return false;
         }
 
@@ -80,6 +82,7 @@ class EditUserRequest extends FormRequest
                 'motherMobile' => ['required', 'digits:11', 'phone:AUTO,IR'],
             ]);
         }
+
         return $rules;
     }
 }

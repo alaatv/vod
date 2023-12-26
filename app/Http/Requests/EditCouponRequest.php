@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class EditCouponRequest
- * @package App\Http\Requests
  */
 class EditCouponRequest extends FormRequest
 {

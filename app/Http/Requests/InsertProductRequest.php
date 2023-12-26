@@ -17,23 +17,22 @@ class InsertProductRequest extends FormRequest
     public function rules()
     {
         return [
-//            'name'            => 'required',
-//            'basePrice'       => 'required|numeric',
-//            'discount'        => 'sometimes|numeric',
-//            'order'           => 'sometimes|numeric',
-//            'amount'          => 'required_if:amountLimit,1',
-//            'image'           => 'sometimes|image|mimes:jpeg,jpg,png',
-//            'file'            => 'sometimes|file',
-//            'attributeset_id' => 'required|exists:attributesets,id',
+            //            'name'            => 'required',
+            //            'basePrice'       => 'required|numeric',
+            //            'discount'        => 'sometimes|numeric',
+            //            'order'           => 'sometimes|numeric',
+            //            'amount'          => 'required_if:amountLimit,1',
+            //            'image'           => 'sometimes|image|mimes:jpeg,jpg,png',
+            //            'file'            => 'sometimes|file',
+            //            'attributeset_id' => 'required|exists:attributesets,id',
             'bonPlus' => 'sometimes|numeric|min:0',
             'bonDiscount' => 'sometimes|numeric|min:0|max:100',
-//            'producttype_id'  => 'required|exists:producttypes,id',
-
+            //            'producttype_id'  => 'required|exists:producttypes,id',
 
             'category' => 'nullable|string|min:2|max:191',
             'grand_id' => 'nullable|integer|min:1|exists:products,id',
             // TODO: I check it and I think the following item isn't used anywhere. So it's not needed. Please you check it too.
-//            'redirectUrl' => 'nullable|string|min:2|max:191',
+            //            'redirectUrl' => 'nullable|string|min:2|max:191',
             'name' => 'required|string|min:2|max:255',
             'shortName' => 'required|string|min:2|max:100',
             'basePrice' => 'required|integer|min:0',

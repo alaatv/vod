@@ -25,7 +25,7 @@ class ContentInComeRequest extends FormRequest
     {
         return [
             'date' => 'required|string|date_format:Y-m-d',
-//            'content_id' => 'required|exists:educationalcontents,id'
+            //            'content_id' => 'required|exists:educationalcontents,id'
         ];
     }
 }

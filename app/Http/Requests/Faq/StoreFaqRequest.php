@@ -26,7 +26,7 @@ class StoreFaqRequest extends FormRequest
         return [
             'product_id' => 'nullable|exists:products,id',
             'title' => 'required|max:500',
-            'body' => 'required|max:20000'
+            'body' => 'required|max:20000',
 
         ];
     }

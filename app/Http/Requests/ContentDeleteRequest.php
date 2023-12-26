@@ -24,7 +24,7 @@ class ContentDeleteRequest extends FormRequest
     public function rules()
     {
         return [
-            'contents' => 'required|array|exists:educationalcontents,id'
+            'contents' => 'required|array|exists:educationalcontents,id',
         ];
     }
 
@@ -34,6 +34,4 @@ class ContentDeleteRequest extends FormRequest
             return $this->merge(['contents' => [$this->contents]]);
         }
     }
-
-
 }

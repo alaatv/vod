@@ -2,67 +2,67 @@
 
 namespace App\Providers;
 
-use App\{Adapter\AlaaSftpAdapter,
-    Classes\AlaaRedisStore,
-    Classes\AuthorizationService\AuthorizationServiceInterface,
-    Classes\AuthorizationService\SeaAuthorizationService,
-    Classes\Search\ContentSearch,
-    Classes\Search\ContentsetSearch,
-    Classes\Search\ProductSearch,
-    Classes\Search\SearchStrategy\AlaaSearch,
-    Http\Resources\ReferralCodeInfoWithPrice,
-    Models\Block,
-    Models\Comment,
-    Models\Content,
-    Models\Contentset,
-    Models\Coupon,
-    Models\Employeetimesheet,
-    Models\LiveDescription,
-    Models\MapDetail,
-    Models\Order,
-    Models\Orderfile,
-    Models\Ordermanagercomment,
-    Models\Orderpostinginfo,
-    Models\Orderproduct,
-    Models\Plan,
-    Models\Product,
-    Models\ReferralRequest,
-    Models\Slideshow,
-    Models\Source,
-    Models\Ticket,
-    Models\TicketMessage,
-    Models\Transaction,
-    Models\User,
-    Models\WatchHistory,
-    Observers\BlockObserver,
-    Observers\CommentObserver,
-    Observers\ContentObserver,
-    Observers\CouponObserver,
-    Observers\EmployeetimesheetObserver,
-    Observers\LiveDescriptionObserver,
-    Observers\MapDetailObserver,
-    Observers\OrderFileObserver,
-    Observers\OrderManagerCommentObserver,
-    Observers\OrderObserver,
-    Observers\OrderPostingInfoObserver,
-    Observers\OrderproductObserver,
-    Observers\PlanObserver,
-    Observers\ProductObserver,
-    Observers\ReferralRequestObserver,
-    Observers\SetObserver,
-    Observers\SlideshowObserver,
-    Observers\SourceObserver,
-    Observers\TicketMessageObserver,
-    Observers\TicketObserver,
-    Observers\TransactionObserver,
-    Observers\UserObserver,
-    Observers\WatchHistoryObserver,
-    Repositories\AuthorizationRepository\_3aAuthorizationRepo,
-    Repositories\AuthorizationRepository\AuthorizationRepoInterface,
-    Repositories\Loging\ActivityLogRepo,
-    Repositories\SmsDetailsRepository,
-    Traits\RegionCommon,
-    Traits\UserCommon};
+use App\Adapter\AlaaSftpAdapter;
+use App\Classes\AlaaRedisStore;
+use App\Classes\AuthorizationService\AuthorizationServiceInterface;
+use App\Classes\AuthorizationService\SeaAuthorizationService;
+use App\Classes\Search\ContentSearch;
+use App\Classes\Search\ContentsetSearch;
+use App\Classes\Search\ProductSearch;
+use App\Classes\Search\SearchStrategy\AlaaSearch;
+use App\Http\Resources\ReferralCodeInfoWithPrice;
+use App\Models\Block;
+use App\Models\Comment;
+use App\Models\Content;
+use App\Models\Contentset;
+use App\Models\Coupon;
+use App\Models\Employeetimesheet;
+use App\Models\LiveDescription;
+use App\Models\MapDetail;
+use App\Models\Order;
+use App\Models\Orderfile;
+use App\Models\Ordermanagercomment;
+use App\Models\Orderpostinginfo;
+use App\Models\Orderproduct;
+use App\Models\Plan;
+use App\Models\Product;
+use App\Models\ReferralRequest;
+use App\Models\Slideshow;
+use App\Models\Source;
+use App\Models\Ticket;
+use App\Models\TicketMessage;
+use App\Models\Transaction;
+use App\Models\User;
+use App\Models\WatchHistory;
+use App\Observers\BlockObserver;
+use App\Observers\CommentObserver;
+use App\Observers\ContentObserver;
+use App\Observers\CouponObserver;
+use App\Observers\EmployeetimesheetObserver;
+use App\Observers\LiveDescriptionObserver;
+use App\Observers\MapDetailObserver;
+use App\Observers\OrderFileObserver;
+use App\Observers\OrderManagerCommentObserver;
+use App\Observers\OrderObserver;
+use App\Observers\OrderPostingInfoObserver;
+use App\Observers\OrderproductObserver;
+use App\Observers\PlanObserver;
+use App\Observers\ProductObserver;
+use App\Observers\ReferralRequestObserver;
+use App\Observers\SetObserver;
+use App\Observers\SlideshowObserver;
+use App\Observers\SourceObserver;
+use App\Observers\TicketMessageObserver;
+use App\Observers\TicketObserver;
+use App\Observers\TransactionObserver;
+use App\Observers\UserObserver;
+use App\Observers\WatchHistoryObserver;
+use App\Repositories\AuthorizationRepository\_3aAuthorizationRepo;
+use App\Repositories\AuthorizationRepository\AuthorizationRepoInterface;
+use App\Repositories\Loging\ActivityLogRepo;
+use App\Repositories\SmsDetailsRepository;
+use App\Traits\RegionCommon;
+use App\Traits\UserCommon;
 use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Container\Container;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -70,16 +70,20 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\{Auth, Cache, Schema, Storage, Validator};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 use League\Flysystem\Filesystem;
 
 class AppServiceProvider extends ServiceProvider
 {
-    use UserCommon;
     use RegionCommon;
+    use UserCommon;
 
     /**
      * Register any application services.
@@ -94,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
             $contentSearch = new ContentSearch();
             $setSearch = new ContentsetSearch();
             $productSearch = new ProductSearch();
+
             return new AlaaSearch($contentSearch, $setSearch, $productSearch);
         });
 
@@ -105,13 +110,14 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Horizon::auth(function ($request) {
-            return (Auth::check() && Auth::user()
-                    ->hasRole('admin'));
+            return Auth::check() && Auth::user()
+                ->hasRole('admin');
         });
         Schema::defaultStringLength(191);
 
         Storage::extend('sftp', function ($app, $config) {
             $adapter = new AlaaSftpAdapter($config);
+
             return new FilesystemAdapter(
                 new Filesystem($adapter, $config),
                 $adapter,
@@ -120,9 +126,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         //pick columns from collection
-        if (!Collection::hasMacro('pick')) {
+        if (! Collection::hasMacro('pick')) {
             Collection::macro('pick', function ($columns) {
                 $is_assoc = Arr::isAssoc($columns);
+
                 return $this->map(function ($item) use ($columns, $is_assoc) {
                     $data = [];
                     foreach ($columns as $name => $as) {
@@ -134,8 +141,7 @@ class AppServiceProvider extends ServiceProvider
             });
         }
 
-
-        if (!Collection::hasMacro('pushAt')) {
+        if (! Collection::hasMacro('pushAt')) {
             Collection::macro('pushAt', function ($key, $item) {
                 return $this->put($key, collect($this->get($key))->push($item));
             });
@@ -151,10 +157,10 @@ class AppServiceProvider extends ServiceProvider
                 $currentPage = $page;
                 $options['path'] = Paginator::resolveCurrentPath();
                 $options['pageName'] = $pageName;
+
                 return Container::getInstance()->makeWith(LengthAwarePaginator::class,
                     compact('items', 'total', 'perPage', 'currentPage', 'options'));
             });
-
 
     }
 
@@ -165,7 +171,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-//        added to keep bootstrap default instead of tailwind (https://laravel.com/docs/8.x/upgrade#pagination-defaults)
+        //        added to keep bootstrap default instead of tailwind (https://laravel.com/docs/8.x/upgrade#pagination-defaults)
         Paginator::useBootstrap();
         Blade::withoutComponentTags();
         Content::observe(ContentObserver::class);
