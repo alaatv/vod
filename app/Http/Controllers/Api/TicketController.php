@@ -31,9 +31,9 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Validator;
 
 class TicketController extends Controller
 {
@@ -59,11 +59,11 @@ class TicketController extends Controller
     private function callMiddlewares(array $authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
-        $this->middleware('permission:' . config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
-        $this->middleware('permission:' . config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
-        $this->middleware('permission:' . config('constants.SEND_TICKET_STATUS_NOTICE'),
+        $this->middleware('permission:'.config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
+        $this->middleware('permission:'.config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
+        $this->middleware('permission:'.config('constants.SEND_TICKET_STATUS_NOTICE'),
             ['only' => 'sendTicketStatusChangeNotice']);
-        $this->middleware('permission:' . config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
+        $this->middleware('permission:'.config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
         //        $this->middleware('permission:' . config('constants.CREATE_TICKET'), ['only' => 'create']);
     }
 
@@ -117,7 +117,7 @@ class TicketController extends Controller
         $this->authorize('create', [Ticket::class, $request->get('department_id')]);
         $ticketUserId = $request->user_id;
         $authUser = $request->user();
-        $isMessagePrivate = (bool)$request->get('is_private', false);
+        $isMessagePrivate = (bool) $request->get('is_private', false);
         $request->offsetSet('tags', convertTagStringToArray($request->get('tags')));
         try {
             $ticket = TicketRepo::new($ticketUserId, $request->get('title'), TicketStatus::DEFAULT_STATUS,
@@ -157,7 +157,7 @@ class TicketController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        if (!$user->isAbleTo(config('constants.SHOW_TICKET_ACCESS')) && $ticket->user_id != $user->id) {
+        if (! $user->isAbleTo(config('constants.SHOW_TICKET_ACCESS')) && $ticket->user_id != $user->id) {
             return myAbort(Response::HTTP_FORBIDDEN, 'شما اجازه مشاهده این تیکت را ندارید');
         }
 
@@ -185,7 +185,7 @@ class TicketController extends Controller
     public function destroy(Ticket $ticket): JsonResponse
     {
         if ($ticket->delete()) {
-            Cache::tags(['ticket_' . $ticket->id, 'ticket_search'])->flush();
+            Cache::tags(['ticket_'.$ticket->id, 'ticket_search'])->flush();
 
             return response()->json(['message' => 'تیکت با موفقیت حذف شد']);
         }
@@ -196,7 +196,7 @@ class TicketController extends Controller
     public function sendTicketStatusChangeNotice(Ticket $ticket): JsonResponse
     {
         $user = $ticket->user;
-        if (!isset($user)) {
+        if (! isset($user)) {
             return response()->json(['message' => 'کاربر مالک تیکت یافت نشد'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -237,7 +237,7 @@ class TicketController extends Controller
         $ticket->rate = $request->get('rate');
         try {
             $ticket->update();
-            Cache::tags(['ticket_' . $ticket->id])->flush();
+            Cache::tags(['ticket_'.$ticket->id])->flush();
         } catch (QueryException) {
             return response()->json(['message' => 'خطا در پایگاه داده'], Response::HTTP_SERVICE_UNAVAILABLE);
         }
@@ -267,7 +267,7 @@ class TicketController extends Controller
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, $exception->getMessage());
         }
 
-        if (!$updateResult) {
+        if (! $updateResult) {
             return response()->json(['message' => 'خطای پایگاه داده']);
         }
 
