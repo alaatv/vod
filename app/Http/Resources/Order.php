@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 /**
  * Class Order
  *
- * @mixin \App\Models\Models\Order
+ * @mixin \App\Models\Order
  * */
 class Order extends AlaaJsonResource
 {
@@ -23,7 +23,11 @@ class Order extends AlaaJsonResource
             return [];
         }
 
-        $this->loadMissing('orderstatus', 'paymentstatus', 'orderproducts', 'transactions', 'orderpostinginfos',
+        $this->loadMissing('orderstatus',
+            'paymentstatus',
+            'orderproducts',
+            'transactions',
+            'orderpostinginfos',
             'user');
 
         return [
@@ -70,7 +74,7 @@ class Order extends AlaaJsonResource
                 return optional($this->created_at)->toDateTimeString();
             }),
             'completed_at' => $this->when(isset($this->completed_at), function () {
-                return isset($this->completed_at) ? $this->completed_at : null;
+                return $this->completed_at ?? null;
             }),
         ];
     }
