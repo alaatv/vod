@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
- * Class \App\Studyplan
+ * Class \App\Models\Studyplan
  *
- * @mixin \App\Studyplan
+ * @mixin \App\Models\Studyplan
  * */
 class StudyPlan2 extends AlaaJsonResource
 {
@@ -22,6 +21,7 @@ class StudyPlan2 extends AlaaJsonResource
     {
         $data = $this->resource;
         $plans = $data->plans->groupBy('section_name');
+
         return [
             'studyPlan_id' => $data->id,
             'id' => $data->plan_date,
@@ -45,6 +45,7 @@ class StudyPlan2 extends AlaaJsonResource
             $result[$a][$this->getMajorKey($data->major)] = $this->getPlan($data);
             $a++;
         }
+
         return $result;
     }
 
@@ -53,6 +54,7 @@ class StudyPlan2 extends AlaaJsonResource
         if ($major == 'riazi' || $major == 'ریاضی') {
             return 'riazi';
         }
+
         return 'tajrobi';
     }
 

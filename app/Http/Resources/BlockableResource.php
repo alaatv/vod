@@ -17,7 +17,7 @@ class BlockableResource extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (($this->blockable instanceof \App\Slideshow)) {
+        if (($this->blockable instanceof \App\Models\Slideshow)) {
             $type = 'slideshow';
         } elseif (($this->blockable instanceof \App\Models\Content)) {
             $type = 'content';
@@ -74,6 +74,7 @@ class BlockableResource extends AlaaJsonResource
                     if (is_null($this->blockable->screensize)) {
                         return null;
                     }
+
                     return [
                         'id' => $this->blockable->screensize->id,
                         'title' => $this->blockable->screensize->title,
@@ -81,7 +82,7 @@ class BlockableResource extends AlaaJsonResource
                 }
 
                 return null;
-            })
+            }),
         ];
     }
 }

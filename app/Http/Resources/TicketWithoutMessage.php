@@ -8,19 +8,18 @@ use App\Traits\Ticket\Resource;
 use App\Traits\TicketCommon;
 use Illuminate\Http\Request;
 
-
 /**
- * Class \App\Ticket
+ * Class \App\Models\Ticket
  *
  * @mixin Ticket
  * */
 class TicketWithoutMessage extends AlaaJsonResource
 {
-    use ResourceCommon;
     use Resource;
+    use ResourceCommon;
     use TicketCommon;
 
-    /** @var \App\User $authUser */
+    /** @var \App\User */
     private $authUser;
 
     public function __construct(Ticket $model)
@@ -53,7 +52,7 @@ class TicketWithoutMessage extends AlaaJsonResource
             'updated_at' => $this->getLasMessageCreationTime(),
             'created_at' => $this->created_at->toDateTimeString(),
             // TODO: The following code doesn't work.
-//            'last_responder' => $this->when(isset($this->last_ticket_responder), new TicketSender($this->last_ticket_responder)),
+            //            'last_responder' => $this->when(isset($this->last_ticket_responder), new TicketSender($this->last_ticket_responder)),
             'last_responder' => isset($this->last_ticket_responder) ? new TicketSender($this->last_ticket_responder) : null,
         ];
     }

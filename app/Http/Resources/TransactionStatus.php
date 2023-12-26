@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class TransactionStatus
  *
- * @mixin \App\Transactionstatus
+ * @mixin \App\Models\Transactionstatus
  * */
 class TransactionStatus extends AlaaJsonResource
 {
@@ -16,7 +15,6 @@ class TransactionStatus extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)

@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Transactiongateway
  *
- * @mixin \App\Transactiongateway
+ * @mixin \App\Models\Transactiongateway
  * */
 class Transactiongateway extends AlaaJsonResource
 {
@@ -16,12 +15,11 @@ class Transactiongateway extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Transactiongateway)) {
+        if (! ($this->resource instanceof \App\Models\Transactiongateway)) {
             return [];
         }
 

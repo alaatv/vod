@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Map
  *
- * @mixin \App\Map
+ * @mixin \App\Models\Map
  * */
 class Map extends AlaaJsonResource
 {

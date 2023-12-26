@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
- * Class \App\Plan
+ * Class \App\Models\Plan
  *
- * @mixin \App\Plan
+ * @mixin \App\Models\Plan
  * */
 class Plan extends AlaaJsonResource
 {
@@ -26,6 +25,7 @@ class Plan extends AlaaJsonResource
             return $content->pivot->type_id = 4;
         });
         $product = $teachingContent?->set->products->first();
+
         return [
             'id' => $data->id,
             'title' => $data->title,
@@ -66,11 +66,6 @@ class Plan extends AlaaJsonResource
         ];
     }
 
-    /**
-     * @param
-     *
-     * @return string|null
-     */
     private function getMajorName($majorId): ?string
     {
         if ($majorId == 1) {

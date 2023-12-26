@@ -24,7 +24,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App' => 'App\Policies',
         Draft::class => DraftPolicy::class,
-        Ticket::class => TicketPolicy::class
+        Ticket::class => TicketPolicy::class,
     ];
 
     /**
@@ -34,8 +34,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         //TODO:// Extend Auth so that we can use alaatv guard in a middleware
         Auth::viaRequest('alaatv', function (Request $request) {
-//            return $request->user('api');
-            return User::find(1);
+            //            return $request->user('api');
+            return User::find(12);
         });
 
         Gate::define('askPermission', function (User $user) {

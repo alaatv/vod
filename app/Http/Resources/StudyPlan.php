@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
- * Class \App\Studyplan
+ * Class \App\Models\Studyplan
  *
- * @mixin \App\Studyplan
+ * @mixin \App\Models\Studyplan
  * */
 class StudyPlan extends AlaaJsonResource
 {
@@ -21,6 +20,7 @@ class StudyPlan extends AlaaJsonResource
     public function toArray($request)
     {
         $data = $this->resource;
+
         return [
             'studyPlan_id' => $data->id,
             'id' => $data->plan_date,

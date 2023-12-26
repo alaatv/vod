@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Product
  *
@@ -12,7 +11,7 @@ use Illuminate\Http\Request;
  * */
 class OrderProduct extends AlaaJsonResource
 {
-    public function __construct(\App\Orderproduct $model)
+    public function __construct(\App\Models\Orderproduct $model)
     {
         parent::__construct($model);
     }
@@ -21,12 +20,11 @@ class OrderProduct extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Orderproduct)) {
+        if (! ($this->resource instanceof \App\Models\Orderproduct)) {
             return [];
         }
 

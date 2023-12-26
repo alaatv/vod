@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Block
  *
@@ -16,12 +15,11 @@ class BlockV2 extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\Block)) {
+        if (! ($this->resource instanceof \App\Models\Block)) {
             return [];
         }
 
@@ -31,12 +29,12 @@ class BlockV2 extends AlaaJsonResource
         $banners = $this->active_banners;
 
         // Not return special banner, If request sent from android app
-//        if (stripos($request->header('User-Agent'), 'android') !== false) {
-//            $banners = $banners->filter(function ($value, $key) {
-//                return !in_array($value->id, array_keys(\App\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
-//            });
+        //        if (stripos($request->header('User-Agent'), 'android') !== false) {
+        //            $banners = $banners->filter(function ($value, $key) {
+        //                return !in_array($value->id, array_keys(\App\Models\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
+        //            });
         $banners = $banners->whereNotIn('id', array_keys(\App\Models\Slideshow::BANNERS_TWO_PACK_LEFT_LINKS));
-//        }
+        //        }
 
         return [
             'id' => $this->id,

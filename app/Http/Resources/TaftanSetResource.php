@@ -9,10 +9,9 @@ use Illuminate\Support\Arr;
 
 class TaftanSetResource extends JsonResource
 {
-
     public function toArray($request)
     {
-        if (!($this->resource instanceof Contentset)) {
+        if (! ($this->resource instanceof Contentset)) {
             return [];
         }
 
@@ -29,6 +28,7 @@ class TaftanSetResource extends JsonResource
     private function setProductId()
     {
         $productInfo = Arr::get(Taftan::MAP, $this->id);
+
         return Arr::get($productInfo, 'product');
     }
 
@@ -37,9 +37,10 @@ class TaftanSetResource extends JsonResource
         return $this->sections()
             ->unique()
             ->sortBy('order')
-            ->map(function (\App\Section $section) {
+            ->map(function (\App\Models\Section $section) {
                 $requiredFields['id'] = $section->id;
                 $requiredFields['title'] = $section->name;
+
                 return $requiredFields;
             })->toArray();
     }
@@ -48,7 +49,7 @@ class TaftanSetResource extends JsonResource
     {
         $majorInfo = Arr::get(Taftan::MAP, $this->id);
         $majorId = Arr::get($majorInfo, 'major');
-        $majors = array_filter(Taftan::MAJORS, fn($major) => $major['id'] == $majorId);
+        $majors = array_filter(Taftan::MAJORS, fn ($major) => $major['id'] == $majorId);
 
         return [
             'id' => $majorId,

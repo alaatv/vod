@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Gender
  *
- * @mixin \App\Gender
+ * @mixin \App\Models\Gender
  * */
 class Gender extends AlaaJsonResource
 {
@@ -16,7 +15,6 @@ class Gender extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)

@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Order
  *
- * @mixin \App\Order
+ * @mixin \App\Models\Models\Order
  * */
 class Order extends AlaaJsonResource
 {
@@ -16,12 +15,11 @@ class Order extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Order)) {
+        if (! ($this->resource instanceof \App\Models\Order)) {
             return [];
         }
 
@@ -32,7 +30,7 @@ class Order extends AlaaJsonResource
             'id' => $this->id,
             'discount' => $this->discount,
             'customer_description' => $this->when(isset($this->customerDescription), $this->customerDescription),
-//            'customer_extra_info'      => $this->customerExtraInfo ,
+            //            'customer_extra_info'      => $this->customerExtraInfo ,
             'price' => $this->price,
             'paid_price' => $this->paid_price,
             'refund_price' => $this->refund_price,
@@ -43,11 +41,11 @@ class Order extends AlaaJsonResource
             'paymentstatus' => $this->when(isset($this->paymentstatus_id), function () {
                 return isset($this->paymentstatus_id) ? new Paymentstatus($this->paymentstatus) : null;
             }),
-//            'orderproducts'           => Orderproduct::collection($this->whenLoaded('orderproducts')),
+            //            'orderproducts'           => Orderproduct::collection($this->whenLoaded('orderproducts')),
             'orderproducts' => $this->when(isset($this->orderproducts), function () {
                 return isset($this->orderproducts) ? PurchasedOrderproduct::collection($this->whenLoaded('orderproducts')) : null;
             }),
-//            'coupon_info'              => $this->when(!is_null($this->coupon_info) , $this->coupon_info), //Deprecated
+            //            'coupon_info'              => $this->when(!is_null($this->coupon_info) , $this->coupon_info), //Deprecated
             'coupon_info' => $this->when(isset($this->coupon_id), function () {
                 return isset($this->coupon_id) ? new Coupon($this->coupon) : null;
             }),
@@ -63,8 +61,8 @@ class Order extends AlaaJsonResource
             'posting_info' => $this->when($this->orderpostinginfos->isNotEmpty(), function () {
                 return $this->orderpostinginfos->isNotEmpty() ? Orderpostinginfo::collection($this->whenLoaded('orderpostinginfos')) : null;
             }),
-//            'usedBonSum'             => $this->used_bon_sum,
-//            'addedBonSum'            => $this->added_bon_sum,
+            //            'usedBonSum'             => $this->used_bon_sum,
+            //            'addedBonSum'            => $this->added_bon_sum,
             'user' => $this->when(isset($this->user_id), function () {
                 return isset($this->user_id) ? new OrderOwner($this->user) : null;
             }),

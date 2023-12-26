@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Paymentmethod
  *
- * @mixin \App\Paymentmethod
+ * @mixin \App\Models\Paymentmethod
  * */
 class Paymentmethod extends AlaaJsonResource
 {
@@ -16,12 +15,11 @@ class Paymentmethod extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Paymentmethod)) {
+        if (! ($this->resource instanceof \App\Models\Paymentmethod)) {
             return [];
         }
 
