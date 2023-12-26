@@ -23,7 +23,7 @@ class ReferralCodesController extends Controller
 
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.GENERATE_GIFT_CARD_PANEL'), ['only' => ['batchStore']]);
+        //        $this->middleware('permission:'.config('constants.GENERATE_GIFT_CARD_PANEL'), ['only' => ['batchStore']]);
     }
 
     public function index(Request $request)
