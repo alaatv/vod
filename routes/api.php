@@ -27,7 +27,6 @@ use App\Http\Controllers\Api\DashboardPageV2Controller;
 use App\Http\Controllers\Api\DonateController;
 use App\Http\Controllers\Api\DraftController;
 use App\Http\Controllers\Api\EmployeetimesheetController;
-use App\Http\Controllers\Api\EntekhabReshteController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\EventResultController;
 use App\Http\Controllers\Api\EwanoController;
@@ -282,9 +281,6 @@ Route::prefix('v2')->group(function () {
     Route::post('subscription/update/value',
         ['\\'.SubscriptoinController::class, 'updateValue'])->name('user.subscriptions.updateValue');
     Route::resource('subscription', '\\'.SubscriptoinController::class)->only(['store']);
-
-    // Entekhab Reshte routes
-    Route::resource('entekhab-reshte', '\\'.EntekhabReshteController::class)->only('store');
 
     // Watch History routes
     Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
