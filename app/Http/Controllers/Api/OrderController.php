@@ -60,16 +60,20 @@ use Symfony\Component\HttpFoundation\Response as HTTPResponse;
 class OrderController extends Controller
 {
     protected $setting;
+
     protected string $succsessMessage = '';
+
     protected string $unSuccsessMessage = '';
+
     protected array $addedGifts = [];
+
     protected array $addedProducts = [];
 
-    use ResponseFormatter;
-    use OrderCommon;
-    use OrderproductTrait;
     use AssetTrait;
     use CharacterCommon;
+    use OrderCommon;
+    use OrderproductTrait;
+    use ResponseFormatter;
 
     /**
      * OrderController constructor.
@@ -77,18 +81,18 @@ class OrderController extends Controller
     public function __construct()
     {
         $this->middleware(['OverwriteOrderIDAndAddItToRequest', 'openOrder'],
-            ['only' => ['submitCoupon', 'submitCouponV2', 'submitReferralCode'],]);
+            ['only' => ['submitCoupon', 'submitCouponV2', 'submitReferralCode']]);
         $this->middleware('OverwriteOrderIDAndAddItToRequest',
-            ['only' => ['removeCoupon', 'removeCouponV2', 'removeReferralCode'],]);
+            ['only' => ['removeCoupon', 'removeCouponV2', 'removeReferralCode']]);
         $this->middleware('ApiOrderCheckoutReview', ['only' => 'checkoutReviewV2']);
     }
 
     /**
      * Showing authentication step in the checkout process
      *
-     * @param  Request  $request
      *
      * @return Response
+     *
      * @throws Exception
      */
     public function checkoutReview(Request $request)
@@ -108,9 +112,9 @@ class OrderController extends Controller
     /**
      * API Version 2
      *
-     * @param  Request  $request
      *
      * @return ResponseFactory|JsonResponse|Response
+     *
      * @throws Exception
      */
     public function checkoutReviewV2(Request $request)
@@ -155,9 +159,9 @@ class OrderController extends Controller
     /**
      * Showing payment step in checkout the process
      *
-     * @param  Request  $request
      *
      * @return Response
+     *
      * @throws Exception
      */
     public function checkoutPayment(Request $request)
@@ -205,11 +209,10 @@ class OrderController extends Controller
     /**
      * Submits a coupon for the order
      *
-     * @param  SubmitCouponRequest  $request
      *
-     * @param  AlaaInvoiceGenerator  $invoiceGenerator
      *
      * @return ResponseFactory|Response
+     *
      * @throws Exception
      */
     public function submitCoupon(SubmitCouponRequest $request, AlaaInvoiceGenerator $invoiceGenerator)
@@ -220,18 +223,18 @@ class OrderController extends Controller
             $order = $request->get('openOrder');
         } else {
             $order = Order::Find($request->get('order_id'));
-            if (!isset($order)) {
+            if (! isset($order)) {
                 return response($this->makeErrorResponse(Response::HTTP_BAD_REQUEST, 'Invalid order'));
             }
         }
 
         Cache::tags(['order_'.$order->id])->flush();
 
-        if (!isset($coupon)) {
+        if (! isset($coupon)) {
             return response($this->makeErrorResponse(Response::HTTP_BAD_REQUEST, 'Invalid coupon'));
         }
 
-        if (!$this->canUserUseCoupon($coupon, $user)) {
+        if (! $this->canUserUseCoupon($coupon, $user)) {
             return response($this->makeErrorResponse(Response::HTTP_BAD_REQUEST,
                 'You are not the owner of this coupon'));
         }
@@ -245,6 +248,7 @@ class OrderController extends Controller
         $result = (new CouponSubmitter($order))->submit($coupon);
         if ($result === true) {
             $invoiceGenerator->generateOrderInvoice($order);
+
             return response([
                 $coupon,
                 'message' => 'Coupon attached successfully',
@@ -256,10 +260,9 @@ class OrderController extends Controller
 
     /** API Version 2
      *
-     * @param  SubmitCouponRequest  $request
-     * @param  AlaaInvoiceGenerator  $invoiceGenerator
      *
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function submitCouponV2(SubmitCouponRequest $request, AlaaInvoiceGenerator $invoiceGenerator)
@@ -268,7 +271,7 @@ class OrderController extends Controller
         $user = $request->user('api');
 
         $coupon = CouponRepo::findCouponByCode($request->get('code'));
-        if (!isset($coupon)) {
+        if (! isset($coupon)) {
             return myAbort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Invalid coupon');
         }
 
@@ -279,13 +282,13 @@ class OrderController extends Controller
             }
         }
 
-        if (!$this->canUserUseCoupon($coupon, $user)) {
+        if (! $this->canUserUseCoupon($coupon, $user)) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Your are not the owner');
         }
 
         $checkedCouponRequirement = $this->checkCouponRequirements($coupon, $user);
         $checkedCouponUnrequirement = $this->checkCouponUnrequirements($coupon, $user);
-        if (!$checkedCouponRequirement || !$checkedCouponUnrequirement) {
+        if (! $checkedCouponRequirement || ! $checkedCouponUnrequirement) {
             return response()->json([
                 'error' => [
                     'message' => 'شما محصولات پیش نیاز را خریداری نکرده اید',
@@ -293,12 +296,11 @@ class OrderController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-
         if ($request->has('openOrder')) {
             $order = $request->get('openOrder');
         } else {
             $order = Order::Find($request->get('order_id'));
-            if (!isset($order)) {
+            if (! isset($order)) {
                 return myAbort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Invalid order');
             }
         }
@@ -332,8 +334,6 @@ class OrderController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     *
      * @return ResponseFactory|Response
      */
     public function removeCoupon(Request $request)
@@ -346,7 +346,7 @@ class OrderController extends Controller
         }
 
         if (isset($order)) {
-            Cache::tags(['order_'.$order->id,])->flush();
+            Cache::tags(['order_'.$order->id])->flush();
 
             $coupon = $order->coupon;
             if (isset($coupon)) {
@@ -386,11 +386,8 @@ class OrderController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     *
-     * @param  AlaaInvoiceGenerator  $invoiceGenerator
-     *
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function removeCouponV2(Request $request, AlaaInvoiceGenerator $invoiceGenerator)
@@ -404,7 +401,7 @@ class OrderController extends Controller
         }
 
         if (isset($order)) {
-            Cache::tags(['order_'.$order->id,])->flush();
+            Cache::tags(['order_'.$order->id])->flush();
 
             $coupon = $order->coupon;
             if (isset($coupon)) {
@@ -456,7 +453,7 @@ class OrderController extends Controller
             $order = $request->get('openOrder');
         } else {
             $order = Order::Find($request->get('order_id'));
-            if (!isset($order)) {
+            if (! isset($order)) {
                 return myAbort(Response::HTTP_UNPROCESSABLE_ENTITY, 'Invalid order');
             }
         }
@@ -472,7 +469,7 @@ class OrderController extends Controller
         if ($result !== true) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Error on attaching referral code to order');
         }
-        $referralCode->update(['isAssigned' => 1,]);
+        $referralCode->update(['isAssigned' => 1]);
         $invoiceInfo = $invoiceGenerator->generateOrderInvoice($order);
         $priceInfo = $invoiceInfo['price'];
         if ($priceInfo['final'] < config('constants.REFERRAL_CODE_USING_MIN_PRICE')) {
@@ -503,7 +500,7 @@ class OrderController extends Controller
         }
 
         if (isset($order)) {
-            Cache::tags(['order_'.$order->id,])->flush();
+            Cache::tags(['order_'.$order->id])->flush();
 
             $referralCode = $order->referralCode;
             if (isset($referralCode)) {
@@ -546,9 +543,7 @@ class OrderController extends Controller
     /**
      * Makes a donate request
      *
-     * @param  DonateRequest  $request
      * @param  OrderproductController  $orderproductController
-     *
      * @return RedirectResponse
      */
     public function donateOrder(DonateRequest $request)
@@ -567,7 +562,7 @@ class OrderController extends Controller
             ]);
         }
 
-        Cache::tags(['order_'.$donateOrder->id,])->flush();
+        Cache::tags(['order_'.$donateOrder->id])->flush();
 
         $donateProduct = Product::FindOrFail(Product::CUSTOM_DONATE_PRODUCT);
 
@@ -600,7 +595,6 @@ class OrderController extends Controller
     /**
      * API Version 2
      *
-     * @param  DonateRequest  $request
      *
      * @return array
      */
@@ -623,7 +617,7 @@ class OrderController extends Controller
             ]);
         }
 
-        Cache::tags(['order_'.$donateOrder->id,])->flush();
+        Cache::tags(['order_'.$donateOrder->id])->flush();
 
         $donateProduct = Product::FindOrFail(Product::CUSTOM_DONATE_PRODUCT);
 
@@ -653,6 +647,7 @@ class OrderController extends Controller
         $paymentMethod = 'mellat';
         $device = $request->ajax() ? 'web' : 'android';
         $encryptedPostfix = encrypt(['user_id' => $user->id, 'order_id' => $donateOrder->id]);
+
         return [
             'data' => [
                 'url' => $this->getEncryptedUrl($paymentMethod, $device, $encryptedPostfix),
@@ -663,9 +658,7 @@ class OrderController extends Controller
     /**
      * Adds a product to intended order
      *
-     * @param  Request  $request
      * @param  Product  $product
-     *
      * @return ResponseFactory|JsonResponse|Response
      */
     public function addDonate(Request $request)
@@ -675,7 +668,7 @@ class OrderController extends Controller
             $restored = false;
             $user = $request->user();
             $openOrder = $user->getOpenOrderOrCreate();
-            Cache::tags(['order_'.$openOrder->id,])->flush();
+            Cache::tags(['order_'.$openOrder->id])->flush();
 
             $donate_5_hezar = Product::DONATE_PRODUCT_5_HEZAR;
             $deletedOrderproduct = $openOrder->orderproducts(config('constants.ORDER_PRODUCT_TYPE_DEFAULT'))
@@ -687,13 +680,13 @@ class OrderController extends Controller
                 $restored = true;
             }
 
-            if (!$restored) {
+            if (! $restored) {
                 $result = $this->new([
                     'product_id' => $donate_5_hezar,
                     'order_id' => $openOrder->id,
                     'withoutBon' => true,
                 ]);
-                if (!$result['status']) {
+                if (! $result['status']) {
                     //ToDo : change the output of the method called new() in OrderproductController then fix this
 
                     $text = Arr::get(Arr::get($result, 'message'), 0);
@@ -726,7 +719,7 @@ class OrderController extends Controller
         /** @var User $user */
         $user = $request->user();
         $openOrder = $user->getOpenOrderOrCreate();
-        Cache::tags(['order_'.$openOrder->id,])->flush();
+        Cache::tags(['order_'.$openOrder->id])->flush();
         $donate_5_hezar = Product::DONATE_PRODUCT_5_HEZAR;
         /** @var OrderproductCollection $orderproducts */
         $orderproducts = $openOrder->orderproducts(config('constants.ORDER_PRODUCT_TYPE_DEFAULT'))
@@ -762,9 +755,9 @@ class OrderController extends Controller
             return response()->json(['Product not found'], Response::HTTP_BAD_REQUEST);
         }
 
-//        if (!$products->enable) {
-//            return response()->json(['Product is not enable'], Response::HTTP_BAD_REQUEST);
-//        }
+        //        if (!$products->enable) {
+        //            return response()->json(['Product is not enable'], Response::HTTP_BAD_REQUEST);
+        //        }
 
         if ($user->userHasAnyOfTheseProducts2($productIds)) {
             return response()->json(['success']);
@@ -777,20 +770,21 @@ class OrderController extends Controller
             $order = OrderRepo::createBasicCompletedOrder($user->id, config('constants.PAYMENT_STATUS_PAID'), 0, 0);
             OrderproductRepo::createGiftOrderproduct($order->id, $productId, 0);
 
-//            if (in_array($productId, array_keys(_3aExamNotification2::VALID_PRODUCTS))) {
-//                $user->notify(new _3aExamNotification2($productId));
-//            }
+            //            if (in_array($productId, array_keys(_3aExamNotification2::VALID_PRODUCTS))) {
+            //                $user->notify(new _3aExamNotification2($productId));
+            //            }
             Log::channel('register3AParticipantsErrors')->debug("User {$user->id} got this exam for free");
             CacheFlush::flushAssetCache($user);
+
             return response()->json(['success']);
         }
 
-        if (!empty(array_intersect($productIds, [952, 953, 954, 955]))) {
+        if (! empty(array_intersect($productIds, [952, 953, 954, 955]))) {
             return response()->json(['You are not allowed to register in this exam'], Response::HTTP_FORBIDDEN);
         }
 
         $open3aOrder = $user->orders()->where('orderstatus_id', config('constants.ORDER_STATUS_OPEN_3A'))->first();
-        if (!isset($open3aOrder)) {
+        if (! isset($open3aOrder)) {
             $open3aOrder = Order::create([
                 'orderstatus_id' => config('constants.ORDER_STATUS_OPEN_3A'),
                 'paymentstatus_id' => config('constants.PAYMENT_STATUS_UNPAID'),
@@ -798,7 +792,7 @@ class OrderController extends Controller
             ]);
         }
 
-        Cache::tags(['order_'.$open3aOrder->id,])->flush();
+        Cache::tags(['order_'.$open3aOrder->id])->flush();
 
         foreach ($open3aOrder->orderproducts as $oldOrderproduct) {
             $oldOrderproduct->delete();
@@ -821,6 +815,7 @@ class OrderController extends Controller
 
         CacheFlush::flushAssetCache($user);
         Log::channel('register3AParticipantsErrors')->debug("User {$user->id} has been redirected to gateway");
+
         return response()->json([
             'data' => [
                 'redirect_url' => $this->getEncryptedUrl('saman2', 'web',
@@ -838,7 +833,7 @@ class OrderController extends Controller
                 $user->userHasAnyOfTheseProducts(array_keys(Product::ALL_ABRISHAM_PRO_PRODUCTS));
             $hasTaftan =
                 $user->userHasAnyOfTheseProducts([
-                    Product::TAFTAN1401_TAJROBI_PACKAGE, Product::TAFTAN1401_RIYAZI_PACKAGE
+                    Product::TAFTAN1401_TAJROBI_PACKAGE, Product::TAFTAN1401_RIYAZI_PACKAGE,
                 ]);
             $isMianTerm1Jambandi =
                 in_array($product->product_id, [
@@ -847,13 +842,13 @@ class OrderController extends Controller
                     Product::_3A_JAMBANDI_YAZDAHOM_ENSANI_MIAN_TERM1_1401,
                     Product::_3A_JAMBANDI_DAVAZDAHOM_TAJROBI_MIAN_TERM1_1401,
                     Product::_3A_JAMBANDI_DAVAZDAHOM_RIYAZI_MIAN_TERM1_1401,
-                    Product::_3A_JAMBANDI_DAVAZDAHOM_ENSANI_MIAN_TERM1_1401
+                    Product::_3A_JAMBANDI_DAVAZDAHOM_ENSANI_MIAN_TERM1_1401,
                 ]);
             $isTem1Jambandi =
                 in_array($product->product_id, [
                     Product::_3A_JAMBANDI_DAVAZDAHOM_RIYAZI_TERM1_1401,
                     Product::_3A_JAMBANDI_DAVAZDAHOM_ENSANI_TERM1_1401,
-                    Product::_3A_JAMBANDI_DAVAZDAHOM_TAJROBI_TERM1_1401
+                    Product::_3A_JAMBANDI_DAVAZDAHOM_TAJROBI_TERM1_1401,
                 ]);
             $isJambandiPaye = in_array($product->product_id, [
                 Product::_3A_DAVAZDAHOM_ENSANI_JAMBADNI_PAYE_BA_JOGHRAFI_DAHOM,
@@ -870,16 +865,16 @@ class OrderController extends Controller
                     Product::_3A_JAMBANDI_YAZDAHOM_TAJROBI_MIAN_TERM2_1401,
                     Product::_3A_JAMBANDI_DAVAZDAHOM_TAJROBI_MIAN_TERM1_1401,
                     Product::_3A_JAMBANDI_DAVAZDAHOM_RIYAZI_MIAN_TERM1_1401,
-                    Product::_3A_JAMBANDI_DAVAZDAHOM_ENSANI_MIAN_TERM1_1401
+                    Product::_3A_JAMBANDI_DAVAZDAHOM_ENSANI_MIAN_TERM1_1401,
                 ]);
             $isJambandiDahomYazdahom =
                 in_array($product->product_id, [
                     Product::_3A_DAVAZDAHOM_RIYAZI_JAMBANDI_DAHOM_VA_YAZDAHOM,
                     Product::_3A_DAVAZDAHOM_ENSANI_JAMBANDI_DAHOM_VA_YAZDAHOM,
                     Product::_3A_DAVAZDAHOM_TAJROBI_JAMBANDI_DAHOM_VA_YAZDAHOM, Product::TAFTAN1401_RIYAZI_PACKAGE,
-                    Product::TAFTAN1401_TAJROBI_PACKAGE
+                    Product::TAFTAN1401_TAJROBI_PACKAGE,
                 ]);
-            $isJambandiOrdibehesht1401 = in_array($product->product_id, [680, 681, 682, 673, 672, 671,]);
+            $isJambandiOrdibehesht1401 = in_array($product->product_id, [680, 681, 682, 673, 672, 671]);
             $isJambandiKhordad1401 = in_array($product->product_id, [730, 729, 728, 679, 678, 677, 676, 675, 674]);
             $isTaaiSath = in_array($product->product_id, [952, 953, 954, 955]);
 
@@ -902,6 +897,7 @@ class OrderController extends Controller
                 break;
             }
         }
+
         return $foundProduct;
     }
 
@@ -917,11 +913,11 @@ class OrderController extends Controller
         /** @var Collection $products */
         $products = ProductRepository::getProductsById([Arr::get($data, 'products')])->get();
         /** @var Product $product */
-        if (!$products->first()->isFree() && $products->first()->basePrice != 0) {
+        if (! $products->first()->isFree() && $products->first()->basePrice != 0) {
             return myAbort(Response::HTTP_FORBIDDEN, 'محصول انتخاب شده رایگان نمی باشد');
         }
 
-        if (!$products->first()->isEnableToPurchase()) {
+        if (! $products->first()->isEnableToPurchase()) {
             return myAbort(Response::HTTP_FORBIDDEN, 'محصول انتخاب شده فعال نمی باشد');
         }
 
@@ -947,6 +943,7 @@ class OrderController extends Controller
         if ($user->id == $order->user_id) {
             return new \App\Http\Resources\Order($order);
         }
+
         return response()->json(myAbort(401, 'unauthorized'));
     }
 
@@ -956,11 +953,10 @@ class OrderController extends Controller
 
         $product = Product::findOrFail($request->get('subscription_id'));
 
-
         if ($response = $product->validateProduct()) {
             return response()->json(['message' => $response], Response::HTTP_BAD_REQUEST);
         }
-        if (!$product->isFree()) {
+        if (! $product->isFree()) {
             return response()->json(['message' => 'اشتراک رایگان نیست'], Response::HTTP_BAD_REQUEST);
         }
         Cache::tags(['userAsset', 'userAsset_'.$user->id])->flush();
@@ -997,6 +993,7 @@ class OrderController extends Controller
 
         } catch (Exception $exception) {
             DB::rollBack();
+
             return response()->json([
                 'error' => 'خطایی رخ داده است',
             ], HTTPResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -1016,6 +1013,7 @@ class OrderController extends Controller
         if ($orderProduct) {
             $orderProductsService->destroyOrderProduct($orderProduct);
         }
+
         return response()->json([
             'status' => 'product deleted from cart successfully',
         ]);
@@ -1075,12 +1073,12 @@ class OrderController extends Controller
             $request->merge(['order_id' => $order->id]);
             $transactionRequest = $request->only([
                 'order_id', 'cost', 'traceNumber', 'referenceNumber', 'paycheckNumber', 'managerComment',
-                'paymentmethod_id', 'transactionstatus_id'
+                'paymentmethod_id', 'transactionstatus_id',
             ]);
             $transactionController->store($transactionRequest);
         }
 
-        if (!$done) {
+        if (! $done) {
             return response()->json(['message' => 'No operation was performed'], HTTPResponse::HTTP_BAD_REQUEST);
         }
 
@@ -1126,8 +1124,8 @@ class OrderController extends Controller
         $oldOrder = Order::FindOrFail($orderId);
 
         if ($orderproducts->count() >= $oldOrder->orderproducts->where('orderproducttype_id', '<>',
-                config('constants.ORDER_PRODUCT_GIFT'))
-                ->count()) {
+            config('constants.ORDER_PRODUCT_GIFT'))
+            ->count()) {
             return response()->json([
                 'message' => 'شما نمی توانید سفارش را خالی کنید',
             ], Response::HTTP_SERVICE_UNAVAILABLE);
@@ -1135,7 +1133,7 @@ class OrderController extends Controller
 
         $oldOrderBackup = $oldOrder->replicate();
         $newOrder = $oldOrder->replicate();
-        if (!$newOrder->save()) {
+        if (! $newOrder->save()) {
             return response()->json([
                 'message' => 'خطا درایجاد سفارش جدید',
             ], Response::HTTP_SERVICE_UNAVAILABLE);
@@ -1161,7 +1159,7 @@ class OrderController extends Controller
         $oldOrder->cost = $orderCost['rawCostWithDiscount'];
         $oldOrder->costwithoutcoupon = $orderCost['rawCostWithoutDiscount'];
         $oldOrderDone = $oldOrder->updateWithoutTimestamp();
-        if (!$oldOrderDone) {
+        if (! $oldOrderDone) {
             return response()->json([
                 'message' => 'خطا در آپدیت اطلاعات سفارش قدیم',
             ], HTTPResponse::HTTP_SERVICE_UNAVAILABLE);
@@ -1247,7 +1245,6 @@ class OrderController extends Controller
             /**
              * End
              */
-
             if ($newOrder->totalPaidCost() >= $newOrder->totalCost()) {
                 $newOrder->paymentstatus_id = config('constants.PAYMENT_STATUS_PAID');
                 $newOrder->update();
@@ -1284,7 +1281,7 @@ class OrderController extends Controller
             /** @var User $user */
             $user = $request->user();
             $openOrder = $user->getOpenOrderOrCreate();
-            Cache::tags(['order_'.$openOrder->id,])->flush();
+            Cache::tags(['order_'.$openOrder->id])->flush();
 
             $donate_5_hezar = Product::DONATE_PRODUCT_5_HEZAR;
             $createFlag = true;
@@ -1310,7 +1307,7 @@ class OrderController extends Controller
                 $data['order_id'] = $openOrder->id;
                 $data['withoutBon'] = true;
                 $result = $this->new($data);
-                if (!$result['status']) {
+                if (! $result['status']) {
                     return myAbort(HTTPResponse::HTTP_LOCKED, 'Could not add donate to order.');
                 }
 
@@ -1379,7 +1376,7 @@ class OrderController extends Controller
             'افزودن محصولات زیر با خطا مواجه شد: <br>'.$this->unSuccsessMessage) : null;
         $response = [
             'success' => $successMessage,
-            'unsuccess' => $unSuccessMessage
+            'unsuccess' => $unSuccessMessage,
         ];
 
         return response()->json($response);
@@ -1392,7 +1389,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'شما قبلا آزمون را خریداری کرده اید'], 200);
         }
 
-        if (!($order = OrderRepo::generalOrderSelectionWithUser(Product::ARASH_PRODUCTS_ARRAY, [$user->id])->first())) {
+        if (! ($order = OrderRepo::generalOrderSelectionWithUser(Product::ARASH_PRODUCTS_ARRAY, [$user->id])->first())) {
             return response()->json(['message' => 'شما آرش خریداری نکرده اید'], 200);
         }
 
@@ -1412,12 +1409,12 @@ class OrderController extends Controller
         $newOrder = $request->user()->getOpenOrderOrCreate()->load('orderproducts');
         $existProductInOrder = $newOrder->orderproducts()->with('product')->get();
         foreach ($transformProducts as $transformProduct) {
-            if (!$existProductInOrder->contains('product.id', $transformProduct->id)) {
+            if (! $existProductInOrder->contains('product.id', $transformProduct->id)) {
                 OrderproductRepo::createBasicOrderproduct($newOrder->id, $transformProduct->id,
                     $transformProduct->basePrice);
             }
         }
+
         return response()->json(['message' => 'Upgrade successful'], 200);
     }
 }
-

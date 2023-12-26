@@ -375,12 +375,6 @@ Route::prefix('v2')->group(function () {
     Route::post('/exam/store',
         [ExamResultsController::class, 'store'])->name('api.v2.store.exam')->middleware('3aIpAccess');
 
-    Route::group(['prefix' => 'checkout'], function () {
-        Route::get('review', [OrderController::class, 'checkoutReviewV2'])->name('api.v2.checkout.review');
-    });
-    Route::get('/orderWithTransaction/{order}',
-        [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
-
     // Event result routes
     Route::resource('event-result', '\\'.EventResultController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('event-result/event/{event}',

@@ -19,6 +19,12 @@ Route::prefix('v2')->group(function () {
         Route::delete('removeDonate', [OrderController::class, 'removeDonate']);
     });
 
+    Route::group(['prefix' => 'checkout'], function () {
+        Route::get('review', [OrderController::class, 'checkoutReviewV2'])->name('api.v2.checkout.review');
+    });
+    Route::get('/orderWithTransaction/{order}',
+        [App\Http\Controllers\Api\OrderController::class, 'show'])->name('api.v2.orderWithTransaction');
+
     // Payment redirect link
     Route::any('getPaymentRedirectEncryptedLink',
         '\\'.GetPaymentRedirectEncryptedLink::class)->name('api.v2.payment.getEncryptedLink');
