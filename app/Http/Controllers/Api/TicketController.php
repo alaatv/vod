@@ -51,37 +51,24 @@ class TicketController extends Controller
         $this->callMiddlewares($authException);
     }
 
-    /**
-     *
-     * @return array
-     */
     private function getAuthExceptionArray(): array
     {
         return [];
     }
 
-    /**
-     * @param  array  $authException
-     */
     private function callMiddlewares(array $authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
-        $this->middleware('permission:'.config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
-        $this->middleware('permission:'.config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
-        $this->middleware('permission:'.config('constants.SEND_TICKET_STATUS_NOTICE'),
+        $this->middleware('permission:' . config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
+        $this->middleware('permission:' . config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
+        $this->middleware('permission:' . config('constants.SEND_TICKET_STATUS_NOTICE'),
             ['only' => 'sendTicketStatusChangeNotice']);
-        $this->middleware('permission:'.config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
-//        $this->middleware('permission:' . config('constants.CREATE_TICKET'), ['only' => 'create']);
+        $this->middleware('permission:' . config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
+        //        $this->middleware('permission:' . config('constants.CREATE_TICKET'), ['only' => 'create']);
     }
 
     /**
      * Display a listing of the resource.
-     *
-     * @param  ListTicketRequest  $request
-     *
-     * @param  TicketSearch  $ticketSearch
-     *
-     * @return JsonResponse
      */
     public function index(ListTicketRequest $request, TicketSearch $ticketSearch): JsonResponse
     {
@@ -122,9 +109,7 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  InsertTicketRequest  $request
      *
-     * @return JsonResponse
      * @throws AuthorizationException
      */
     public function store(InsertTicketRequest $request): JsonResponse
@@ -132,7 +117,7 @@ class TicketController extends Controller
         $this->authorize('create', [Ticket::class, $request->get('department_id')]);
         $ticketUserId = $request->user_id;
         $authUser = $request->user();
-        $isMessagePrivate = (bool) $request->get('is_private', false);
+        $isMessagePrivate = (bool)$request->get('is_private', false);
         $request->offsetSet('tags', convertTagStringToArray($request->get('tags')));
         try {
             $ticket = TicketRepo::new($ticketUserId, $request->get('title'), TicketStatus::DEFAULT_STATUS,
@@ -167,11 +152,6 @@ class TicketController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  Request  $request
-     * @param  Ticket  $ticket
-     *
-     * @return JsonResponse
      */
     public function show(Request $request, Ticket $ticket): JsonResponse
     {
@@ -199,26 +179,20 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Ticket  $ticket
      *
-     * @return JsonResponse
      * @throws Exception
      */
     public function destroy(Ticket $ticket): JsonResponse
     {
         if ($ticket->delete()) {
-            Cache::tags(['ticket_'.$ticket->id, 'ticket_search'])->flush();
+            Cache::tags(['ticket_' . $ticket->id, 'ticket_search'])->flush();
+
             return response()->json(['message' => 'تیکت با موفقیت حذف شد']);
         }
 
         return response()->json(['خطای پایگاه داده'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * @param  Ticket  $ticket
-     *
-     * @return JsonResponse
-     */
     public function sendTicketStatusChangeNotice(Ticket $ticket): JsonResponse
     {
         $user = $ticket->user;
@@ -263,22 +237,16 @@ class TicketController extends Controller
         $ticket->rate = $request->get('rate');
         try {
             $ticket->update();
-            Cache::tags(['ticket_'.$ticket->id])->flush();
+            Cache::tags(['ticket_' . $ticket->id])->flush();
         } catch (QueryException) {
             return response()->json(['message' => 'خطا در پایگاه داده'], Response::HTTP_SERVICE_UNAVAILABLE);
         }
-
 
         return response()->json(['message' => 'تیکت با موفقیت امتیازدهی شد']);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  EditTicketRequest  $request
-     * @param  Ticket  $ticket
-     *
-     * @return JsonResponse
      */
     public function update(EditTicketRequest $request, Ticket $ticket): JsonResponse
     {
