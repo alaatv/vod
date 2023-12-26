@@ -83,20 +83,6 @@ class Order extends BaseModel implements GiveGift
     */
     public Carbon|false $completed_at;
 
-    /**
-     * @var mixed|string|null
-     */
-    public mixed $customerDescription;
-
-    /**
-     * @var Repository|\Illuminate\Contracts\Foundation\Application|Application|mixed|string
-     */
-    public mixed $paymentstatus_id;
-
-    public mixed $user;
-
-    public mixed $id;
-
     protected $table = 'orders';
 
     protected $cascadeDeletes = [
@@ -670,7 +656,7 @@ class Order extends BaseModel implements GiveGift
      * @param  string  $paymentStatus
      * @return void
      */
-    public function close($paymentStatus = null, int $orderStatus = null)
+    public function close($paymentStatus = null, ?int $orderStatus = null)
     {
         if (is_null($orderStatus)) {
             // You can't put config() in method signature

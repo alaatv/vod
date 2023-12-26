@@ -939,7 +939,6 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $user = auth('api')->user();
-
         if ($user->id == $order->user_id) {
             return new \App\Http\Resources\Order($order);
         }

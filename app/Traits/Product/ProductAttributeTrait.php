@@ -8,7 +8,6 @@
 
 namespace App\Traits\Product;
 
-
 use App\Classes\Uploader\Uploader;
 use App\Models\Attribute;
 use App\Models\Attributetype;
@@ -21,8 +20,6 @@ use Illuminate\Support\Facades\Cache;
 trait ProductAttributeTrait
 {
     /**
-     * @param  array  $attributesId
-     *
      * @return mixed
      */
     public function getAttributesValueByIds(array $attributesId)
@@ -55,7 +52,7 @@ trait ProductAttributeTrait
 
     public function attributevalueTree($attributeType = null)
     {
-        $key = 'product:attributevalueTree:'.$attributeType.$this->cacheKey();
+        $key = 'product:attributevalueTree:' . $attributeType . $this->cacheKey();
 
         return Cache::tags(['product'])
             ->remember($key, config('constants.CACHE_60'), function () use ($attributeType) {
@@ -93,9 +90,6 @@ trait ProductAttributeTrait
             });
     }
 
-    /**
-     * @return Collection|null
-     */
     public function getAttributesAttribute(): ?Collection
     {
         return $this->getAllAttributes();
@@ -103,15 +97,13 @@ trait ProductAttributeTrait
 
     /**
      * Gets product's all attributes
-     *
-     * @return Collection|null
      */
     protected function getAllAttributes(): ?Collection
     {
         $product = $this;
-        $key = 'product:getAllAttributes:'.$product->id;
+        $key = 'product:getAllAttributes:' . $product->id;
 
-        return Cache::tags(['product', 'attribute', 'product_'.$this->id, 'product_'.$this->id.'_attributes'])
+        return Cache::tags(['product', 'attribute', 'product_' . $this->id, 'product_' . $this->id . '_attributes'])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
 
                 $selectCollection = collect();
@@ -181,15 +173,15 @@ trait ProductAttributeTrait
                                 foreach ($attributevalues as $attributevalue) {
                                     $attributevalueIndex = $attributevalue->name;
                                     if (isset($attributevalue->pivot->description) && strlen($attributevalue->pivot->description) > 0) {
-                                        $attributevalueIndex .= '( '.$attributevalue->pivot->description.' )';
+                                        $attributevalueIndex .= '( ' . $attributevalue->pivot->description . ' )';
                                     }
 
                                     if (isset($attributevalue->pivot->extraCost)) {
                                         if ($attributevalue->pivot->extraCost > 0) {
-                                            $attributevalueIndex .= '(+'.number_format($attributevalue->pivot->extraCost).' تومان)';
+                                            $attributevalueIndex .= '(+' . number_format($attributevalue->pivot->extraCost) . ' تومان)';
                                         }
                                         if ($attributevalue->pivot->extraCost < 0) {
-                                            $attributevalueIndex .= '(-'.number_format($attributevalue->pivot->extraCost).' تومان)';
+                                            $attributevalueIndex .= '(-' . number_format($attributevalue->pivot->extraCost) . ' تومان)';
                                         }
                                     }
 
@@ -215,7 +207,7 @@ trait ProductAttributeTrait
                                         foreach ($attributevalues as $attributevalue) {
                                             $attributevalueIndex = $attributevalue->name;
                                             if (isset($attributevalue->pivot->description) && strlen($attributevalue->pivot->description) > 0) {
-                                                $attributevalueIndex .= '( '.$attributevalue->pivot->description.' )';
+                                                $attributevalueIndex .= '( ' . $attributevalue->pivot->description . ' )';
                                             }
 
                                             $attributevalueExtraCost = '';
@@ -231,24 +223,25 @@ trait ProductAttributeTrait
                                                     'type' => $attributeType->name,
                                                     'productType' => $product->producttype->name,
                                                 ]);
+
                                                 continue;
                                             }
                                             if ($attributevalue->pivot->extraCost > 0) {
                                                 $attributevalueExtraCost =
-                                                    '+'.number_format($attributevalue->pivot->extraCost).' تومان';
+                                                    '+' . number_format($attributevalue->pivot->extraCost) . ' تومان';
                                                 if ($product->discount > 0) {
                                                     $attributevalueExtraCostWithDiscount =
-                                                        number_format('+'.$attributevalue->pivot->extraCost * (1 - ($product->discount / 100))).' تومان';
+                                                        number_format('+' . $attributevalue->pivot->extraCost * (1 - ($product->discount / 100))) . ' تومان';
                                                 } else {
                                                     $attributevalueExtraCostWithDiscount = 0;
                                                 }
                                             } else {
                                                 if ($attributevalue->pivot->extraCost < 0) {
                                                     $attributevalueExtraCost =
-                                                        '-'.number_format($attributevalue->pivot->extraCost).' تومان';
+                                                        '-' . number_format($attributevalue->pivot->extraCost) . ' تومان';
                                                     if ($product->discount > 0) {
                                                         $attributevalueExtraCostWithDiscount =
-                                                            number_format('-'.$attributevalue->pivot->extraCost * (1 - ($product->discount / 100))).' تومان';
+                                                            number_format('-' . $attributevalue->pivot->extraCost * (1 - ($product->discount / 100))) . ' تومان';
                                                     } else {
                                                         $attributevalueExtraCostWithDiscount = 0;
                                                     }
@@ -297,12 +290,12 @@ trait ProductAttributeTrait
 
                 ];
 
-//            return $productAttributes;
+                //            return $productAttributes;
                 $attributesResult = collect();
                 foreach ($productAttributes as $key => $values) {
-//                dump([$key,$values]);
+                    //                dump([$key,$values]);
                     foreach ($values as $attributes) {
-//                    dump($attributes);
+                        //                    dump($attributes);
                         $data = collect();
                         foreach ($attributes as $item) {
                             $type = Arr::get($item, 'type');
@@ -334,7 +327,7 @@ trait ProductAttributeTrait
         foreach ($attributevalues as $attributevalue) {
             $attributevalueIndex = $attributevalue->name;
             if (isset($attributevalue->pivot->description) && strlen($attributevalue->pivot->description) > 0) {
-                $attributevalueIndex .= '( '.$attributevalue->pivot->description.' )';
+                $attributevalueIndex .= '( ' . $attributevalue->pivot->description . ' )';
             }
 
             if (!isset($attributevalue->pivot->extraCost)) {
@@ -347,17 +340,17 @@ trait ProductAttributeTrait
                         'type' => $type,
                     ],
                 ]);
-//            $result = Arr::add($result, $attributevalue->id, $attributevalueIndex);
+
+                //            $result = Arr::add($result, $attributevalue->id, $attributevalueIndex);
                 continue;
             }
             if ($attributevalue->pivot->extraCost > 0) {
-                $attributevalueIndex .= '(+'.number_format($attributevalue->pivot->extraCost).' تومان)';
+                $attributevalueIndex .= '(+' . number_format($attributevalue->pivot->extraCost) . ' تومان)';
             } else {
                 if ($attributevalue->pivot->extraCost < 0) {
-                    $attributevalueIndex .= '(-'.number_format($attributevalue->pivot->extraCost).' تومان)';
+                    $attributevalueIndex .= '(-' . number_format($attributevalue->pivot->extraCost) . ' تومان)';
                 }
             }
-
 
             $result = array_merge($result, [
                 $attributevalue->id => [
@@ -367,7 +360,7 @@ trait ProductAttributeTrait
                     'type' => $type,
                 ],
             ]);
-//            $result = Arr::add($result, $attributevalue->id, $attributevalueIndex);
+            //            $result = Arr::add($result, $attributevalue->id, $attributevalueIndex);
         }
     }
 
@@ -376,7 +369,8 @@ trait ProductAttributeTrait
         &$attribute,
         &$attributeType,
         Collection &$simpleInfoAttributes
-    ) {
+    )
+    {
         $infoAttributeArray = [];
         foreach ($attributevalues as $attributevalue) {
 
@@ -396,11 +390,11 @@ trait ProductAttributeTrait
     public function getInfoAttributesAttribute()
     {
         $product = $this;
-        $key = 'product:getInfoAttributes:'.$product->id;
+        $key = 'product:getInfoAttributes:' . $product->id;
 
         return Cache::tags([
-            'product', 'attribute', 'infoAttributes', 'product_'.$this->id, 'product_'.$this->id.'_attributes',
-            'product_'.$this->id.'_infoAttributes'
+            'product', 'attribute', 'infoAttributes', 'product_' . $this->id, 'product_' . $this->id . '_attributes',
+            'product_' . $this->id . '_infoAttributes',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 $attributes = [
@@ -437,6 +431,7 @@ trait ProductAttributeTrait
                     $attributes[$attributeName][] = $attributevalue->name;
 
                 }
+
                 return $attributes;
             });
     }
@@ -444,11 +439,11 @@ trait ProductAttributeTrait
     public function getDurationAttributeAttribute()
     {
         $product = $this;
-        $key = 'product:durationAttribute:'.$product->id;
+        $key = 'product:durationAttribute:' . $product->id;
 
         return Cache::tags([
-            'product', 'attribute', 'infoAttributes', 'product_'.$this->id, 'product_'.$this->id.'_attributes',
-            'product_'.$this->id.'_infoAttributes'
+            'product', 'attribute', 'infoAttributes', 'product_' . $this->id, 'product_' . $this->id . '_attributes',
+            'product_' . $this->id . '_infoAttributes',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 $attributes = [
@@ -468,6 +463,7 @@ trait ProductAttributeTrait
                 foreach ($attributevalues as $attributevalue) {
                     $attributes['duration'][] = $attributevalue->name;
                 }
+
                 return $attributes;
             });
     }
@@ -475,11 +471,11 @@ trait ProductAttributeTrait
     public function getExtraAttributesAttribute()
     {
         $product = $this;
-        $key = 'product:getExtraAttributes:'.$product->id;
+        $key = 'product:getExtraAttributes:' . $product->id;
 
         return Cache::tags([
-            'product', 'attribute', 'extraAttributes', 'product_'.$this->id, 'product_'.$this->id.'_attributes',
-            'product_'.$this->id.'_extra!ttributes'
+            'product', 'attribute', 'extraAttributes', 'product_' . $this->id, 'product_' . $this->id . '_attributes',
+            'product_' . $this->id . '_extra!ttributes',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 return $this->filterAttribute($product, config('constants.ATTRIBUTE_TYPE_EXTRA'));
@@ -497,17 +493,18 @@ trait ProductAttributeTrait
                 $attributes[$attribute->name][] = $attributevalue->name;
             }
         }
+
         return $attributes;
     }
 
     public function getSubscriptionAttributesAttribute()
     {
         $product = $this;
-        $key = 'product:getSubscriptionAttributes:'.$product->id;
+        $key = 'product:getSubscriptionAttributes:' . $product->id;
 
         return Cache::tags([
-            'product', 'attribute', 'subscriptionAttributes', 'product_'.$this->id, 'product_'.$this->id.'_attributes',
-            'product_'.$this->id.'_subscription!ttributes'
+            'product', 'attribute', 'subscriptionAttributes', 'product_' . $this->id, 'product_' . $this->id . '_attributes',
+            'product_' . $this->id . '_subscription!ttributes',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($product) {
                 return $this->filterAttribute($product, config('constants.ATTRIBUTE_TYPE_SUBSCRIPTION'));
