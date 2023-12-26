@@ -1055,7 +1055,6 @@ class Order extends BaseModel implements GiveGift
         $order = $this;
         $key = 'order:orderproducts:'.$order->cacheKey();
 
-        dd($this->id);
         $this->Orderproducts_cache = Cache::tags([
             'order',
             'orderproduct',
