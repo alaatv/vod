@@ -74,6 +74,6 @@ return [
     ],
 
     'forrest' => [
-        'server' => env('FORREST_SERVER')
-    ]
+        'server' => env('FORREST_SERVER'),
+    ],
 ];
