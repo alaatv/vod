@@ -11,6 +11,7 @@ use App\Http\Resources\ContentInSet;
 use App\Http\Resources\ResourceCollection;
 use App\Models\Content;
 use App\Models\Contentset;
+use App\Models\Source;
 use App\Services\ContentSetService;
 use App\Traits\SetCommon;
 use Illuminate\Http\JsonResponse;
@@ -26,19 +27,16 @@ class SetController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.LIST_CONTENT_SET_ACCESS'), ['only' => ['index',],]);
-        $this->middleware('permission:'.config('constants.SHOW_CONTENT_SET_ACCESS'), ['only' => ['show',],]);
-        $this->middleware('permission:'.config('constants.INSERT_CONTENT_SET_ACCESS'), ['only' => ['store',],]);
-        $this->middleware('permission:'.config('constants.INSERT_EDUCATIONAL_CONTENT_ACCESS'),
-            ['only' => ['attachContents',],]);
-        $this->middleware('permission:'.config('constants.LIST_CONTENTS_OF_CONTENT_SET_ACCESS'),
-            ['only' => ['contents',],]);
+        //        $this->middleware('permission:'.config('constants.LIST_CONTENT_SET_ACCESS'), ['only' => ['index',],]);
+        //        $this->middleware('permission:'.config('constants.SHOW_CONTENT_SET_ACCESS'), ['only' => ['show',],]);
+        //        $this->middleware('permission:'.config('constants.INSERT_CONTENT_SET_ACCESS'), ['only' => ['store',],]);
+        //        $this->middleware('permission:'.config('constants.INSERT_EDUCATIONAL_CONTENT_ACCESS'),
+        //            ['only' => ['attachContents',],]);
+        //        $this->middleware('permission:'.config('constants.LIST_CONTENTS_OF_CONTENT_SET_ACCESS'),
+        //            ['only' => ['contents',],]);
     }
 
-
     /**
-     * @param  Request  $request
-     * @param  ContentsetSearch  $setSearch
      * @return ResourceCollection
      */
     public function index(Request $request, ContentsetSearch $setSearch)
@@ -64,7 +62,7 @@ class SetController extends Controller
     {
         $contentSet = new Contentset();
         $contentSetService->fillContentSet($request->all(), $contentSet);
-        if (!$contentSet->save()) {
+        if (! $contentSet->save()) {
             return response()->json(['error' => 'خطای پایگاه داده'], 500);
         }
 
@@ -82,10 +80,10 @@ class SetController extends Controller
         return response()->json(['message' => 'دسته با موفقیت درج شد . شماره دسته : '.$contentSet->id]);
     }
 
-
     public function attachContents(AttachContentsRequest $request, Contentset $contentSet)
     {
         Content::whereIn('id', $request->get('contents'))->update(['contentset_id' => $contentSet->id]);
+
         return response()->json(['message' => 'تغیرات با موفقیت صورت گرفت.']);
     }
 
@@ -109,14 +107,15 @@ class SetController extends Controller
         return response()->json([
             'data' => [
                 'id' => $contentSet->id,
-                'message' => 'دسته با موفقیت ویرایش شد . شماره دسته : '.$contentSet->id
-            ]
+                'message' => 'دسته با موفقیت ویرایش شد . شماره دسته : '.$contentSet->id,
+            ],
         ]);
     }
 
     public function destroy(Contentset $contentset): JsonResponse
     {
         $contentset->delete();
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -124,11 +123,26 @@ class SetController extends Controller
     {
         $sumVideoContentDuration = secondsToHumanFormat($this->contentSetVideoContentsStatistics($set)['total_seconds']);
         $contents = optional($set->contents)->sortBy('order');
+
         return response()->json([
             'data' => [
                 'sumVideoContentDuration' => $sumVideoContentDuration,
                 'contents' => ContentInSet::collection($contents),
             ],
         ]);
+    }
+
+    public function edit(Contentset $set)
+    {
+        $setProducts = $set->products()->get();
+        $products = $this->makeProductCollection()->whereNotIn('id', $setProducts->pluck('id'));
+        $sources = Source::all()->pluck('title', 'id')->toArray();
+        $setSources = $set->sources->pluck('id')->toArray();
+
+        $redirectCodes = config('constants.REDIRECT_HTTP_RESPONSE_TYPES');
+        $redirectUrl = $set->redirectUrl;
+
+        return response()->json('set.edit', compact('set', 'setProducts', 'products', 'sources', 'setSources',
+            'redirectCodes', 'redirectUrl'));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Classes\Search\ContentsetSearch;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttachProductsToSetRequest;
+use App\Http\Requests\SetBulkActivateRequest;
 use App\Http\Resources\ContentOfSet;
 use App\Http\Resources\SetInIndex;
 use App\Http\Resources\SetWithContents;
@@ -26,14 +27,14 @@ class SetController extends Controller
 {
     public function showV2(Request $request, Contentset $set)
     {
-        if (!isset($set->redirectUrl)) {
+        if (! isset($set->redirectUrl)) {
             return new SetWithoutPaginationV2($set);
         }
         $redirectUrl = $set->redirectUrl;
+
         return redirect(convertRedirectUrlToApiVersion($redirectUrl['url'], '2'),
             $redirectUrl['code'], $request->headers->all());
     }
-
 
     public function showWithContents(Request $request, Contentset $set)
     {
@@ -50,10 +51,6 @@ class SetController extends Controller
         return SetInIndex::collection($setResult);
     }
 
-    /**
-     * @param  Request  $request
-     * @param  Contentset  $set
-     */
     public function contents(Request $request, Contentset $set)
     {
         return ContentOfSet::collection($set->getActiveContents2());
@@ -65,6 +62,7 @@ class SetController extends Controller
         $links = $contents->map(function ($contentVideo) {
             return $contentVideo->url;
         })->all();
+
         return response()->json($links, 200);
     }
 
@@ -76,7 +74,7 @@ class SetController extends Controller
         $responseData = [
             'set' => $set,
             'contents' => $contents,
-            'sumVideoContentDuration' => $sumVideoContentDuration
+            'sumVideoContentDuration' => $sumVideoContentDuration,
         ];
 
         return response()->json($responseData, 200);
@@ -84,19 +82,21 @@ class SetController extends Controller
 
     public function transferToDana(Request $request, Contentset $set)
     {
-        if (!$set->isActive()) {
+        if (! $set->isActive()) {
             session()->flash('error', 'نمی توانید ست غیرفعال را منتقل کنید');
+
             return redirect()->back();
         }
-        if (!is_null($set->redirectUrl)) {
+        if (! is_null($set->redirectUrl)) {
             session()->flash('error', 'نمی توانید ست ریدایرکت شده را منتقل کنید');
+
             return redirect()->back();
         }
         $setProductIds = $set->products->pluck('id');
         $foriatIds = array_merge(Product::ALL_FORIYAT_110_PRODUCTS, [Product::ARASH_TETA_SHIMI, Product::TETA_ADABIAT]);
         $productIntersect = $setProductIds->intersect($foriatIds)->all();
 
-        if (!empty($productIntersect)) {
+        if (! empty($productIntersect)) {
             return $this->transferToDanaTypeOne($set, $request->get('renew', false));
         } else {
             return $this->transferToDanaTypeTwo($set, $request->get('renew', false));
@@ -110,13 +110,10 @@ class SetController extends Controller
     ): JsonResponse {
         $contentSetService->toggleProduct($request->input('product_id'), $contentSet, $request->input('order') ?? 0);
         $responseData = ['message' => 'عملیات با موفقیت انجام شد'];
+
         return response()->json($responseData, 200);
     }
 
-    /**
-     * @param $setId
-     * @return JsonResponse
-     */
     public function TransferToDanaInfo($setId): JsonResponse
     {
         $danaSets = DanaProductSetTransfer::where('contentset_id', $setId)->get();
@@ -128,6 +125,7 @@ class SetController extends Controller
         if ($danaSets->isEmpty()) {
             return response()->json(['error' => 'Data not found'], 404);
         }
+
         return response()->json(['danaSets' => $danaSets, 'insertType' => $insertType, 'setId' => $setId], 200);
     }
 
@@ -140,6 +138,7 @@ class SetController extends Controller
                 return response()->json(['error' => 'مشکلی در ساخت دوره پیش آمده است'], 500);
             }
         }
+
         return response()->json(['message' => 'دوره با موفقیت ساخته شد'], 200);
     }
 
@@ -167,13 +166,13 @@ class SetController extends Controller
             foreach ($set->contents as $content) {
                 if ($content->urlExist()) {
                     $contentIds[] = $content->id;
-                    if (!in_array($set->id, $setIds)) {
+                    if (! in_array($set->id, $setIds)) {
                         $setIds[] = $set->id;
                     }
                 }
             }
         }
-        if (!empty($contentIds)) {
+        if (! empty($contentIds)) {
             $contents = Content::whereIn('id', $contentIds)->get();
             foreach ($contents as $content) {
                 ContentRepository::update($content, ['enable' => 1]);
@@ -201,8 +200,10 @@ class SetController extends Controller
                     'set_search',
                 ])->flush();
             }
+
             return response()->json(['success' => 'محتواها با موفقیت فعال شدند'], 200);
         }
+
         return response()->json(['error' => 'محتوایی برای فعال سازی یافت نشد از آپلود کردن فایل محتوا اطمینان حاصل کنید'],
             404);
     }

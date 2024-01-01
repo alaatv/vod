@@ -7,18 +7,16 @@ use App\Http\Resources\VastResource;
 use App\Models\Contentset;
 use Illuminate\Http\Request;
 
-
 class SetResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     * @return array
      */
     public function toArray($request): array
     {
-        if (!($this->resource instanceof Contentset)) {
+        if (! ($this->resource instanceof Contentset)) {
             return [];
         }
 
@@ -31,8 +29,8 @@ class SetResource extends AlaaJsonResource
             'enable' => $this->enable,
             'display' => $this->display,
             'is_free' => $this->isFree,
-            'edit_link' => action('Web\SetController@edit', $this->id),
-            'contents_link' => route('web.set.list.contents', $this->id),
+            'edit_link' => action('Api\Admin\SetController@edit', $this->id),
+            'contents_link' => route('api.set.list.contents', $this->id),
             'forrest_trees' => $this->forrest_tree,
             'forrest_tags' => $this->forrest_tags,
             'created_at' => $this->when(isset($this->created_at), function () {
