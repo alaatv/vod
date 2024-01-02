@@ -28,26 +28,26 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\{Artisan, Cache};
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Stevebauman\Purify\Facades\Purify;
 
-class Content extends BaseModel implements Taggable, SeoInterface, FavorableInterface
+class Content extends BaseModel implements FavorableInterface, SeoInterface, Taggable
 {
     /*
     |--------------------------------------------------------------------------
     | Traits
     |--------------------------------------------------------------------------
     */
-//    use Searchable;
+    //    use Searchable;
     use APIRequestCommon;
+    use CommentTrait;
+    use DateTrait;
     use favorableTraits;
+    use logger;
     use ModelTrackerTrait;
     use TaggableContentTrait;
-    use DateTrait;
-    use CommentTrait;
     use WatchHistoryTrait;
-
-    use logger;
 
     protected const LOG_ATTRIBUTES = ['name', 'description'];
     /*
@@ -57,19 +57,33 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     */
 
     public const CONTENT_TYPE_PAMPHLET = 1;
+
     public const CONTENT_TYPE_EXAM = 2;
+
     public const CONTENT_TYPE_GHALAMCHI = 3;
+
     public const CONTENT_TYPE_GOZINE2 = 4;
+
     public const CONTENT_TYPE_SANJESH = 5;
+
     public const CONTENT_TYPE_KONKOOR = 6;
+
     public const CONTENT_TYPE_BOOK = 7;
+
     public const CONTENT_TYPE_VIDEO = 8;
+
     public const CONTENT_TYPE_ARTICLE = 9;
+
     public const CONTENT_TYPE_VOICE = 10;
+
     public const CONTENT_TEMPLATE_VIDEO = 1;
+
     public const CONTENT_TEMPLATE_PAMPHLET = 2;
+
     public const CONTENT_TEMPLATE_ARTICLE = 3;
+
     public const CONTENT_TEMPLATE_EXAM = 4;
+
     public const QUALITY_MAP = [
         '240p' => '240p',
         '480p' => 'hq',
@@ -77,7 +91,9 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     ];
 
     protected const PURIFY_NULL_CONFIG = ['HTML.Allowed' => ''];
+
     public const INDEX_PAGE_NAME = 'contentPage';
+
     /**      * The attributes that should be mutated to dates.        */
     protected $casts = [
         'created_at' => 'datetime',
@@ -87,7 +103,9 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         'forrest_tree_grid' => 'array',
         'forrest_tree_tags' => 'array',
     ];
+
     protected $table = 'educationalcontents';
+
     protected $fillable = [
         'redirectUrl',
         'name',
@@ -116,11 +134,12 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         'content_status_id',
         'short_description',
     ];
+
     protected $hidden = [
         'user',
         'deleted_at',
-//        'validSince',
-//        'enable',
+        //        'validSince',
+        //        'enable',
         'metaKeywords',
         'metaDescription',
         'metaTitle',
@@ -130,24 +149,32 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         'contentsets',
         'contentset_id',
         'template',
-//        'contenttype',
+        //        'contenttype',
     ];
+
     protected $with = [
         'user',
         'set',
         'template',
-        'contenttype'
+        'contenttype',
     ];
+
     protected $timepoints_cache;
+
     protected $cachedMethods = [
         'getTimesAttribute',
         'getSourcesAttribute',
         'getDisplayNameAttribute',
     ];
+
     protected $is_favored_cache;
+
     protected $sources_cache;
+
     protected $display_name_cache;
+
     protected $file_cache;
+
     /**
      * Get the content's author .
      *
@@ -155,9 +182,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      */
     protected $content_author_cache;
 
-    /**
-     * @return array
-     */
     public static function videoFileCaptionTable(): array
     {
         return [
@@ -199,18 +223,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Checks whether the content is active or not .
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
-        return ($this->isEnable() && $this->isValid() ? true : false);
+        return $this->isEnable() && $this->isValid() ? true : false;
     }
 
     /**
      * Checks whether the content is enable or not .
-     *
-     * @return bool
      */
     public function isEnable(): bool
     {
@@ -233,7 +253,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     |--------------------------------------------------------------------------
     */
 
-
     /*
     |--------------------------------------------------------------------------
     | Scopes
@@ -242,13 +261,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Checks whether the content is valid or not .
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
         if ($this->validSince === null || $this->validSince < Carbon::createFromFormat('Y-m-d H:i:s',
-                Carbon::now('Asia/Tehran'))) {
+            Carbon::now('Asia/Tehran'))) {
             return true;
         }
 
@@ -257,7 +274,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function hasThumbnail(): bool
     {
-        return !is_null($this->thumbnail_for_admin) && isFileExists($this->thumbnail_for_admin);
+        return ! is_null($this->thumbnail_for_admin) && isFileExists($this->thumbnail_for_admin);
     }
 
     public function allFilesExist(): bool
@@ -265,14 +282,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         $files = $this->file_for_admin;
         $files = Arr::get($files, 'video', []);
         foreach ($files as $file) {
-            if (!isFileExists($file->link)) {
+            if (! isFileExists($file->link)) {
                 return false;
             }
         }
 
         $files = Arr::get($files, 'pamphlet', []);
         foreach ($files as $file) {
-            if (!isFileExists($file->link)) {
+            if (! isFileExists($file->link)) {
                 return false;
             }
         }
@@ -282,7 +299,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function hasDuration(): bool
     {
-        return !is_null($this->duration);
+        return ! is_null($this->duration);
     }
 
     public function isVideo(): bool
@@ -350,12 +367,13 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         foreach ($unSetArray as $key) {
             unset($array[$key]);
         }
-        if (!(!$this->isActive() || isset($this->redirectUrl))) {
+        if (! (! $this->isActive() || isset($this->redirectUrl))) {
             return $array;
         }
         foreach ($array as $key => $value) {
             $array[$key] = null;
         }
+
         return $array;
     }
 
@@ -372,7 +390,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     /**
      * Create a new Eloquent Collection instance.
      *
-     * @param  array  $models
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -386,7 +403,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      *
      * @param  Builder  $query
      * @param  int  $enable
-     *
      * @return Builder
      */
     public function scopeEnable($query, $enable = 1)
@@ -396,7 +412,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeVideo($query)
@@ -406,7 +421,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopePamphlet($query)
@@ -422,7 +436,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeArticle($query)
@@ -434,7 +447,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      * Scope a query to only include Valid Contents.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeValid($query)
@@ -454,7 +466,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      * Scope a query to only include active Contents.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeActive($query)
@@ -469,6 +480,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         foreach ($keywords as $keyword) {
             $query->where('name', 'LIKE', '%'.$keyword.'%');
         }
+
         return $query;
     }
 
@@ -491,7 +503,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      * Scope a query to only include Contents that will come soon.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeSoon($query)
@@ -510,6 +521,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         if (isset($this->id)) {
             return appUrlRoute('c.show', $this);
         }
+
         return '';
     }
 
@@ -524,6 +536,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         $forrestTreeGrid = $this->attributes[$attribute];
         $key = "content:$attribute:".$this->cacheKey().$forrestTreeGrid;
         $forrestTreeGrid = json_decode($forrestTreeGrid);
+
         return Cache::tags(['content', 'content_'.$this->id])
             ->remember($key, config('constants.CACHE_600'), function () use ($treesCollection, $forrestTreeGrid) {
                 if (isset($forrestTreeGrid) && is_array($forrestTreeGrid)) {
@@ -534,6 +547,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                         }
                     }
                 }
+
                 return $treesCollection;
             });
     }
@@ -552,14 +566,15 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     {
         $key = 'content:previousContent:'.$this->cacheKey();
 
-        if (!isset($this->contentset_id)) {
+        if (! isset($this->contentset_id)) {
             return null;
         }
 
         $set = $this->set;
+
         return Cache::tags(['content', 'previousContent', 'content_'.$this->id, 'content_previousContent_'.$this->id])
             ->remember($key, config('constants.CACHE_600'), function () use ($set) {
-                if (!isset($set)) {
+                if (! isset($set)) {
                     return null;
                 }
                 $previousContent = $set->activeContents([])
@@ -567,7 +582,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                     ->where('order', '<=', $this->order - 1)
                     ->orderByDesc('order')
                     ->first();
-
 
                 return $previousContent ?? null;
             });
@@ -580,7 +594,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         return Cache::tags(['content', 'previousContent', 'content_'.$this->id, 'content_previousContent_'.$this->id])
             ->remember($key, config('constants.CACHE_600'), function () {
                 $set = $this->set;
-                if (!isset($set)) {
+                if (! isset($set)) {
 
                     return isset($previousContent) ? $previousContent : null;
                 }
@@ -589,7 +603,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                     ->where('order', '<=', $this->order - 1)
                     ->orderByDesc('order')
                     ->first();
-
 
                 return isset($previousContent) ? $previousContent : null;
             });
@@ -617,7 +630,8 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                     ->where('order', '>=', $this->order + 1)
                     ->orderBy('order')
                     ->first();
-                return ($nextContent) ?? null;
+
+                return $nextContent ?? null;
             });
     }
 
@@ -634,8 +648,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                     ->orderBy('order')
                     ->first();
 
-
-                return ($nextContent) ?? null;
+                return $nextContent ?? null;
             });
     }
 
@@ -649,7 +662,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         if (isset($this->id)) {
             return [
                 'v1' => route('api.v1.content.show', $this),
-//                'v2' => route('api.v2.content.show' , $this)
+                //                'v2' => route('api.v2.content.show' , $this)
             ];
 
         }
@@ -666,7 +679,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getApiUrlV2Attribute($value)
     {
-        return appUrlRoute('api.v2.content.show', $this->id);
+        return appUrlRoute('c.api.v2.content.show', $this->id);
     }
 
     public function getPreviousApiUrlAttribute($value)
@@ -681,10 +694,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Get the content's title .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getTitleAttribute($value): string
     {
@@ -693,10 +702,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Get the content's description .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getDescriptionAttribute($value): string
     {
@@ -705,10 +710,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Get the content's name .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getNameAttribute($value): string
     {
@@ -717,10 +718,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Get the content's meta title .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getMetaTitleAttribute($value): string
     {
@@ -733,8 +730,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     }
 
     /**
-     * @param  string  $text
-     *
      * @return mixed
      */
     private function getCleanTextForMetaTags(string $text)
@@ -744,10 +739,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Get the content's meta description .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getMetaDescriptionAttribute($value): string
     {
@@ -757,26 +748,24 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         $value =
             mb_substr($this->getCleanTextForMetaTags($this->description.' '.$this->getSetName().' '.$this->displayName),
                 0, config('constants.META_TITLE_LIMIT'), 'utf-8');
+
         return str_replace(["\n", "\r"], '', $value);
     }
 
     public function getSetName()
     {
         $set = $this->set;
+
         return $set?->name;
     }
 
     /**
      * Get the content's files .
-     *
-     * @param $value
-     *
-     * @return Collection
      */
     public function getFileAttribute($value): ?Collection
     {
 
-        if (!is_null($this->file_cache)) {
+        if (! is_null($this->file_cache)) {
             return $this->file_cache;
         }
 
@@ -793,7 +782,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 $value = $content->getRawOriginal('file');
 
                 return $this->getFileCollection($content, 'getLinks', $value, $disk ?? null, unsetFromItem: [
-                    'fileName', 'disk', 'url'
+                    'fileName', 'disk', 'url',
                 ]);
             });
 
@@ -811,6 +800,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         if ($this->isFree) {
             return config('disks.HALF_PRICE_FREE_DISK');
         }
+
         return config('disks.HALF_PRICE_PAID_DISK');
     }
 
@@ -838,7 +828,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             $item->disk = $customDisk ?? $item->disk;
             $l = new LinkGenerator($item);
             $item->link = $l->$getLinksMethod($content, function (string $fileName, ?string $quality) {
-                if (!$this->isFree) {
+                if (! $this->isFree) {
                     return $this->makePaidContentFileName($fileName);
                 }
 
@@ -847,7 +837,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 }
 
                 return $this->makeFreeContentFileName($this->contentset_id, $fileName, $quality);
-            }, !($turnOffEncryption) && !$this->isFree);
+            }, ! ($turnOffEncryption) && ! $this->isFree);
 
             foreach ($unsetFromItem as $key) {
                 unset($item->$key);
@@ -855,6 +845,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             if (in_array($item->type, ['pamphlet', 'voice'])) {
                 unset($item->res);
             }
+
             return $item;
         });
 
@@ -874,6 +865,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     private function makeFreeContentFileName(?string $contentSetId, string $fileName, ?string $quality)
     {
         $qualitySubFolder = $quality ? $quality.'/' : '';
+
         return $contentSetId.'/'.$qualitySubFolder.$fileName;
     }
 
@@ -881,8 +873,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      * Get the content's files .
      *
      * @param $value
-     *
-     * @return Collection
      */
     public function getFileForAppAttribute(): ?Collection
     {
@@ -896,14 +886,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
         return Cache::tags([
             'content', 'file', $column.'ForApp', 'content_'.$this->id, 'content_'.$this->id.'_file',
-            'content_'.$this->id.'_'.$column.'ForApp'
+            'content_'.$this->id.'_'.$column.'ForApp',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($value, $column) {
                 $content = $this->getFileResource();
                 $value = $content->getRawOriginal($column);
 
                 return $this->getFileCollection($content, 'getLinksForApp', $value, unsetFromItem: [
-                    'fileName', 'disk', 'url'
+                    'fileName', 'disk', 'url',
                 ]);
             });
     }
@@ -917,10 +907,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      * Get the content's files for admin.
      *
      * @param $value
-     *
-     * @return Collection
      */
-
     public function getFileForAdminAttribute(): ?Collection
     {
         $content = $this->getFileResource();
@@ -931,7 +918,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getTimesAttribute()
     {
-        if (!is_null($this->timepoints_cache)) {
+        if (! is_null($this->timepoints_cache)) {
             return $this->timepoints_cache;
         }
         $key = 'content:timepoints:'.$this->cacheKey();
@@ -941,12 +928,13 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 ->remember($key, config('constants.CACHE_600'), function () {
                     return $this->timepoints()->orderBy('time')->get();
                 });
+
         return $this->timepoints_cache;
     }
 
     public function timepoints()
     {
-        return $this->hasMany(Timepoint::Class);
+        return $this->hasMany(Timepoint::class);
     }
 
     public function getFavoredTimesAttribute()
@@ -965,14 +953,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
         return Cache::tags([
             'content', 'content_'.$this->id, 'content_'.$this->id.'_timepoints',
-            'content_'.$this->id.'_favoredTimepoints'
+            'content_'.$this->id.'_favoredTimepoints',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($user) {
                 $timepoints = $this->times;
                 foreach ($timepoints as $key => $timepoint) {
                     $isFavored = (isset($user)) ? $user->hasFavoredTimepoint($timepoint) : false;
 
-                    if (!$isFavored) {
+                    if (! $isFavored) {
                         $timepoints->pull($key);
                     }
                 }
@@ -988,13 +976,13 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         }
         $value = $this->time_points;
         $value = json_decode($value);
+
         return $value->points;
     }
 
     /**
      * Get the content's thumbnail .
      *
-     * @param $value
      *
      * @return array|null|string
      *
@@ -1035,7 +1023,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
         $t = json_decode($value);
         $link = null;
-        if (!isset($t)) {
+        if (! isset($t)) {
             return $link;
         }
 
@@ -1048,16 +1036,16 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getAuthorAttribute(): User
     {
-        if (!is_null($this->content_author_cache)) {
+        if (! is_null($this->content_author_cache)) {
             return $this->content_author_cache;
         }
         $content = $this;
         $key = 'content:author'.$content->cacheKey();
 
         $this->content_author_cache = Cache::tags([
-            'content', 'author', 'content_'.$content->id, 'content_'.$content->id.'_author'
+            'content', 'author', 'content_'.$content->id, 'content_'.$content->id.'_author',
         ])
-            ->remember($key, config('constants.CACHE_600'), function () use ($content) {
+            ->remember($key, config('constants.CACHE_600'), function () {
 
                 $visibleArray = [
                     'id',
@@ -1067,21 +1055,23 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                     'full_name',
                 ];
                 $user = $this->user ?: User::getNullInstant($visibleArray);
+
                 return $user->setVisible($visibleArray);
             });
+
         return $this->content_author_cache;
     }
 
     public function getAuthorNameAttribute(): ?string
     {
         $author = $this->author;
+
         return isset($author) ? $author->full_name : '';
     }
 
     /**
      * Get the content's tags .
      *
-     * @param $value
      *
      * @return mixed
      */
@@ -1114,8 +1104,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Gets content's pamphlets
-     *
-     * @return Collection
      */
     public function getPamphlets(): Collection
     {
@@ -1131,8 +1119,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Gets content's voices
-     *
-     * @return Collection
      */
     public function getVoices(): Collection
     {
@@ -1148,8 +1134,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * Gets content's videos
-     *
-     * @return Collection
      */
     public function getVideos(): Collection
     {
@@ -1178,6 +1162,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         } else {
             $sameContents = new ContentCollection([]);
         }
+
         return [
             $sameContents,
             $contentSetName,
@@ -1186,26 +1171,26 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getIsFavoredAttribute()
     {
-        if (!is_null($this->is_favored_cache)) {
+        if (! is_null($this->is_favored_cache)) {
             return $this->is_favored_cache;
         }
         $authUser = auth()->user();
-        if (!isset($authUser)) {
+        if (! isset($authUser)) {
             return false;
         }
         $this->is_favored_cache = $authUser->hasFavoredContent($this);
+
         return $this->is_favored_cache;
     }
 
     /**
      * Gets content's display name
      *
-     * @return string
      * @throws Exception
      */
     public function getDisplayNameAttribute(): string
     {
-        if (!is_null($this->display_name_cache)) {
+        if (! is_null($this->display_name_cache)) {
             return $this->display_name_cache;
         }
         $c = $this;
@@ -1221,13 +1206,12 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             .' '.($c->name ?? $c->user->name);
 
         $this->display_name_cache = $displayName;
+
         return $this->display_name_cache;
     }
 
     /**
      * Gets content's meta tags array
-     *
-     * @return array
      */
     public function getMetaTags(): array
     {
@@ -1243,6 +1227,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             self::CONTENT_TYPE_BOOK => SeoMetaTagsGenerator::SEO_MOD_GENERAL_TAGS,
             self::CONTENT_TYPE_ARTICLE => SeoMetaTagsGenerator::SEO_MOD_ARTICLE_TAGS,
         ];
+
         return [
             'title' => $this->metaTitle,
             'description' => $this->metaDescription,
@@ -1276,7 +1261,6 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     /**
      * Set the content's thumbnail.
      *
-     * @param $input
      *
      * @return void
      */
@@ -1292,11 +1276,10 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     /**
      * Set the content's file.
      *
-     * @param  Collection  $input
      *
      * @return void
      */
-    public function setFileAttribute(Collection $input = null)
+    public function setFileAttribute(?Collection $input = null)
     {
         $this->attributes['file'] = optional($input)->toJson(JSON_UNESCAPED_UNICODE);
     }
@@ -1304,14 +1287,13 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     /**
      * Set the content's tag.
      *
-     * @param  array  $value
      *
      * @return void
      */
-    public function setTagsAttribute(array $value = null)
+    public function setTagsAttribute(?array $value = null)
     {
         $tags = null;
-        if (!empty($value)) {
+        if (! empty($value)) {
             $tags = json_encode([
                 'bucket' => 'content',
                 'tags' => $value,
@@ -1323,12 +1305,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     /**
      * every products that have this content.
-     *
-     * @return ProductCollection
      */
     public function activeProducts(): ProductCollection
     {
         $key = 'content:activeProducts:'.$this->cacheKey();
+
         return Cache::tags(['content', 'product', 'content_'.$this->id, 'content_'.$this->id.'_activeProducts'])
             ->remember($key, config('constants.CACHE_60'), function () {
                 return $this->set->getProducts()
@@ -1392,10 +1373,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getSourcesAttribute()
     {
-        if (!is_null($this->sources_cache)) {
+        if (! is_null($this->sources_cache)) {
             return $this->sources_cache;
         }
         $this->sources_cache = $this->sources()->get();
+
         return $this->sources_cache;
     }
 
@@ -1404,7 +1386,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
      */
     public function sources()
     {
-        return $this->morphToMany(Source::Class, 'sourceable')->withTimestamps();
+        return $this->morphToMany(Source::class, 'sourceable')->withTimestamps();
     }
 
     public function contenttype()
@@ -1415,7 +1397,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function section()
     {
-        return $this->belongsTo(Section::Class);
+        return $this->belongsTo(Section::class);
     }
 
     /**
@@ -1562,7 +1544,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 }
                 break;
 
-            case  'pamphlet1':
+            case 'pamphlet1':
                 $pFiles = $content->files;
                 foreach ($pFiles as $file) {
                     $type = 'pamphlet';
@@ -1600,16 +1582,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         Artisan::call('cache:clear');
     }
 
-    /**
-     * @return ProductCollection
-     */
     public function getRelatedProductsAttribute(): ProductCollection
     {
         $content = $this;
         $key = 'content:relatedProduct:'.$content->cacheKey();
         $relatedProductSearch = new RelatedProductSearch();
+
         return Cache::tags([
-            'content', 'relatedProduct', 'content_'.$content->id, 'content_'.$content->id.'_relatedProduct'
+            'content', 'relatedProduct', 'content_'.$content->id, 'content_'.$content->id.'_relatedProduct',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($content, $relatedProductSearch) {
                 $filters = [
@@ -1620,20 +1600,19 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 foreach ($result as $product) {
                     $products->push($product);
                 }
+
                 return $products;
             });
     }
 
-    /**
-     * @return ProductCollection
-     */
     public function getRecommendedProductsAttribute(): ProductCollection
     {
         $content = $this;
         $key = 'content:recommendedProduct:'.$content->cacheKey();
-        $recommendedProductSearch = new RecommendedProductSearch ();
+        $recommendedProductSearch = new RecommendedProductSearch();
+
         return Cache::tags([
-            'content', 'recommendedProduct', 'content_'.$content->id, 'content_'.$content->id.'_recommendedProduct'
+            'content', 'recommendedProduct', 'content_'.$content->id, 'content_'.$content->id.'_recommendedProduct',
         ])
             ->remember($key, config('constants.CACHE_600'), function () use ($content, $recommendedProductSearch) {
                 $filters = [
@@ -1652,7 +1631,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function getRedirectUrlAttribute($value)
     {
-        if (!isset($value)) {
+        if (! isset($value)) {
             return null;
         }
 
@@ -1682,7 +1661,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             });
         })->first();
 
-        if (!$vast) {
+        if (! $vast) {
             $vast = $this->set
                 ->first()
                 ?->vasts()
@@ -1695,11 +1674,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 })->first();
         }
 
-        if (!$vast) {
+        if (! $vast) {
             $vast = VastRepo::randomDefault()?->first();
         }
 
-        if (!$vast) {
+        if (! $vast) {
             return null;
         }
 
@@ -1752,13 +1731,14 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
 
     public function setRedirectUrlAttribute($value)
     {
-        $this->attributes['redirectUrl'] = !isset($value) ? null : json_encode($value);
+        $this->attributes['redirectUrl'] = ! isset($value) ? null : json_encode($value);
     }
 
     public function attachSource($sourceId): bool
     {
         if ($this->sources->where('id', $sourceId)->isEmpty()) {
             $this->sources()->attach($sourceId);
+
             return true;
         }
 
@@ -1776,13 +1756,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
         return $this->hasMany(ContentIncome::class, 'content_id');
     }
 
-    /**
-     * @return string|null
-     */
-    public function abrishamProductShortTitle(int $major = null, bool $attachLessonName = false): ?string
+    public function abrishamProductShortTitle(?int $major = null, bool $attachLessonName = false): ?string
     {
         $contentSet = $this->set;
         $lessonName = optional($contentSet)->abrishamProductLessonName($major);
+
         return 'جلسه '."{$this->order} {$contentSet->small_name} ".($attachLessonName ? $lessonName : '');
     }
 
@@ -1795,7 +1773,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     {
         $user = auth()->check() ? auth()->user() : null;
         $canUseTimePoint = false;
-        if (!$this->isFree) {
+        if (! $this->isFree) {
             $canUseTimePoint = true;
         } else {
             if (isset($user)) {
@@ -1805,6 +1783,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 $canUseTimePoint = isset($userTimepointSubscription);
             }
         }
+
         return $canUseTimePoint;
     }
 
@@ -1816,7 +1795,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     public function urlExist()
     {
         $files = $this->file_for_admin?->first();
-        if (!isset($files)) {
+        if (! isset($files)) {
             return false;
         }
         foreach ($files as $file) {
@@ -1825,6 +1804,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 return true;
             }
         }
+
         return false;
     }
 
@@ -1852,11 +1832,11 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
                 $url = 'http://127.0.0.1:8000'.$parseUrl['path'];
                 $pathInfo = pathinfo($path);
                 $extension = Arr::get($pathInfo, 'extension');
-                if (!in_array($extension, ['mkv', 'mp4'])) {
+                if (! in_array($extension, ['mkv', 'mp4'])) {
                     continue;
                 }
                 $length = getVideoLength($url);
-                if (!is_null($length)) {
+                if (! is_null($length)) {
                     break;
                 }
             }
@@ -1883,6 +1863,7 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
             $link = strtok($link, '?');
             $parseUrl = parse_url($link);
             $path = '/minio'.$parseUrl['path'];
+
             return countPDFPages($path);
         }
 
@@ -1892,21 +1873,20 @@ class Content extends BaseModel implements Taggable, SeoInterface, FavorableInte
     private function isRaheAbrishamContent(): bool
     {
         return Cache::tags([
-            'content', 'content_'.$this->id
+            'content', 'content_'.$this->id,
         ])->remember('content:isRaheAbrishamContent:'.$this->cacheKey(), config('constants.CACHE_600'), function () {
-            return !$this->isFree && !empty(array_intersect($this->allProducts()->pluck('id')->toArray(),
-                    array_keys(Product::ALL_ABRISHAM_PRODUCTS)));
+            return ! $this->isFree && ! empty(array_intersect($this->allProducts()->pluck('id')->toArray(),
+                array_keys(Product::ALL_ABRISHAM_PRODUCTS)));
         });
     }
 
     /**
      * every products that have this content.
-     *
-     * @return ProductCollection
      */
     public function allProducts(): ProductCollection
     {
         $key = 'content:products:'.$this->cacheKey();
+
         return Cache::tags(['content', 'product', 'content_'.$this->id, 'content_'.$this->id.'_products'])
             ->remember($key, config('constants.CACHE_60'), function () {
                 return $this->set->getProducts(false)
