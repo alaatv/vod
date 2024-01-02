@@ -29,24 +29,24 @@ class BlockController extends Controller
     {
         $data = Block::where('type', $request->get('type'))
             ->where('enable', '=', true);
-
         if ($request->has('blockable_type')) {
             $data = $data->whereRelation('blockables', function ($query) use ($request) {
                 return $query->where('blockable_type',
-                    'App\\'.ucfirst($request->get('blockable_type')))->where('deleted_at', null);
+                    'App\\' . ucfirst($request->get('blockable_type')))->where('deleted_at', null);
             })
                 ->with([
                     'blockables' => function ($query) use ($request) {
                         return $query->where('blockable_type',
-                            'App\\'.ucfirst($request->get('blockable_type')))->where('deleted_at',
+                            'App\\Models\\' . ucfirst($request->get('blockable_type')))->where('deleted_at',
                             null)->with('blockable');
-                    }
+                    },
                 ]);
         } else {
             $data = $data->with('blockables.blockable');
         }
 
         $data = $data->orderBy('order')->get();
+
         return BlockWithBlockableResource::collection($data);
     }
 }
