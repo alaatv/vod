@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Admin;
 
+use AllowDynamicProperties;
 use App\Http\Requests\Request;
 use App\Rules\UniqueNationalCodeWithPhoneInTrashBinRule;
 use App\Rules\UniqueNationalCodeWithPhoneRule;
 use App\Traits\RequestCommon;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CreateUserApiRequest extends FormRequest
+#[AllowDynamicProperties] class CreateUserApiRequest extends FormRequest
 {
     use RequestCommon;
 
@@ -38,9 +38,7 @@ class CreateUserApiRequest extends FormRequest
             'mobile' => [
                 'required',
                 'digits:11',
-                Rule::phone()
-                    ->mobile()
-                    ->country('AUTO,IR'),
+                'phone:AUTO,IR',
             ],
             'nationalCode' => [
                 'required',

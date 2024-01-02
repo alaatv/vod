@@ -42,7 +42,6 @@ class UserController extends Controller
         if ($this->validateLengthPaginate($request->input('length'))) {
             $userSearch->setNumberOfItemInEachPage($request->input('length'));
         }
-
         $mapDetails = $userSearch->get($request->all());
 
         return \App\Http\Resources\User::collection($mapDetails);
@@ -56,7 +55,6 @@ class UserController extends Controller
     public function store(CreateUserApiRequest $request)
     {
         $validated = $request->validated();
-
         if (! $request->input('password')) {
             $validated['password'] = bcrypt($request->input('nationalCode'));
         } else {
@@ -80,6 +78,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+
         return response()->json(new \App\Http\Resources\User($user), Response::HTTP_OK);
     }
 

@@ -7,7 +7,6 @@ use App\Rules\UniqueNationalCodeWithPhoneInTrashBinRule;
 use App\Rules\UniqueNationalCodeWithPhoneRule;
 use App\Traits\RequestCommon;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class EditUserApiRequest extends FormRequest
 {
@@ -39,9 +38,7 @@ class EditUserApiRequest extends FormRequest
             'mobile' => [
                 'required',
                 'digits:11',
-                Rule::phone()
-                    ->mobile()
-                    ->country('AUTO,IR'),
+                'phone:AUTO,IR',
             ],
             'nationalCode' => [
                 'required',

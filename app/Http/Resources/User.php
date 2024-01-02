@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class User
  *
@@ -16,15 +15,13 @@ class User extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\User)) {
+        if (! ($this->resource instanceof \App\Models\User)) {
             return [];
         }
-
 
         $profileCompletion = $this->completion();
 
@@ -55,9 +52,9 @@ class User extends AlaaJsonResource
                 return new Grade($this->grade);
             }),
             'gender' => $this->when(isset($this->gender), function () {
-                return new  Gender($this->gender);
+                return new Gender($this->gender);
             }),
-            'profile_completion' => !is_null($profileCompletion) ? (int) $profileCompletion : 0,
+            'profile_completion' => ! is_null($profileCompletion) ? (int) $profileCompletion : 0,
             'wallet_balance' => $this->getTotalWalletBalance(),
             'updated_at' => $this->when(isset($this->updated_at), function () {
                 return optional($this->updated_at)->toDateTimeString();
