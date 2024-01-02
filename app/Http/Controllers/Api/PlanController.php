@@ -28,9 +28,9 @@ class PlanController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['index']]);
-        $this->middleware('permission:'.config('constants.INSERT_PLAN'), ['only' => 'store']);
-        $this->middleware('permission:'.config('constants.UPDATE_PLAN'), ['only' => 'update']);
-        $this->middleware('permission:'.config('constants.DELETE_PLAN'), ['only' => 'delete']);
+        //        $this->middleware('permission:'.config('constants.INSERT_PLAN'), ['only' => 'store']);
+        //        $this->middleware('permission:'.config('constants.UPDATE_PLAN'), ['only' => 'update']);
+        //        $this->middleware('permission:'.config('constants.DELETE_PLAN'), ['only' => 'delete']);
     }
 
     public function index(Request $request)
@@ -47,27 +47,22 @@ class PlanController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  InsertPlanRequest  $request
-     *
-     * @return
      */
     public function store(InsertPlanRequest $request)
     {
         /** @var Studyplan $studyPlan */
         $studyPlan = StudyplanRepo::findByDateOrCreate($request->get('date'), $request->get('event_id'));
 
-        if (!isset($studyPlan)) {
+        if (! isset($studyPlan)) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on creating study plan');
         }
 
         /** @var Plan $plan */
         $plan = Plan::query()->create(array_merge(
-            ['studyplan_id' => $studyPlan->id]
-            , $request->validated()
+            ['studyplan_id' => $studyPlan->id], $request->validated()
         ));
 
-        if (!isset($plan)) {
+        if (! isset($plan)) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on creating plan');
         }
 
@@ -91,8 +86,6 @@ class PlanController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  EditPlanRequest  $request
-     * @param  Plan  $plan
      *
      * @return JsonResponse
      */
@@ -102,18 +95,17 @@ class PlanController extends Controller
         $studyEventId = optional($plan->studyplan)->event_id;
         $studyPlan = StudyplanRepo::findByDateOrCreate($request->get('date'), $studyEventId);
 
-        if (!isset($studyPlan)) {
+        if (! isset($studyPlan)) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on creating study plan');
         }
 
         $request->offsetSet('studyplan_id', $studyPlan->id);
 
         $updateResult = $plan->update(array_merge(
-            ['studyplan_id' => $studyPlan->id]
-            , $request->validated()
+            ['studyplan_id' => $studyPlan->id], $request->validated()
         ));
 
-        if (!$updateResult) {
+        if (! $updateResult) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on updating plan');
         }
 
@@ -136,14 +128,14 @@ class PlanController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Plan  $plan
      *
      * @return JsonResponse
+     *
      * @throws Exception
      */
     public function destroy(Plan $plan)
     {
-        if (!$plan->delete()) {
+        if (! $plan->delete()) {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on deleting plan');
         }
 
