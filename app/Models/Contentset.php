@@ -25,21 +25,21 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Stevebauman\Purify\Facades\Purify;
 
-class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableInterface
+class Contentset extends BaseModel implements FavorableInterface, SeoInterface, Taggable
 {
-
     use MinioPhotoHandler;
 
     public const PHOTO_FIELD = 'photo';
+
     protected const PURIFY_NULL_CONFIG = ['HTML.Allowed' => ''];
 
-    use favorableTraits;
-
-//    use Searchable;
-    use TaggableSetTrait;
     use CommentTrait;
-    use WatchHistoryTrait;
+    use favorableTraits;
     use LogsActivity;
+
+    //    use Searchable;
+    use TaggableSetTrait;
+    use WatchHistoryTrait;
 
     public const NEXT_WATCH_CONTENT_NOT_CONTAIN_CONTENT_SET_STRINGS = [
         'زین بی قرار',
@@ -47,15 +47,25 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         'پس آزمون',
         'مشاوره',
     ];
+
     public const PARACHUTE_SET_ID = 2294;
+
     public const ABRISHAM_MOSHAVERE_SE_ID = 1213;
+
     public const NAHAYI_1402_MOSHAVERE_SET_ID = 2820;
+
     public const INDEX_PAGE_NAME = 'setPage';
+
     public const SET_MOSHAVERE_STRATEGY_100 = 1210;
+
     public const SET_MOSHAVERE_MIND_BUILDER_CLUB = 1211;
+
     protected static $recordEvents = ['updated', 'deleted', 'created'];
+
     protected static $console_description = ' from console';
+
     public int $plan_major_id;
+
     /**
      * @var array
      */
@@ -77,10 +87,12 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         'forrest_tree_grid' => 'array',
         'forrest_tree_tags' => 'array',
     ];
+
     protected $withCount = [
         'contents',
         'activeContents',
     ];
+
     protected $appends = [
         'url',
         'apiUrl',
@@ -89,25 +101,26 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         'contentUrl',
         'setUrl',
     ];
+
     protected $hidden = [
         'deleted_at',
         'small_name',
         'pivot',
         'productSet',
     ];
+
     /**
      * @var array|mixed
      */
     protected $author_cache;
 
     protected $cachedMethods = [
-        'getAuthorAttribute'
+        'getAuthorAttribute',
     ];
 
     /**
      * Create a new Eloquent Collection instance.
      *
-     * @param  array  $models
      *
      * @return SetCollection
      */
@@ -115,7 +128,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     {
         return new SetCollection($models);
     }
-
 
     /**
      * Get the index name for the model.
@@ -185,6 +197,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         foreach ($unSetArrayItems as $item) {
             unset($array[$item]);
         }
+
         return $array;
     }
 
@@ -192,7 +205,6 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
      * Scope a query to only include active Contentsets.
      *
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeActive($query)
@@ -259,11 +271,12 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         return $this->getActiveContents2()->groupBy('section.name');
     }
 
-    public function getActiveContents2(int $type = null)
+    public function getActiveContents2(?int $type = null)
     {
         $key = 'set:getActiveContents2:type_'.$type.':'.$this->cacheKey();
+
         return Cache::tags([
-            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents'
+            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents',
         ])
             ->remember($key, config('constants.CACHE_300'), function () use ($type) {
                 $contents = $this->activeContents();
@@ -276,6 +289,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
                 foreach ($contents as $content) {
                     $content->attacheCachedMethodResult();
                 }
+
                 return $contents;
             });
     }
@@ -296,11 +310,12 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     |--------------------------------------------------------------------------
     */
 
-    public function getActiveContents2ForAPIV2(int $type = null)
+    public function getActiveContents2ForAPIV2(?int $type = null)
     {
         $key = 'set:getActiveContents2ForAPIV2:type_'.$type.':'.$this->cacheKey();
+
         return Cache::tags([
-            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents'
+            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents',
         ])
             ->remember($key, config('constants.CACHE_300'), function () use ($type) {
                 $contents = $this->activeContentsForApiV2();
@@ -315,6 +330,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
                 foreach ($contents as $content) {
                     $content->attacheCachedMethodResult();
                 }
+
                 return $contents;
             });
     }
@@ -329,16 +345,16 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
      */
     public function sources()
     {
-        return $this->morphToMany(Source::Class, 'sourceable')->withTimestamps()
+        return $this->morphToMany(Source::class, 'sourceable')->withTimestamps()
             ->withPivot(['order']);
     }
-
 
     //new way ( after migrate )
 
     public function getLastContentUserWatched()
     {
         $lastWatch = new LastWatch(auth()->user(), 'set', $this->id);
+
         return $lastWatch->get();
     }
 
@@ -377,11 +393,11 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
                 });
             })->first();
 
-        if (!$vast) {
+        if (! $vast) {
             $vast = VastRepo::randomDefault()?->first();
         }
 
-        if (!$vast) {
+        if (! $vast) {
             return null;
         }
 
@@ -404,25 +420,19 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     {
         $onlyActiveString = ($onlyActiveProduct) ? '1' : '0';
         $key = 'set:getProducts:onlyActive_'.$onlyActiveString.':'.$this->cacheKey();
+
         return Cache::tags(['set', 'product', 'set_'.$this->id, 'set_'.$this->id.'_products'])
             ->remember($key, config('constants.CACHE_60'), function () use ($onlyActiveProduct) {
                 return self::getProductOfSet($onlyActiveProduct, $this);
             });
     }
 
-    /**
-     * @param  bool  $onlyActiveProduct
-     * @param  Contentset  $set
-     *
-     * @return ProductCollection
-     */
     public static function getProductOfSet(bool $onlyActiveProduct, Contentset $set): ProductCollection
     {
         return ($onlyActiveProduct ? $set->products()
             ->active()
             ->get() : $set->products()
-            ->get()) ?: new
-        ProductCollection();
+            ->get()) ?: new ProductCollection();
     }
 
     public function products()
@@ -453,14 +463,13 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     /**
      * Set the set's tag.
      *
-     * @param  array  $value
      *
      * @return void
      */
-    public function setTagsAttribute(array $value = null)
+    public function setTagsAttribute(?array $value = null)
     {
         $tags = null;
-        if (!empty($value)) {
+        if (! empty($value)) {
             $tags = json_encode([
                 'bucket' => 'contentset',
                 'tags' => $value,
@@ -470,14 +479,13 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         $this->attributes['tags'] = $tags;
     }
 
-
     public function getLastActiveContent(): Content
     {
         $key = 'set:getLastActiveContent:'.$this->cacheKey();
 
         return Cache::tags([
             'set', 'activeContent', 'lastActiveContent', 'set_'.$this->id, 'set_'.$this->id.'_contents',
-            'set_'.$this->id.'_activeContents', 'set_'.$this->id.'_lastActiveContent'
+            'set_'.$this->id.'_activeContents', 'set_'.$this->id.'_lastActiveContent',
         ])
             ->remember($key, config('constants.CACHE_300'), function () {
 
@@ -493,7 +501,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         $key = 'set:getActiveContents:'.$this->cacheKey();
 
         return Cache::tags([
-            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents'
+            'set', 'activeContent', 'set_'.$this->id, 'set_'.$this->id.'_contents', 'set_'.$this->id.'_activeContents',
         ])
             ->remember($key, config('constants.CACHE_300'), function () {
 
@@ -514,20 +522,19 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
             });
     }
 
-
     public function getLastContent(): Content
     {
         $key = 'set:getLastContent:'.$this->cacheKey();
 
         return Cache::tags([
             'set', 'content', 'lastContent', 'set_'.$this->id, 'set_'.$this->id.'_contents',
-            'set_'.$this->id.'_lastContent'
+            'set_'.$this->id.'_lastContent',
         ])
             ->remember($key, config('constants.CACHE_300'), function () {
 
                 $r = $this->getContents();
 
-                return $r->sortByDesc('order')->first()?->append(['author',]) ?: new Content();
+                return $r->sortByDesc('order')->first()?->append(['author']) ?: new Content();
             });
     }
 
@@ -543,20 +550,18 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
             });
     }
 
-
     public function getApiUrlV2Attribute($value)
     {
-        return appUrlRoute('api.v2.set.show', $this->id);
+        return appUrlRoute('set.show', $this->id);
     }
 
     public function getRedirectUrlAttribute($value)
     {
-        if (!isset($value)) {
+        if (! isset($value)) {
             return null;
         }
 
         $value = json_decode($value);
-
 
         $url = isset($value->url) ? parse_url($value->url) : null;
 
@@ -568,20 +573,18 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
 
     public function setRedirectUrlAttribute($value)
     {
-        $this->attributes['redirectUrl'] = !isset($value) ? null : json_encode($value);
+        $this->attributes['redirectUrl'] = ! isset($value) ? null : json_encode($value);
     }
 
     /**
      * @param $value
-     *
-     * @return User|null
      */
     public function getAuthorAttribute(): ?User
     {
         $set = $this;
         $key = 'set:author-'.$set->cacheKey();
 
-        if (!is_null($this->author_cache)) {
+        if (! is_null($this->author_cache)) {
             return $this->author_cache;
         }
         $this->author_cache = Cache::tags(['set', 'author', 'set_'.$set->id, 'set_'.$set->id.'_author'])
@@ -603,24 +606,21 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
 
                 return $author?->setVisible($visibleArray);
             });
+
         return $this->author_cache;
 
     }
 
     public function getRemoveLinkAttribute()
     {
-//        if (hasAuthenticatedUserPermission(config('constants.REMOVE_BLOCK_ACCESS')))
-//            return action('Web\BlockController@destroy', $this->id);
+        //        if (hasAuthenticatedUserPermission(config('constants.REMOVE_BLOCK_ACCESS')))
+        //            return action('Web\BlockController@destroy', $this->id);
 
         return null;
     }
 
     /**
      * Get the content's meta title .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getMetaTitleAttribute($value): string
     {
@@ -640,16 +640,13 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
 
     /**
      * Get the content's meta description .
-     *
-     * @param $value
-     *
-     * @return string
      */
     public function getMetaDescriptionAttribute($value): string
     {
         if (isset($value[0])) {
             return $this->getCleanTextForMetaTags($value);
         }
+
         return mb_substr($this->getCleanTextForMetaTags($this->description.' '.$this->metaTitle),
             0, config('constants.META_TITLE_LIMIT'), 'utf-8');
     }
@@ -700,13 +697,13 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     public function getIsFavoredAttribute()
     {
         $authUser = auth()->user();
-        if (!isset($authUser)) {
+        if (! isset($authUser)) {
             return false;
         }
 
         return Cache::tags([
             'favorite', 'user', 'user_'.$authUser->id, 'user_'.$authUser->id.'_favorites',
-            'user_'.$authUser->id.'_favoriteSets'
+            'user_'.$authUser->id.'_favoriteSets',
         ])
             ->remember('user:'.$authUser->id.':hasFavored:set:'.$this->cacheKey(), config('constants.CACHE_10'),
                 function () use ($authUser) {
@@ -738,8 +735,9 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
             ->belongsToAbrishamProducts()
             ->first();
 
-        if (!is_null(optional($product)->id)) {
+        if (! is_null(optional($product)->id)) {
             $lessonInfo = Arr::get(Product::ALL_ABRISHAM_PRODUCTS, $product->id);
+
             return Arr::get($lessonInfo, 'lesson_name');
         }
 
@@ -761,10 +759,11 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
     public function getActivitylogOptions(): LogOptions
     {
         $model = explode('\\', self::class)[1];
+
         return LogOptions::defaults()
             ->logOnly($this->fillable)
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName
+            ->setDescriptionForEvent(fn (string $eventName
             ) => (auth()->check()) ? $eventName : $eventName.self::$console_description)
             ->useLogName("{$model}");
     }
@@ -785,6 +784,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
         $forrestTreeGrid = $this->attributes[$attribute];
         $key = "content:$attribute:".$this->cacheKey().$forrestTreeGrid;
         $forrestTreeGrid = json_decode($forrestTreeGrid);
+
         return Cache::tags(['content', 'content_'.$this->id])
             ->remember($key, config('constants.CACHE_600'), function () use ($treesCollection, $forrestTreeGrid) {
                 if (isset($forrestTreeGrid) && is_array($forrestTreeGrid)) {
@@ -795,6 +795,7 @@ class Contentset extends BaseModel implements Taggable, SeoInterface, FavorableI
                         }
                     }
                 }
+
                 return $treesCollection;
             });
 

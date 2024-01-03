@@ -153,7 +153,7 @@ class ReferralCodesController extends Controller
             $inputs['commission']);
         $this->createReferralCodes($referralRequest, $inputs['number_of_codes']);
         ActivityLogRepo::referralCodesGenerated(auth()->user(), $referralRequest);
-        $user->notify(new ReferralCodeGenerate($referralRequest, route('web.giftCards')));
+        $user->notify(new ReferralCodeGenerate($referralRequest, route('sales-man.index')));
 
         return new \App\Http\Resources\User($user);
     }

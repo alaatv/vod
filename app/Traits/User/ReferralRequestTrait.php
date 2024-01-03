@@ -2,9 +2,9 @@
 
 namespace App\Traits\User;
 
-
 use App\Models\ReferralCode;
 use App\Models\ReferralRequest;
+use App\Models\User;
 
 trait ReferralRequestTrait
 {
@@ -35,6 +35,7 @@ trait ReferralRequestTrait
                 'enable' => 1,
             ];
         }
+
         return $referralCodes;
     }
 
@@ -45,7 +46,7 @@ trait ReferralRequestTrait
         if ($isUsed) {
             return $this->generateCode();
         }
+
         return $code;
     }
-
 }

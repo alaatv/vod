@@ -286,8 +286,8 @@ Route::prefix('v2')->group(function () {
     Route::post('unwatched', [WatchHistoryController::class, 'destroyByWatchableId']);
 
     // Sales Man routes
-    Route::prefix('sales-man')->name('api.v2.sales-man')->group(function () {
-        Route::get('/', [SalesManController::class, 'index'])->name('index');
+    Route::prefix('sales-man')->group(function () {
+        Route::get('/', [SalesManController::class, 'index'])->name('sales-man.index');
         Route::post('/contract', [SalesManController::class, 'submitContract'])->name('contract');
     });
 

@@ -20,33 +20,32 @@ use App\Traits\OrderproductTrait;
 use App\Traits\ProductCommon;
 use App\Traits\RequestCommon;
 use App\Traits\UserCommon;
-use Cache;
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class OrderproductController extends Controller
 {
-    use ProductCommon;
-    use OrderproductTrait;
     use OrderCommon;
+    use OrderproductTrait;
+    use ProductCommon;
     use RequestCommon;
     use UserCommon;
 
     public function __construct()
     {
-        $this->middleware(['OverwriteOrderIDAndAddItToRequest',], ['only' => ['store', 'storeV2'],]);
+        $this->middleware(['OverwriteOrderIDAndAddItToRequest'], ['only' => ['store', 'storeV2']]);
         $this->middleware('permission:'.config('constants.RESTORE_ORDERPRODUCT_ACCESS'), ['only' => 'restore']);
     }
 
     /**
      * API Version 2
      *
-     * @param  OrderProductStoreRequest  $request
      *
      * @return JsonResponse
      */
@@ -60,8 +59,8 @@ class OrderproductController extends Controller
         $order = Order::with('orderproducts')->whereId($request->get('order_id'))->get()->first();
         if ($product->complimentedproducts->isNotEmpty()) {
             foreach ($product->complimentedproducts as $complimentedproduct) {
-                if ($complimentedproduct->pivot->is_dependent && !$order->orderproducts->contains('product_id',
-                        $complimentedproduct->id)) {
+                if ($complimentedproduct->pivot->is_dependent && ! $order->orderproducts->contains('product_id',
+                    $complimentedproduct->id)) {
                     return myAbort(Response::HTTP_FORBIDDEN, 'این محصول وابسته به محصول دیگری است');
                 }
             }
@@ -69,7 +68,7 @@ class OrderproductController extends Controller
         Cache::tags(['order_'.$request->get('order_id')])->flush();
 
         $user = $request->user();
-        if (!($request->has('extraAttribute') && !$user->isAbleTo(config('constants.ATTACH_EXTRA_ATTRIBUTE_ACCESS')))) {
+        if (! ($request->has('extraAttribute') && ! $user->isAbleTo(config('constants.ATTACH_EXTRA_ATTRIBUTE_ACCESS')))) {
             $this->new($request->all());
 
             return response()->json(null);
@@ -92,10 +91,9 @@ class OrderproductController extends Controller
     /**
      * API Version 2
      *
-     * @param  Request  $request
-     * @param  Orderproduct  $orderproduct
      *
      * @return ResponseFactory|JsonResponse|Response
+     *
      * @throws Exception
      */
     public function destroyV2(Request $request, Orderproduct $orderproduct)
@@ -117,7 +115,7 @@ class OrderproductController extends Controller
             }
         }
 
-        if (!$orderproduct->delete()) {
+        if (! $orderproduct->delete()) {
 
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Database error on removing orderproduct');
         }
@@ -186,7 +184,7 @@ class OrderproductController extends Controller
 
             $order_products = Orderproduct::whereIn('id', $request->orderproducts);
             $order_products->update([
-                'expire_at' => now()->addYear()
+                'expire_at' => now()->addYear(),
             ]);
 
             $order_products_ids = $order_products->pluck('id');
@@ -197,9 +195,11 @@ class OrderproductController extends Controller
             ]);
 
             DB::commit();
+
             return response()->json();
         } catch (Exception $exception) {
             Db::rollBack();
+
             return response()->json([
                 'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'message' => 'Http internal server error',
@@ -211,11 +211,11 @@ class OrderproductController extends Controller
     public function restore(RestoreOrderproductRequest $request)
     {
         $orderProduct = Orderproduct::onlyTrashed()->find($request->get('orderproductId'));
-        if (!isset($orderProduct)) {
+        if (! isset($orderProduct)) {
             return response()->json([
                 'error' => [
-                    'code' => Response::HTTP_NOT_FOUND, 'message' => 'Orderproduct not found'
-                ]
+                    'code' => Response::HTTP_NOT_FOUND, 'message' => 'Orderproduct not found',
+                ],
             ], Response::HTTP_NOT_FOUND);
         }
         try {
@@ -226,10 +226,11 @@ class OrderproductController extends Controller
         } catch (Exception $exception) {
             return response()->json([
                 'error' => [
-                    'code' => Response::HTTP_SERVICE_UNAVAILABLE, 'message' => 'Unexpected error'
-                ]
+                    'code' => Response::HTTP_SERVICE_UNAVAILABLE, 'message' => 'Unexpected error',
+                ],
             ], Response::HTTP_SERVICE_UNAVAILABLE);
         }
+
         return response()->json(['message' => 'Orderproduct restored successfully'], Response::HTTP_OK);
     }
 }
