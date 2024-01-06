@@ -36,7 +36,6 @@ use App\Http\Controllers\Api\FaqPageController;
 use App\Http\Controllers\Api\FavorableListController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\FirebasetokenController;
-use App\Http\Controllers\Api\FormBuilder;
 use App\Http\Controllers\Api\ForrestController;
 use App\Http\Controllers\Api\GatewayController;
 use App\Http\Controllers\Api\HomeController;
@@ -243,9 +242,6 @@ Route::prefix('v2')->group(function () {
             Route::post('/readAll', [NotificationController::class, 'readAll'])->name('bonyad.notification.readAll');
         });
     });
-
-    // Form Builder Routes
-    Route::get('/form-builder', '\\'.FormBuilder::class);
 
     // Favorable List Routes
     Route::apiResource('favorable-list', '\\'.FavorableListController::class);

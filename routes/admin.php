@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Admin\SlideshowController as AdminSlideshowControll
 use App\Http\Controllers\Api\Admin\TransactionController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\CacheController;
+use App\Http\Controllers\Api\FormBuilder;
 use Illuminate\Support\Facades\Route;
 
 //=================================== Admin Routes ============================================
@@ -118,5 +119,8 @@ Route::prefix('v2')->group(function () {
         // Admin-Abrisham Product Choice Route
         Route::get('abrisham/productChoice',
             [AdminOrderController::class, 'abrishamProductChoice'])->name('abrisham.productChoice');
+
+        // Form Builder Routes
+        Route::get('/form-builder', '\\'.FormBuilder::class);
     });
 });
