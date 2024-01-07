@@ -81,9 +81,15 @@ class OrderController extends Controller
     public function __construct()
     {
         $this->middleware(['OverwriteOrderIDAndAddItToRequest', 'openOrder'],
-            ['only' => ['submitCoupon', 'submitCouponV2', 'submitReferralCode']]);
-        $this->middleware('OverwriteOrderIDAndAddItToRequest',
-            ['only' => ['removeCoupon', 'removeCouponV2', 'removeReferralCode']]);
+            ['only' => [
+                'submitCoupon',
+                'removeCoupon',
+                'submitCouponV2',
+                'removeCouponV2',
+                'submitReferralCode',
+                'removeReferralCode',
+            ],
+            ]);
         $this->middleware('ApiOrderCheckoutReview', ['only' => 'checkoutReviewV2']);
     }
 
@@ -444,6 +450,7 @@ class OrderController extends Controller
 
     public function submitReferralCode(SubmitReferralCodeRequest $request, AlaaInvoiceGenerator $invoiceGenerator)
     {
+
         /** @var User $user */
         $user = $request->user();
 

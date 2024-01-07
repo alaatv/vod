@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -56,16 +55,16 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  Throwable  $exception
      *
      * @return void
+     *
      * @throws Throwable
      */
     public function report(Throwable $exception)
     {
         dd($exception);
-// Kill reporting if this is an "access denied" (code 9) OAuthServerException.
-        if ($exception instanceof OAuthServerException && $exception->getCode() == 9) {
+        // Kill reporting if this is an "access denied" (code 9) OAuthServerException.
+        if ($exception instanceof OAuthServerException && $exception->getCode() === 9) {
             return;
         }
 
@@ -76,8 +75,8 @@ class Handler extends ExceptionHandler
         }
 
         if (Reflector::isCallable($reportCallable = [
-                $exception, 'report'
-            ]) && $this->container->call($reportCallable) !== false) {
+            $exception, 'report',
+        ]) && $this->container->call($reportCallable) !== false) {
             return;
 
         }
@@ -114,9 +113,8 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      *
      * @param  Request  $request
-     * @param  Throwable  $exception
-     *
      * @return JsonResponse|RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
      * @throws Throwable
      */
     public function render($request, Throwable $exception)
@@ -131,6 +129,7 @@ class Handler extends ExceptionHandler
             if (Str::contains($request->path(), 'api/v2')) {
                 return myAbort(Response::HTTP_NOT_FOUND, 'Resource not found');
             }
+
             return response()->json([
                 'error' => 'Resource not found',
             ], Response::HTTP_NOT_FOUND);
@@ -165,12 +164,12 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof AuthenticationException && $request->wantsJson() && Str::contains($request->path(),
-                'v2')) {
+            'v2')) {
             return myAbort(Response::HTTP_UNAUTHORIZED, 'Unauthorized.');
         }
 
         if ($exception instanceof AuthorizationException && $request->wantsJson() && Str::contains($request->path(),
-                'v2')) {
+            'v2')) {
             return myAbort($exception->getCode() ?? Response::HTTP_FORBIDDEN,
                 $exception->getMessage() ?? 'This action is unauthorized.');
         }
@@ -182,6 +181,7 @@ class Handler extends ExceptionHandler
                     'errors' => null,
                 ], $exception->getStatusCode());
             }
+
             return response()->json([
                 'error' => $exception->getMessage(),
             ], $exception->getStatusCode());
@@ -192,9 +192,9 @@ class Handler extends ExceptionHandler
             return ExceptionInterpreter::makeResponse($exception);
         }
 
-        if (!($exception instanceof Exception && !$exception instanceof ValidationException && $request->wantsJson() && Str::contains($request->path(),
-                'api/v2'))) {
-//            return \response('NOT OK');
+        if (! ($exception instanceof Exception && ! $exception instanceof ValidationException && $request->wantsJson() && Str::contains($request->path(),
+            'api/v2'))) {
+            //            return \response('NOT OK');
             return parent::render($request, $exception);
         }
 
@@ -202,6 +202,7 @@ class Handler extends ExceptionHandler
         if (config('app.env') !== 'development') {
             return myAbort(Response::HTTP_SERVICE_UNAVAILABLE, 'Service unavailable');
         }
+
         return response()->json([
             'message' => $exception->getMessage(),
             'errors' => [
@@ -222,8 +223,6 @@ class Handler extends ExceptionHandler
      * Convert an authentication exception into an unauthenticated response.
      *
      * @param  Request  $request
-     * @param  AuthenticationException  $exception
-     *
      * @return Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)

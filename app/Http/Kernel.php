@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\OverwriteOrderIDAndAddItToRequest;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
@@ -69,5 +70,9 @@ class Kernel extends HttpKernel
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
+    ];
+
+    protected $routeMiddleware = [
+        'OverwriteOrderIDAndAddItToRequest' => OverwriteOrderIDAndAddItToRequest::class,
     ];
 }

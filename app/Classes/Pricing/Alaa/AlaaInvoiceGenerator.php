@@ -17,9 +17,6 @@ use Illuminate\Support\Collection;
 class AlaaInvoiceGenerator
 {
     /**
-     * @param  Order  $order
-     *
-     * @return array
      * @throws Exception
      */
     public function generateOrderInvoice(Order $order): array
@@ -49,8 +46,6 @@ class AlaaInvoiceGenerator
     }
 
     /**
-     * @param  Order  $order
-     *
      * @return array
      */
     private function getOrderproductsInfo(Order $order)
@@ -60,7 +55,7 @@ class AlaaInvoiceGenerator
 
         $purchasedOrderproducts =
             $allOrderproducts->whereType([
-                config('constants.ORDER_PRODUCT_TYPE_DEFAULT'), config('constants.ORDER_PRODUCT_EXCHANGE')
+                config('constants.ORDER_PRODUCT_TYPE_DEFAULT'), config('constants.ORDER_PRODUCT_EXCHANGE'),
             ]);
         $giftOrderproducts = $allOrderproducts->whereType([config('constants.ORDER_PRODUCT_GIFT')]);
 
@@ -72,10 +67,6 @@ class AlaaInvoiceGenerator
 
     /**
      * Formats orderproduct collection and return total number of orderproducts
-     *
-     * @param  OrderproductCollection  $orderproducts
-     *
-     * @return int
      */
     private function orderproductFormatter(OrderproductCollection &$orderproducts): int
     {
@@ -137,8 +128,6 @@ class AlaaInvoiceGenerator
     }
 
     /**
-     * @param  Collection  $fakeOrderproducts
-     *
      * @return array
      */
     public function generateFakeOrderproductsInvoice(Collection $fakeOrderproducts)

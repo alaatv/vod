@@ -24,7 +24,11 @@ class SubmitReferralCodeRequest extends FormRequest
     public function rules()
     {
         return [
-            'referral_code' => ['required', 'string', 'exists:referral_codes,code'],
+            'referral_code' => [
+                'string',
+                'required',
+                'exists:referral_codes,code',
+            ],
             'openOrder' => 'required',
         ];
     }

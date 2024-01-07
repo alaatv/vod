@@ -12,10 +12,7 @@ class OverwriteOrderIDAndAddItToRequest
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
      * @param  null  $guard
-     *
      * @return mixed
      */
     public function handle(Request $request, Closure $next, $guard = null)
@@ -38,7 +35,6 @@ class OverwriteOrderIDAndAddItToRequest
         if ($isInInstalmentOrder && $openOrder->orderproducts->count() > 0) {
             $openOrder->orderproducts()->delete();
         }
-
 
         $request->offsetSet('order_id', $openOrder->id);
         $request->offsetSet('openOrder', $openOrder);
