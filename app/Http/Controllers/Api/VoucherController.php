@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use phpseclib3\System\SSH\Agent;
 
 class VoucherController extends Controller
 {
@@ -29,44 +28,37 @@ class VoucherController extends Controller
         $this->callMiddlewares($authException);
     }
 
-    /**
-     * @param  Agent  $agent
-     *
-     * @return array
-     */
     private function getAuthExceptionArray(): array
     {
         return [];
     }
 
-    /**
-     * @param $authException
-     */
     private function callMiddlewares(array $authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
-        $this->middleware('permission:'.config('constants.VERIFY_HEKMAT_VOUCHER'), ['only' => ['verify',],]);
-        $this->middleware('permission:'.config('constants.DISABLE_HEKMAT_VOUCHER'), ['only' => ['disable',],]);
-        $this->middleware(['findVoucher', 'validateVoucher'], ['only' => ['submit'],]);
+        $this->middleware('permission:'.config('constants.VERIFY_HEKMAT_VOUCHER'), ['only' => ['verify']]);
+        $this->middleware('permission:'.config('constants.DISABLE_HEKMAT_VOUCHER'), ['only' => ['disable']]);
+        $this->middleware(['findVoucher', 'validateVoucher'], ['only' => ['submit']]);
     }
 
     public function verify(Request $request)
     {
         $voucher = ProductvoucherRepo::findVoucherByCode($request->get('code'))->first();
-        if (!isset($voucher)) {
+        if (! isset($voucher)) {
             return response()->json([
-                'error' => 'Resource not found'
+                'error' => 'Resource not found',
             ], Response::HTTP_NOT_FOUND);
         }
+
         return new VerifyVoucherResource($voucher);
     }
 
     public function disable(Request $request)
     {
         $voucher = ProductvoucherRepo::findVoucherByCode($request->get('code'))->first();
-        if (!isset($voucher)) {
+        if (! isset($voucher)) {
             return response()->json([
-                'error' => 'Resource not found'
+                'error' => 'Resource not found',
             ], Response::HTTP_NOT_FOUND);
         }
         if (ProductvoucherRepo::disableVoucher($voucher)) {
@@ -96,19 +88,21 @@ class VoucherController extends Controller
             $voucher->markVoucherAsUsed($user->id, $order->id, Productvoucher::CONTRANCTOR_HEKMAT);
             event(new SendOrderNotificationsEvent($order, $user, true, true));
             event(new UserPurchaseCompleted($order));
+
             return response()->json([
                 'message' => 'Voucher has been used successfully',
                 'products' => $products,
             ]);
 
         }
+
         return myAbort(Response::HTTP_BAD_REQUEST, 'Your request could not been done', ['code' => $code]);
     }
 
     private function addVoucherProductsToUser(User $user, Collection $products, $couponId): array
     {
         $coupon = Coupon::find($couponId);
-        if (!isset($coupon)) {
+        if (! isset($coupon)) {
             return [false, null];
         }
         $order = OrderRepo::createBasicCompletedOrder(
@@ -149,6 +143,7 @@ class VoucherController extends Controller
             Log::error('error:'.$e->getMessage());
             $result = [false, null];
         }
+
         return $result;
     }
 }

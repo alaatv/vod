@@ -14,9 +14,7 @@ class ValidateVoucher
      * Handle an incoming request.
      *
      * @param  Request  $request
-     * @param  Closure  $next
      * @param  null  $guard
-     *
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)
@@ -26,8 +24,7 @@ class ValidateVoucher
         $voucher = $request->get('voucher');
         $user = Auth::guard($guard)->user();
 
-
-        if (isset($voucher) && !$voucher->isValid()) {
+        if (isset($voucher) && ! $voucher->isValid()) {
             if ($request->expectsJson()) {
                 return myAbort(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY, 'Voucher is not valid');
             }
@@ -37,10 +34,11 @@ class ValidateVoucher
                 'body' => 'کد شما یافت نشد',
             ];
             setcookie('flashMessage', json_encode($flash), time() + (86400 * 30), '/');
+
             return redirect(route('web.voucher.submit.form', ['code' => $code ?? null]));
         }
 
-        if (!(isset($voucher) && $voucher->hasBeenUsed())) {
+        if (! (isset($voucher) && $voucher->hasBeenUsed())) {
             return $next($request);
         }
         if ($voucher->user_id == $user->id) {
@@ -63,6 +61,7 @@ class ValidateVoucher
             'body' => 'کد قبلا استفاده شده است',
         ];
         setcookie('flashMessage', json_encode($flash), time() + (86400 * 30), '/');
+
         return redirect(route('web.voucher.submit.form', ['code' => $code ?? null]));
     }
 }

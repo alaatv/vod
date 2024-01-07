@@ -13,8 +13,6 @@ class FindVoucher
      * Handle an incoming request.
      *
      * @param  Request  $request
-     * @param  Closure  $next
-     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -22,7 +20,7 @@ class FindVoucher
         $code = $request->get('code');
 
         $voucher = ProductvoucherRepo::findVoucherByCode($code)->first();
-        if (!is_null($voucher)) {
+        if (! is_null($voucher)) {
 
             $request->offsetSet('voucher', $voucher);
 
@@ -38,6 +36,7 @@ class FindVoucher
         ];
         //TODO:// refactor
         setcookie('flashMessage', json_encode($flash), time() + (86400 * 30), '/');
+
         return redirect(route('web.voucher.submit.form', ['code' => $request->get('code')]));
     }
 }

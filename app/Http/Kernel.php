@@ -3,11 +3,13 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\FindVoucher;
 use App\Http\Middleware\OverwriteOrderIDAndAddItToRequest;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\ValidateSignature;
+use App\Http\Middleware\ValidateVoucher;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -74,5 +76,7 @@ class Kernel extends HttpKernel
 
     protected $routeMiddleware = [
         'OverwriteOrderIDAndAddItToRequest' => OverwriteOrderIDAndAddItToRequest::class,
+        'findVoucher' => FindVoucher::class,
+        'validateVoucher' => ValidateVoucher::class,
     ];
 }
