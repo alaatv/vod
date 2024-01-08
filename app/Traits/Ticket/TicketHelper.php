@@ -1,13 +1,11 @@
 <?php
 
-
 namespace App\Traits\Ticket;
 
-
 use App\Models\TicketAction;
+use App\Models\TicketMessage;
 use App\Repositories\TicketActionLogRepo;
 use Illuminate\Support\Str;
-
 
 trait TicketHelper
 {
@@ -24,7 +22,7 @@ trait TicketHelper
                     'fileName' => basename($photo),
                     'size' => null,
                     'ext' => pathinfo($photo, PATHINFO_EXTENSION),
-                ]
+                ],
             ];
         } else {
             $files['photos'] = null;
@@ -39,7 +37,7 @@ trait TicketHelper
                     'fileName' => basename($voice),
                     'size' => null,
                     'ext' => pathinfo($voice, PATHINFO_EXTENSION),
-                ]
+                ],
             ];
         } else {
             $files['voices'] = null;
@@ -54,12 +52,13 @@ trait TicketHelper
                     'fileName' => basename($file),
                     'size' => null,
                     'ext' => pathinfo($file, PATHINFO_EXTENSION),
-                ]
+                ],
             ];
         } else {
             $files['file'] = null;
         }
-        return !empty($files) ? $files : null;
+
+        return ! empty($files) ? $files : null;
     }
 
     private function logTicketMessageInsertion(TicketMessage $ticketMessage, int $authUserId)
