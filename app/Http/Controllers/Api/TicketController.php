@@ -59,11 +59,11 @@ class TicketController extends Controller
     private function callMiddlewares(array $authException): void
     {
         $this->middleware('auth', ['except' => $authException]);
-        $this->middleware('permission:'.config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
-        $this->middleware('permission:'.config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
-        $this->middleware('permission:'.config('constants.SEND_TICKET_STATUS_NOTICE'),
-            ['only' => 'sendTicketStatusChangeNotice']);
-        $this->middleware('permission:'.config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
+        //        $this->middleware('permission:'.config('constants.EDIT_TICKET_ACCESS'), ['only' => 'update']);
+        //        $this->middleware('permission:'.config('constants.REMOVE_TICKET_ACCESS'), ['only' => 'destroy']);
+        //        $this->middleware('permission:'.config('constants.SEND_TICKET_STATUS_NOTICE'),
+        //            ['only' => 'sendTicketStatusChangeNotice']);
+        //        $this->middleware('permission:'.config('constants.ASSIGN_TICKET'), ['only' => 'assignToUser']);
         //        $this->middleware('permission:' . config('constants.CREATE_TICKET'), ['only' => 'create']);
     }
 

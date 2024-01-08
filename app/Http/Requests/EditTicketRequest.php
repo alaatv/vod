@@ -25,8 +25,8 @@ class EditTicketRequest extends FormRequest
     public function rules()
     {
         return [
-            'department_id' => ['exists:App\TicketDepartment,id'],
-            'orderproduct_id' => ['exists:App\Orderproduct,id'],
+            'department_id' => ['exists:App\Models\TicketDepartment,id'],
+            'orderproduct_id' => ['exists:App\Models\Orderproduct,id'],
         ];
     }
 }
