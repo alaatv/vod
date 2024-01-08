@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\ApiOrderCheckoutReview;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\FillOpenOrderIDIfNotExistsInRequest;
 use App\Http\Middleware\FindVoucher;
 use App\Http\Middleware\OverwriteOrderIDAndAddItToRequest;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -80,5 +81,6 @@ class Kernel extends HttpKernel
         'findVoucher' => FindVoucher::class,
         'validateVoucher' => ValidateVoucher::class,
         'ApiOrderCheckoutReview' => ApiOrderCheckoutReview::class,
+        'openOrder' => FillOpenOrderIDIfNotExistsInRequest::class,
     ];
 }
