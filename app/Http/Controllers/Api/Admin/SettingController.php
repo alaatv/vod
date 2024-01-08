@@ -16,15 +16,16 @@ class SettingController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:'.config('constants.STORE_SETTING'))->only(['store', 'file']);
-        $this->middleware('permission:'.config('constants.UPDATE_SETTING'))->only(['update']);
-        $this->middleware('permission:'.config('constants.DESTROY_SETTING'))->only(['destroy']);
-        $this->middleware('permission:'.config('constants.INDEX_SETTING'))->only(['index']);
+        //        $this->middleware('permission:'.config('constants.STORE_SETTING'))->only(['store', 'file']);
+        //        $this->middleware('permission:'.config('constants.UPDATE_SETTING'))->only(['update']);
+        //        $this->middleware('permission:'.config('constants.DESTROY_SETTING'))->only(['destroy']);
+        //        $this->middleware('permission:'.config('constants.INDEX_SETTING'))->only(['index']);
     }
 
     public function index(Request $request)
     {
         $settings = Setting::where('service_id', $request->get('service_id', 1))->paginate();
+
         return SettingResource::collection($settings);
     }
 
@@ -33,6 +34,7 @@ class SettingController extends Controller
         $data = $request->validated();
         $data['service_id'] = $request->get('service_id', 1);
         $setting = Setting::create($data);
+
         return response()->json($setting);
     }
 
@@ -41,8 +43,9 @@ class SettingController extends Controller
         $setting = Setting::create([
             'key' => $request->input('key'),
             'value' => $request->input('value'),
-            'service_id' => 3
+            'service_id' => 3,
         ]);
+
         return response()->json($setting);
     }
 
@@ -53,14 +56,15 @@ class SettingController extends Controller
                 'data' => [
                     'key' => $setting->key,
                     'message' => 'successfully updated',
-                ]
+                ],
             ]);
         }
+
         return response()->json([
             'data' => [
                 'key' => $setting->key,
                 'message' => 'has error while updating',
-            ]
+            ],
         ]);
 
     }
@@ -72,14 +76,15 @@ class SettingController extends Controller
                 'data' => [
                     'key' => $setting->key,
                     'message' => 'successfully deleted',
-                ]
+                ],
             ]);
         }
+
         return response()->json([
             'data' => [
                 'key' => $setting->key,
                 'message' => 'has error while deleting',
-            ]
+            ],
         ]);
     }
 
@@ -87,6 +92,7 @@ class SettingController extends Controller
     {
         $setting = Setting::where('key', $request->setting)->where('service_id',
             $request->get('service_id', 1))->first();
+
         return new SettingResource($setting);
     }
 
@@ -101,6 +107,7 @@ class SettingController extends Controller
                 ],
             ]);
         }
+
         return myAbort(Response::HTTP_INTERNAL_SERVER_ERROR, 'آپلود با خطا مواجه شد');
     }
 }

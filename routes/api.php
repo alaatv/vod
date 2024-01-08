@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\_3AController;
 use App\Http\Controllers\Api\Admin\CouponController;
 use App\Http\Controllers\Api\Admin\MarketingController;
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\TransactionController;
 use App\Http\Controllers\Api\Admin\VoipController;
 use App\Http\Controllers\Api\Admin\VoucherManagementController;
@@ -161,27 +160,7 @@ Route::prefix('v2')->group(function () {
 
     });
 
-    //=================================== Setting Routes ============================================
-    Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
-        Route::resource('', '\\'.SettingController::class)->only(['index', 'store', 'update']);
-        Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
-        Route::post('/', [SettingController::class, 'store'])->name('admin.setting.store');
-        Route::put('{setting:key}', [SettingController::class, 'update'])->name('admin.setting.update');
-        Route::delete('{setting}', [SettingController::class, 'destroy'])->name('admin.setting.destroy');
-        Route::post('file', [SettingController::class, 'file'])->name('file');
-    });
 
-    // Setting Controller Routes
-    Route::prefix('setting')->name('setting.')->group(function () {
-        Route::get('/{setting:key}', [SettingController::class, 'show'])->name('show');
-        Route::post('/uesrStore', [SettingController::class, 'userStore'])->middleware('auth:api')->name('user-store');
-    });
-
-    // Website setting routes
-    Route::prefix('website-setting')->name('website-setting.')->group(function () {
-        Route::post('/user', [WebsiteSettingController::class, 'storeUserSetting'])->name('store-user-setting');
-        Route::get('/user', [WebsiteSettingController::class, 'userSetting'])->name('user-setting');
-    });
 
     // Upload Center routes
     Route::post('upload/presigned-request',

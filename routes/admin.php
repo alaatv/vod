@@ -13,11 +13,13 @@ use App\Http\Controllers\Api\Admin\PermissionController as AdminPermissionContro
 use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Api\Admin\SetController as AdminSetController;
+use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\SlideshowController as AdminSlideshowController;
 use App\Http\Controllers\Api\Admin\TransactionController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\CacheController;
 use App\Http\Controllers\Api\FormBuilder;
+use App\Http\Controllers\Api\WebsiteSettingController;
 use Illuminate\Support\Facades\Route;
 
 //=================================== Admin Routes ============================================
@@ -122,5 +124,24 @@ Route::prefix('v2')->group(function () {
 
         // Form Builder Routes
         Route::get('/form-builder', '\\'.FormBuilder::class);
+
+        //=================================== Setting Routes ============================================
+        Route::group(['prefix' => 'setting', 'as' => 'setting'], function () {
+            Route::resource('', '\\'.SettingController::class)->only(['index', 'store', 'update']);
+            Route::get('/', [SettingController::class, 'index'])->name('admin.setting.index');
+            Route::post('/', [SettingController::class, 'store'])->name('admin.setting.store');
+            Route::put('{setting:key}', [SettingController::class, 'update'])->name('admin.setting.update');
+            Route::delete('{setting}', [SettingController::class, 'destroy'])->name('admin.setting.destroy');
+            Route::post('file', [SettingController::class, 'file'])->name('file');
+            Route::get('/{setting:key}', [SettingController::class, 'show'])->name('setting.show');
+            Route::post('/uesrStore', [SettingController::class, 'userStore'])->middleware('auth:api')->name('setting.user-store');
+        });
+
+        // Website setting routes
+        Route::prefix('website-setting')->name('website-setting.')->group(function () {
+            Route::post('/user', [WebsiteSettingController::class, 'storeUserSetting'])->name('store-user-setting');
+            Route::get('/user', [WebsiteSettingController::class, 'userSetting'])->name('user-setting');
+        });
     });
+
 });
