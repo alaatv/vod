@@ -4,15 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
-/**
- * Class \App\User
- *
- * @mixin \App\User
- * */
 class TicketSender extends AlaaJsonResource
 {
-    public function __construct(\App\User $model)
+    public function __construct(\App\Models\User $model)
     {
         parent::__construct($model);
     }
@@ -37,10 +31,9 @@ class TicketSender extends AlaaJsonResource
                 if (is_null($this->major_id)) {
                     return null;
                 }
+
                 return new Major($this->major);
-            })
+            }),
         ];
     }
-
-
 }

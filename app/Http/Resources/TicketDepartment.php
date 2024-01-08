@@ -5,11 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 
 
-/**
- * Class \App\TicketDepartment
- *
- * @mixin \App\TicketDepartment
- * */
 class TicketDepartment extends AlaaJsonResource
 {
     /**

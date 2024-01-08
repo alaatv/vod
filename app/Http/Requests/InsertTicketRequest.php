@@ -46,9 +46,9 @@ class InsertTicketRequest extends FormRequest
         $input = $this->input();
         $orderproductRule = '';
         if ($this->user->isAbleTo(config('constants.INSERT_TICKET_ACCESS'))) {
-            $orderproductRule = 'exists:App\Orderproduct,id';
-            $orderRule = 'exists:App\Order,id';
-            $departmentRule = 'exists:App\TicketDepartment,id';
+            $orderproductRule = 'exists:App\Models\Orderproduct,id';
+            $orderRule = 'exists:App\Models\Order,id';
+            $departmentRule = 'exists:App\Models\TicketDepartment,id';
 
             if ($this->request->has('orderproduct_id')) {
                 $orderproduct = Orderproduct::find($this->request->get('orderproduct_id'));
