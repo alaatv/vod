@@ -15,52 +15,53 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
-if (!function_exists('nullable')) {
+if (! function_exists('nullable')) {
     function nullable($result, $data = []): Nullable
     {
         return new Nullable($result, $data);
     }
 }
 
-if (!function_exists('boolean')) {
+if (! function_exists('boolean')) {
     function boolean($result): UtilBoolean
     {
         return new UtilBoolean($result);
     }
 }
 
-if (!function_exists('httpResponse')) {
+if (! function_exists('httpResponse')) {
     function httpResponse($api = null, $view = null)
     {
         if (request()->expectsJson()) {
             return $api;
         }
+
         return $view;
     }
 }
 
-if (!function_exists('hasAuthenticatedUserPermission')) {
+if (! function_exists('hasAuthenticatedUserPermission')) {
     function hasAuthenticatedUserPermission(string $permission): bool
     {
-        return (Auth::check() && Auth::user()
-                ->isAbleTo($permission));
+        return Auth::check() && Auth::user()
+            ->isAbleTo($permission);
     }
 }
 
-if (!function_exists('hasAuthenticatedUserRole')) {
+if (! function_exists('hasAuthenticatedUserRole')) {
     function hasAuthenticatedUserRole(string $role): bool
     {
-        return (Auth::check() && Auth::user()->hasRole($role));
+        return Auth::check() && Auth::user()->hasRole($role);
     }
 }
 
-if (!function_exists('clearHtml')) {
+if (! function_exists('clearHtml')) {
     function clearHtml($value): string
     {
         return Purify::clean($value, ['HTML.Allowed' => '']);
     }
 }
-if (!function_exists('convertTagStringToArray')) {
+if (! function_exists('convertTagStringToArray')) {
     function convertTagStringToArray($tagString): array
     {
         $tags = explode(',', $tagString);
@@ -71,18 +72,19 @@ if (!function_exists('convertTagStringToArray')) {
 
 }
 
-if (!function_exists('convertArrayToTagString')) {
-    function convertArrayToTagString($array): string|null
+if (! function_exists('convertArrayToTagString')) {
+    function convertArrayToTagString($array): ?string
     {
-        if (!is_array($array)) {
+        if (! is_array($array)) {
             return null;
         }
+
         return implode(',', json_decode(json_encode($array), true));
     }
 
 }
 
-if (!function_exists('rankInArray')) {
+if (! function_exists('rankInArray')) {
     function rankInArray(array $array, $value): int
     {
         $rank = count($array);
@@ -93,12 +95,13 @@ if (!function_exists('rankInArray')) {
                 break;
             }
         }
+
         return $rank + 1;
     }
 
 }
 
-if (!function_exists('getCurrentWeekDateViaDayName')) {
+if (! function_exists('getCurrentWeekDateViaDayName')) {
     function getCurrentWeekDateViaDayName($dayEnglishName): ?string
     {
         $startOfWeekDate = Carbon::now('Asia/Tehran')->startOfWeek(Carbon::SATURDAY);
@@ -129,18 +132,18 @@ if (!function_exists('getCurrentWeekDateViaDayName')) {
                 }
             }
         }
+
         return (isset($date)) ? $date : null;
     }
 }
 
-if (!function_exists('alaaSetting')) {
+if (! function_exists('alaaSetting')) {
     /**
      * Get / set the specified cache value.
      *
      * If an array is passed, we'll assume you want to put to the cache.
      *
      * @param  dynamic  key|key,default|data,expiration|null
-     *
      * @return mixed|CacheManager
      *
      * @throws Exception
@@ -151,7 +154,7 @@ if (!function_exists('alaaSetting')) {
     }
 }
 
-if (!function_exists('convertRedirectUrlToApiVersion')) {
+if (! function_exists('convertRedirectUrlToApiVersion')) {
     function convertRedirectUrlToApiVersion(string $url, string $apiVersion = '1')
     {
         $url = parse_url($url);
@@ -160,14 +163,14 @@ if (!function_exists('convertRedirectUrlToApiVersion')) {
     }
 }
 
-if (!function_exists('pureHTML')) {
+if (! function_exists('pureHTML')) {
     function pureHTML(string $text)
     {
         return Purify::clean($text, ['HTML.Allowed' => 'div,b,a[href]']);
     }
 }
 
-if (!function_exists('generateSecurePathHash')) {
+if (! function_exists('generateSecurePathHash')) {
     function generateSecurePathHash($expires, $client_IP, $secret, $url)
     {
         $str = $expires.$url.$client_IP.' '.$secret;
@@ -181,13 +184,9 @@ if (!function_exists('generateSecurePathHash')) {
     }
 }
 
-if (!function_exists('getSecureUrl')) {
+if (! function_exists('getSecureUrl')) {
     /**
-     * @param             $url
-     *
      * @param  string|null  $download
-     *
-     * @return string
      */
     function getSecureUrl($url, ?int $download): string
     {
@@ -195,7 +194,7 @@ if (!function_exists('getSecureUrl')) {
     }
 }
 
-if (!function_exists('urlAvailable')) {
+if (! function_exists('urlAvailable')) {
     // check for available gateway bank urls
     // return available banks if only non is available return Zarinpal ( ˘︹˘ )
     function urlAvailable($gateways)
@@ -209,6 +208,7 @@ if (!function_exists('urlAvailable')) {
                     if (in_array($gateway->id,
                         [Transactiongateway::GATE_WAY_SAMAN_ALAA_ID, Transactiongateway::GATE_WAY_SAMAN_SOALAA_ID])) {
                         $availableGateways[$gateway->name] = $gateway;
+
                         continue;
                     }
                     try {
@@ -230,29 +230,24 @@ if (!function_exists('urlAvailable')) {
                         Log::error('Error in helper method urlAvailable on pinging gateway : '.$gateway->name.' - '.$e->getFile().' - '.$e->getLine());
                     }
                 }
-//                if (count($availableGateways) > 1) {
-//                    foreach ($availableGateways as $key => $gateway) {
-//                        if ($key == 'zarinpal') {
-//                            unset($availableGateways[$key]);
-//                        }
-//                    }
-//                }
+
+                //                if (count($availableGateways) > 1) {
+                //                    foreach ($availableGateways as $key => $gateway) {
+                //                        if ($key == 'zarinpal') {
+                //                            unset($availableGateways[$key]);
+                //                        }
+                //                    }
+                //                }
                 return $availableGateways;
             });
+
         return $availableGateways;
     }
 }
 
-if (!function_exists('myAbort')) {
-    /**
-     * @param  int  $statusCode
-     * @param  string  $message
-     *
-     * @param  array  $errors
-     *
-     * @return JsonResponse
-     */
-    function myAbort(int $statusCode, string $message, array $errors = null): JsonResponse
+if (! function_exists('myAbort')) {
+
+    function myAbort(int $statusCode, string $message, ?array $errors = null): JsonResponse
     {
         return response()->json([
             'message' => $message,
@@ -261,18 +256,15 @@ if (!function_exists('myAbort')) {
     }
 }
 
-if (!function_exists('isFileExists')) {
-    /**
-     * @param  string  $url
-     *
-     * @return bool
-     */
+if (! function_exists('isFileExists')) {
+
     function isFileExists(string $url): bool
     {
         $client = new Client();
 
         try {
             $client->head($url);
+
             return true;
         } catch (ClientException $e) {
             return false;
@@ -280,7 +272,7 @@ if (!function_exists('isFileExists')) {
     }
 }
 
-if (!function_exists('strip_punctuations')) {
+if (! function_exists('strip_punctuations')) {
     function strip_punctuations($str)
     {
         if ($str == '') {
@@ -388,7 +380,7 @@ if (!function_exists('strip_punctuations')) {
     }
 }
 
-if (!function_exists('appendRequestParameters')) {
+if (! function_exists('appendRequestParameters')) {
     function appendRequestParameters(string $url, $request): string
     {
         $parametersString = '';
@@ -414,33 +406,35 @@ if (!function_exists('appendRequestParameters')) {
     }
 }
 
-if (!function_exists('pickAdapterDisk')) {
+if (! function_exists('pickAdapterDisk')) {
     function pickAdapterDisk(string $sftpDisk, $cdnDisk): string
     {
         return $sftpDisk;
-//        return (config('app.env') == 'production') ? $cdnDisk : $sftpDisk;
+        //        return (config('app.env') == 'production') ? $cdnDisk : $sftpDisk;
     }
 }
 
-if (!function_exists('url_exists')) {
+if (! function_exists('url_exists')) {
     function url_exists($url)
     {
         $headers = get_headers($url);
+
         return (bool) stripos($headers[0], '200 OK');
     }
 }
-if (!function_exists('url_get_size')) {
+if (! function_exists('url_get_size')) {
     function url_get_size($url): int
     {
-        if (!url_exists($url)) {
+        if (! url_exists($url)) {
             return 0;
         }
-//        Log::channel('debug')->debug("url_get_size : url :". $url);
+        //        Log::channel('debug')->debug("url_get_size : url :". $url);
         $data = get_headers($url, true);
+
         return isset($data['Content-Length']) ? (int) $data['Content-Length'] : 0;
     }
 }
-if (!function_exists('file_size_formatter')) {
+if (! function_exists('file_size_formatter')) {
     function file_size_formatter(?int $size): ?string
     {
         if (is_null($size)) {
@@ -460,53 +454,57 @@ if (!function_exists('file_size_formatter')) {
         }
     }
 }
-if (!function_exists('getVideoLength')) {
+if (! function_exists('getVideoLength')) {
     function getVideoLength($url)
     {
-        if (!url_exists(urldecode($url))) {
+        if (! url_exists(urldecode($url))) {
             return null;
         }
         $command =
-            "ffprobe -v error -hide_banner -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i \"".urldecode($url)."\"";
-//        Log::channel('debug')->debug($command);
+            'ffprobe -v error -hide_banner -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -i "'.urldecode($url).'"';
+        //        Log::channel('debug')->debug($command);
         try {
             $videoLength = (int) exec($command);
-//            Log::channel('debug')->debug("l:" .$videoLength);
+            //            Log::channel('debug')->debug("l:" .$videoLength);
         } catch (Exception $exception) {
             Log::error('getVideoLength: '.$url.' - '.$exception->getMessage());
         }
+
         return $videoLength;
     }
 }
 
-if (!function_exists('getFileSize')) {
+if (! function_exists('getFileSize')) {
     function getFileSize($path)
     {
-        if (!file_exists(urldecode($path))) {
+        if (! file_exists(urldecode($path))) {
             return null;
         }
         $fileSizeKB = filesize(urldecode($path)) / 1024;
+
         return (int) $fileSizeKB;
     }
 }
 
-if (!function_exists('countPDFPages')) {
+if (! function_exists('countPDFPages')) {
     function countPDFPages($path)
     {
-        if (!file_exists(urldecode($path))) {
+        if (! file_exists(urldecode($path))) {
             return null;
         }
         $pdftext = file_get_contents(urldecode($path));
         $numOfPages = preg_match_all('/\/Page\W/', $pdftext, $dummy);
+
         return $numOfPages;
     }
 }
 
-if (!function_exists('determineSMSOperator')) {
+if (! function_exists('determineSMSOperator')) {
     function determineSMSOperator(string $mobile): string|Exception
     {
         try {
             $operator = determineUserMobileOperator($mobile);
+
             return $operator?->provider?->number ??
                 SmsProvider::filter(['enable' => true, 'defaults' => true])->first()->number ??
                 throw new Exception('Provider Not Defined');
@@ -516,8 +514,8 @@ if (!function_exists('determineSMSOperator')) {
     }
 }
 
-if (!function_exists('determineUserMobileOperator')) {
-    function determineUserMobileOperator(string $mobile): PhoneNumberProvider|null
+if (! function_exists('determineUserMobileOperator')) {
+    function determineUserMobileOperator(string $mobile): ?PhoneNumberProvider
     {
         //Forcing operator 1000 to all messages
         return PhoneNumberProvider::whereId(3)->first();
@@ -532,21 +530,21 @@ if (!function_exists('determineUserMobileOperator')) {
     }
 }
 
-if (!function_exists('recheckSentSmsStatusTime')) {
+if (! function_exists('recheckSentSmsStatusTime')) {
     function recheckSentSmsStatusTime(): Carbon
     {
         return now()->addMinutes(config('services.medianaSMS.MEDIANA_RECHECK_SEND_MESSAGE_STATUS_INTERVAL'));
     }
 }
 
-if (!function_exists('resendUnsuccessfulMessageTime')) {
+if (! function_exists('resendUnsuccessfulMessageTime')) {
     function resendUnsuccessfulMessageTime(): Carbon
     {
         return now()->addMinutes(config('services.medianaSMS.MEDIANA_RESEND_UNSUCCESSFUL_MESSAGE_INTERVAL'));
     }
 }
 
-if (!function_exists('baseTelNo')) {
+if (! function_exists('baseTelNo')) {
     function baseTelNo($mobile): string
     {
         /*
@@ -574,11 +572,12 @@ if (!function_exists('baseTelNo')) {
         if (substr($mobile, 0, 2) == '98') {
             $mobile = substr($mobile, 2);
         }
+
         return $mobile;
     }
 }
 
-if (!function_exists('reformatToUseInSync')) {
+if (! function_exists('reformatToUseInSync')) {
     function reformatToUseInSync(array $inputArray): array
     {
         $outputArray = [];
@@ -591,18 +590,19 @@ if (!function_exists('reformatToUseInSync')) {
             }
             $outputArray[$value['id']] = $subParams;
         }
+
         return $outputArray;
     }
 }
 
-if (!function_exists('ticketDepartmentTagRedisUrl')) {
+if (! function_exists('ticketDepartmentTagRedisUrl')) {
     function ticketDepartmentTagRedisUrl(int $ticketDepartmentId): string
     {
         return config('constants.TAG_API_URL').'id/ticketDepartment/'.$ticketDepartmentId;
     }
 }
 
-if (!function_exists('diffInPeriod')) {
+if (! function_exists('diffInPeriod')) {
     function diffInPeriod($startDate, $endDate, $carbonDiffMethodName): string
     {
         $startDate = Carbon::parse($startDate)->format('Y-m-d H:i:s');
@@ -613,42 +613,41 @@ if (!function_exists('diffInPeriod')) {
     }
 }
 
-if (!function_exists('diffInSeconds')) {
+if (! function_exists('diffInSeconds')) {
     function diffInSeconds($startDate, $endDate): string
     {
         return diffInPeriod($startDate, $endDate, __FUNCTION__);
     }
 }
 
-if (!function_exists('diffInMinutes')) {
+if (! function_exists('diffInMinutes')) {
     function diffInMinutes($startDate, $endDate): string
     {
         return diffInPeriod($startDate, $endDate, __FUNCTION__);
     }
 }
 
-if (!function_exists('diffInHours')) {
+if (! function_exists('diffInHours')) {
     function diffInHours($startDate, $endDate): string
     {
         return diffInPeriod($startDate, $endDate, __FUNCTION__);
     }
 }
 
-if (!function_exists('isDevelopmentMode')) {
+if (! function_exists('isDevelopmentMode')) {
     function isDevelopmentMode(): bool
     {
         return config('app.env') == 'local';
     }
 }
 
-if (!function_exists('appUrlRoute')) {
+if (! function_exists('appUrlRoute')) {
     /**
      * Generate the URL to a named route.
      *
      * @param  array|string  $name
      * @param  mixed  $parameters
      * @param  bool  $absolute
-     * @return string
      */
     function appUrlRoute($name, $parameters = [], $absolute = true): string
     {
@@ -665,14 +664,11 @@ if (!function_exists('appUrlRoute')) {
     }
 }
 
-if (!function_exists('secondsToHumanFormat')) {
-    /**
-     * @param  int|null  $seconds
-     * @return string|null
-     */
+if (! function_exists('secondsToHumanFormat')) {
+
     function secondsToHumanFormat(?int $seconds): ?string
     {
-        if (!isset($seconds)) {
+        if (! isset($seconds)) {
             return null;
         }
 
@@ -685,24 +681,21 @@ if (!function_exists('secondsToHumanFormat')) {
             $result = explode(':', $result);
             $result = implode(':', [($days * 24) + $result[0], $result[1], $result[2]]);
         }
+
         return $result;
     }
 }
 
-if (!function_exists('nestedArraySearchWithKey')) {
-    /**
-     * @param  array  $array
-     * @param  string  $key
-     * @param  string  $value
-     * @return array|null
-     */
+if (! function_exists('nestedArraySearchWithKey')) {
+
     function nestedArraySearchWithKey(array $array, string $value, string $key): ?array
     {
         $arraySearchedValues = array_column($array, $key);
-        if (!empty($arraySearchedValues)) {
+        if (! empty($arraySearchedValues)) {
             $index = array_search($value, $arraySearchedValues);
             if ($index !== false) {
                 $arrayKey = array_keys($array)[$index];
+
                 return $array[$arrayKey];
             }
         }
@@ -711,14 +704,8 @@ if (!function_exists('nestedArraySearchWithKey')) {
     }
 }
 
-if (!function_exists('nestedArraySearchValueByAnotherField')) {
-    /**
-     * @param  array  $array
-     * @param  string  $searchValue
-     * @param  string  $searchKey
-     * @param  string  $returnFieldKey
-     * @return mixed
-     */
+if (! function_exists('nestedArraySearchValueByAnotherField')) {
+
     function nestedArraySearchValueByAnotherField(
         array $array,
         string $searchValue,
@@ -726,7 +713,7 @@ if (!function_exists('nestedArraySearchValueByAnotherField')) {
         string $returnFieldKey
     ): mixed {
         $searchedArray = nestedArraySearchWithKey($array, $searchValue, $searchKey);
-        if (!is_null($searchedArray)) {
+        if (! is_null($searchedArray)) {
             return Arr::get($searchedArray, $returnFieldKey);
         }
 
@@ -734,49 +721,47 @@ if (!function_exists('nestedArraySearchValueByAnotherField')) {
     }
 }
 
-if (!function_exists('searchArrayToAnotherArray')) {
-    /**
-     * @param  array  $array1
-     * @param  array  $array2
-     * @return bool
-     */
+if (! function_exists('searchArrayToAnotherArray')) {
+
     function searchArrayToAnotherArray(array $array1, array $array2): bool
     {
         return count(array_intersect($array1, $array2)) === count($array1);
     }
 }
 
-if (!function_exists('standardTelNo')) {
+if (! function_exists('standardTelNo')) {
     function standardTelNo(string $telNo): string
     {
         return '0'.baseTelNo($telNo);
     }
 }
 
-if (!function_exists('standardNationCode')) {
+if (! function_exists('standardNationCode')) {
     function standardNationCode(string $nationalCode): string
     {
         return str_pad($nationalCode, 10, '0', STR_PAD_LEFT);
     }
 }
 
-if (!function_exists('removeQueryFromUrl')) {
+if (! function_exists('removeQueryFromUrl')) {
     function removeQueryFromUrl(string $url): string
     {
         $parseUrl = parse_url($url);
+
         return $parseUrl['scheme'].'://'.$parseUrl['host'].$parseUrl['path'];
     }
 }
 
-if (!function_exists('convertBaseUrlToAppUrl')) {
+if (! function_exists('convertBaseUrlToAppUrl')) {
     function convertBaseUrlToAppUrl(string $url): string
     {
         $parseUrl = parse_url($url);
+
         return config('app.url').$parseUrl['path'].'?'.$parseUrl['query'];
     }
 }
 
-if (!function_exists('generateRandomString')) {
+if (! function_exists('generateRandomString')) {
     function generateRandomString($n)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -791,19 +776,19 @@ if (!function_exists('generateRandomString')) {
     }
 }
 
-if (!function_exists('randomNumber')) {
+if (! function_exists('randomNumber')) {
     function randomNumber($length)
     {
         $result = '';
         for ($i = 0; $i < $length; $i++) {
             $result .= mt_rand(0, 9);
         }
+
         return $result;
     }
 }
 
-
-if (!function_exists('defaultHeader')) {
+if (! function_exists('defaultHeader')) {
     function defaultHeader()
     {
         return [
@@ -813,14 +798,18 @@ if (!function_exists('defaultHeader')) {
     }
 }
 
-if (!function_exists('array_filter_collapse')) {
+//In this refactored version, I've used the spread operator (...) to merge the filtered arrays directly using array_merge.
+// This takes advantage of the fact that the filtered array is already an array of arrays,
+// and the spread operator simplifies the process of merging them
+
+if (! function_exists('array_filter_collapse')) {
     function array_filter_collapse(array $arr, callable $callback): array
     {
-        return array_collapse(array_filter($arr, $callback));
+        return array_merge(...array_filter($arr, $callback));
     }
 }
 
-if (!function_exists('arrayInsert')) {
+if (! function_exists('arrayInsert')) {
     /**
      * @param  array  $array
      * @param  int|string  $position
@@ -841,19 +830,19 @@ if (!function_exists('arrayInsert')) {
     }
 }
 
-if (!function_exists('mobileValidation')) {
+if (! function_exists('mobileValidation')) {
     function mobileValidation($mobile): bool
     {
         return preg_match('/^(\+98|98|0)9\d{9}$/', $mobile);
     }
 }
 
-if (!function_exists('nationalCodeValidation')) {
+if (! function_exists('nationalCodeValidation')) {
     function nationalCodeValidation($value): bool
     {
         $arrCode = str_split($value);
         foreach ($arrCode as $value) {
-            if (!is_numeric($value)) {
+            if (! is_numeric($value)) {
                 return false;
             }
         }
@@ -869,10 +858,11 @@ if (!function_exists('nationalCodeValidation')) {
         if ($a == $c && $a < 2 || $a == 11 - $c) {
             return true;
         }
+
         return false;
     }
 
-    if (!function_exists('makeRandomOnlyAlphabeticalString')) {
+    if (! function_exists('makeRandomOnlyAlphabeticalString')) {
         function makeRandomOnlyAlphabeticalString($length)
         {
             $seed = str_split('abcdefghijklmnopqrstuvwxyz'
@@ -882,6 +872,7 @@ if (!function_exists('nationalCodeValidation')) {
             foreach (array_rand($seed, $length) as $k) {
                 $rand .= $seed[$k];
             }
+
             return $rand;
         }
     }
