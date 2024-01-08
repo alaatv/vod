@@ -13,7 +13,7 @@ class ApiOrderCheckoutReview
 
     public function handle(Request $request, Closure $next)
     {
-        if (!auth('api')->check()) {
+        if (! auth('api')->check()) {
             return $next($request);
         }
         $user = auth('api')->user();
@@ -26,7 +26,7 @@ class ApiOrderCheckoutReview
             return myAbort(Response::HTTP_BAD_REQUEST, 'بیش از یک محصول در سبد قسطی شما افزوده شده است.');
         }
         $request->offsetSet('order_id', $openOrder->id);
-        if (!$request->has('cartItems')) {
+        if (! $request->has('cartItems')) {
             return $next($request);
         }
 
@@ -37,16 +37,12 @@ class ApiOrderCheckoutReview
                 $this->storeOrderproductJsonObject($orderproduct, $data);
             }
         }
+
         return $next($request);
     }
 
-    /**
-     * @param $cookieOrderproducts
-     *
-     * @return bool
-     */
     private function validateOrderproducts($cookieOrderproducts): bool
     {
-        return is_array($cookieOrderproducts) && !empty($cookieOrderproducts);
+        return is_array($cookieOrderproducts) && ! empty($cookieOrderproducts);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ApiOrderCheckoutReview;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\FindVoucher;
 use App\Http\Middleware\OverwriteOrderIDAndAddItToRequest;
@@ -78,5 +79,6 @@ class Kernel extends HttpKernel
         'OverwriteOrderIDAndAddItToRequest' => OverwriteOrderIDAndAddItToRequest::class,
         'findVoucher' => FindVoucher::class,
         'validateVoucher' => ValidateVoucher::class,
+        'ApiOrderCheckoutReview' => ApiOrderCheckoutReview::class,
     ];
 }
