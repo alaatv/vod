@@ -28,7 +28,6 @@ use App\Traits\ProductCommon;
 use App\Traits\User\AssetTrait;
 use App\Traits\WatchHistoryTrait;
 use Carbon\Carbon;
-use Config;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +35,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Purify;
+use Illuminate\Support\Facades\Config;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -1829,9 +1828,6 @@ class Product extends BaseModel implements Advertisable, FavorableInterface, Seo
         $this->attributes['redirectUrl'] = ! isset($value) ? null : json_encode($value);
     }
 
-    /**
-     * @param  User|null  $user
-     */
     public function getPriceTextAttribute(): array
     {
         if ($this->isFree) {
@@ -1856,9 +1852,6 @@ class Product extends BaseModel implements Advertisable, FavorableInterface, Seo
         ];
     }
 
-    /**
-     * @param  User|null  $user
-     */
     public function getPriceTextForInstalmentAttribute(): array
     {
         if ($this->isFree) {
@@ -1883,9 +1876,6 @@ class Product extends BaseModel implements Advertisable, FavorableInterface, Seo
         ];
     }
 
-    /**
-     * @return array|string
-     */
     public function getPriceAttribute()
     {
         if (! is_null($this->price_cache)) {
@@ -1947,7 +1937,6 @@ class Product extends BaseModel implements Advertisable, FavorableInterface, Seo
     /**
      * Obtains product's cost
      *
-     * @param  User|null  $user
      * @return mixed
      */
     private function obtainCostInfo()
