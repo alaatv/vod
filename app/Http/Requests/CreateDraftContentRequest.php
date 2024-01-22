@@ -27,6 +27,7 @@ class CreateDraftContentRequest extends FormRequest
         foreach ($this->except(['_token', 'model', 'id']) as $key => $value) {
             $result[$key] = 'string|nullable';
         }
+
         return $result;
     }
 }

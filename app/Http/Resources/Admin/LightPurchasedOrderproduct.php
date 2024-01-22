@@ -7,7 +7,6 @@ use App\Http\Resources\ProductLite;
 use App\Models\Orderproduct;
 use Illuminate\Http\Request;
 
-
 /**
  * Class Orderproduct
  *
@@ -23,8 +22,7 @@ class LightPurchasedOrderproduct extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

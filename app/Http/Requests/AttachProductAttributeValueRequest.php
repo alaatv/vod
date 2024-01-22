@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class AttachProductAttributeValueRequest
- * @package App\Http\Requests
  */
 class AttachProductAttributeValueRequest extends FormRequest
 {

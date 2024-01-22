@@ -11,16 +11,19 @@ class Bookmark extends AlaaJsonResource
     use AssetTrait;
 
     public const TYPE_CONTENT = 'content';
+
     public const TYPE_PRODUCT = 'product';
+
     public const TYPE_SET = 'set';
 
     private $item;
+
     private $type;
 
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -36,7 +39,7 @@ class Bookmark extends AlaaJsonResource
             'url' => $this->getUrl(),
             'timepoint' => $this->getTimePoints(),
             'is_purchased' => ($this->type == 'product') ?
-                $this->searchProductInUserAssetsCollection($this->item, auth()->user()) : null
+                $this->searchProductInUserAssetsCollection($this->item, auth()->user()) : null,
         ];
     }
 
@@ -72,6 +75,7 @@ class Bookmark extends AlaaJsonResource
         if ($timepoints->isEmpty()) {
             return null;
         }
+
         return ContentTimePointAPI::collection($timepoints);
     }
 }

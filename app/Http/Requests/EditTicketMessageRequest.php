@@ -13,13 +13,13 @@ class EditTicketMessageRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     *
+     * @param \Illuminate\Http\Request $request
      * @return bool
      */
     public function authorize(Request $request)
     {
         $this->user = $request->user();
+
         return true;
     }
 

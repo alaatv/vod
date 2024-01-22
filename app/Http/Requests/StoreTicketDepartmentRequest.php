@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTicketDepartmentRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;

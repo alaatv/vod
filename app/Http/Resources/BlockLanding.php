@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Block
  *
@@ -20,8 +19,7 @@ class BlockLanding extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -36,6 +34,7 @@ class BlockLanding extends AlaaJsonResource
         $sets = $this->sets->where('enable', 1)->where('redirectUrl', null);
         $products = $this->products;
         $banners = $this->banners;
+
         return [
             'id' => $this->id,
             'title' => $this->when(isset($this->title), $this->title),

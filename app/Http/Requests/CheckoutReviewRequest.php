@@ -17,9 +17,6 @@ class CheckoutReviewRequest extends FormRequest
         return $this->getRules();
     }
 
-    /**
-     * @return array
-     */
     private function getRules(): array
     {
         $user = Auth::user();

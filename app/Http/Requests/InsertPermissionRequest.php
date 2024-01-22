@@ -24,6 +24,7 @@ class InsertPermissionRequest extends FormRequest
         foreach (array_values(config('constants.SERVICE_IDS')) as $value) {
             $serviceIds[] = $value['KEY'];
         }
+
         return [
             'name' => 'required',
             'display_name' => 'required',
@@ -33,7 +34,7 @@ class InsertPermissionRequest extends FormRequest
                 Rule::unique('permissions')->where(function ($query) {
                     return $query->where('service_id', $this->service_id)
                         ->where('name', $this->name);
-                })
+                }),
             ],
         ];
     }

@@ -25,8 +25,7 @@ class ProductSet extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -45,7 +44,7 @@ class ProductSet extends AlaaJsonResource
             'redirect_url' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'url')),
             'title' => $this->when(isset($this->name), $this->name),
             'short_title' => $this->when(isset($this->shortName), $this->shortName),
-//            'photo'          => $this->when(isset($this->photo), $this->photo),
+            //            'photo'          => $this->when(isset($this->photo), $this->photo),
             'photo' => $this->when(isset($this->photo), $this->getPhoto($lastContent)),
             'url' => $this->when($this->hasUrl(), $this->hasUrl() ? new Url($this) : null),
             'contents_count' => $activeContents->count(),

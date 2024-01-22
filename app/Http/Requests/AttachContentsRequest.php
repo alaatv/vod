@@ -24,7 +24,7 @@ class AttachContentsRequest extends FormRequest
     public function rules()
     {
         return [
-            'contents' => 'required|array|exists:educationalcontents,id'
+            'contents' => 'required|array|exists:educationalcontents,id',
         ];
     }
 }

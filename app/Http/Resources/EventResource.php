@@ -4,10 +4,8 @@ namespace App\Http\Resources;
 
 use App\Models\Event;
 
-
 class EventResource extends AlaaJsonResource
 {
-
     public function toArray($request)
     {
         if (!($this->resource instanceof Event)) {

@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\Device;
 use Illuminate\Http\Request;
 
-
 /**
  * Class DeviceLightResource
  *
@@ -17,8 +16,7 @@ class DeviceLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

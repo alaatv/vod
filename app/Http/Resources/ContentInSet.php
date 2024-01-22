@@ -23,8 +23,7 @@ class ContentInSet extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -58,7 +57,7 @@ class ContentInSet extends AlaaJsonResource
 
     private function getType()
     {
-//        return New Contenttype($this->contenttype);
+        //        return New Contenttype($this->contenttype);
         return $this->contenttype_id;
     }
 }

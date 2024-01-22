@@ -12,7 +12,7 @@ class SoalaaAttributeResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array|Arrayable|JsonSerializable
      */
     public function toArray($request)
@@ -22,6 +22,7 @@ class SoalaaAttributeResource extends AlaaJsonResource
         }
 
         $resource = $this->resource;
+
         return [
             'info' => $this->when(!empty($resource->info_attributes),
                 new SoalaaInfoAttributeResource($resource->info_attributes)),

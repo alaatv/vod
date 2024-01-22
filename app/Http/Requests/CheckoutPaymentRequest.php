@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-
 class CheckoutPaymentRequest extends FormRequest
 {
     public function authorize()
@@ -18,9 +17,6 @@ class CheckoutPaymentRequest extends FormRequest
         return $this->getRules();
     }
 
-    /**
-     * @return array
-     */
     private function getRules(): array
     {
         $user = Auth::user();

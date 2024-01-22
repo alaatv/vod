@@ -14,7 +14,7 @@ class SoalaaResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array|Arrayable|JsonSerializable
      */
     public function toArray($request)
@@ -24,6 +24,7 @@ class SoalaaResource extends AlaaJsonResource
         }
         $redirectUrl = $this->redirect_url;
         $grandsChildren = $this->grandsChildren()->active()->get();
+
         return [
             'id' => $this->id,
             'redirect_url' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'url')),

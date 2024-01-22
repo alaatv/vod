@@ -27,7 +27,7 @@ class EntekhabReshteRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => ['mimes:jpeg,jpg,png,pdf',],
+            'file' => ['mimes:jpeg,jpg,png,pdf'],
             'comment' => 'nullable|string',
             'consultant_firstname' => ['required_with:consultant_lastname,consultant_mobile', 'string'],
             'consultant_lastname' => ['required_with:consultant_firstname,consultant_mobile', 'string'],
@@ -73,5 +73,4 @@ class EntekhabReshteRequest extends FormRequest
 
         $this->replace($input);
     }
-
 }

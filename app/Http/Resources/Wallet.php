@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Wallet
  *
@@ -14,7 +13,8 @@ class Wallet extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
-     * @param  Request  $request
+     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -31,7 +31,7 @@ class Wallet extends AlaaJsonResource
                 return new Wallettype($this->walletType);
             }),
             'balance' => $this->balance,
-            'user' => $this->relationLoaded('user') ? $this->user : null
+            'user' => $this->relationLoaded('user') ? $this->user : null,
         ];
     }
 }

@@ -5,19 +5,17 @@ namespace App\Http\Resources;
 use App\Models\Productvoucher;
 use Illuminate\Http\Request;
 
-
 /**
  * Class \App\Models\Productvoucher
  *
  * @mixin Productvoucher
- *
  */
 class HekmatVoucher extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -43,7 +41,7 @@ class HekmatVoucher extends AlaaJsonResource
                 }
 
                 return null;
-            })
+            }),
         ];
     }
 }

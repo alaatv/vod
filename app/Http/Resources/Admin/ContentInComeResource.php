@@ -7,13 +7,12 @@ use App\Http\Resources\Author;
 use App\Models\ContentIncome;
 use Illuminate\Http\Request;
 
-
 class ContentInComeResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -39,6 +38,7 @@ class ContentInComeResource extends AlaaJsonResource
         if (is_null($user)) {
             return null;
         }
+
         return new Author($user);
     }
 }

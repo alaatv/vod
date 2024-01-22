@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class InsertAttributegroupRequest extends FormRequest
 {
-
     public function authorize()
     {
         if (auth()

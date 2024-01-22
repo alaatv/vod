@@ -4,26 +4,25 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class DonateResource
- * @package App\Http\Resources
  */
 class DonateResource extends AlaaJsonResource
 {
-    /**
-     * @var
-     */
     private $latestDonors;
+
     private $maxDonors;
+
     private $chartData;
+
     private $totalIncome;
+
     private $totalSpend;
 
     /**
      * Create a new resource instance.
      *
-     * @param  mixed  $resource
+     * @param mixed $resource
      * @return void
      */
     public function __construct($resource, $latestDonors, $maxDonors, $chartData, $totalIncome, $totalSpend)
@@ -42,8 +41,7 @@ class DonateResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     * @return array
+     * @param Request $request
      */
     public function toArray($request): array
     {

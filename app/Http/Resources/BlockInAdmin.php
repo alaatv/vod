@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class Block
  *
@@ -18,8 +17,7 @@ class BlockInAdmin extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -34,6 +32,7 @@ class BlockInAdmin extends AlaaJsonResource
         $sets = $this->sets;
         $products = $this->products;
         $banners = $this->banners;
+
         return [
             'id' => $this->id,
             'type' => $this->when(isset($this->type), function () {

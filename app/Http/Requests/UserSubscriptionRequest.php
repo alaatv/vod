@@ -28,8 +28,8 @@ class UserSubscriptionRequest extends FormRequest
         return [
             'subscription_id' => [
                 'required', Rule::exists(Product::getTableName(), 'id')->where('producttype_id',
-                    config('constants.PRODUCT_TYPE_SUBSCRIPTION'))
-            ]
+                    config('constants.PRODUCT_TYPE_SUBSCRIPTION')),
+            ],
         ];
     }
 }

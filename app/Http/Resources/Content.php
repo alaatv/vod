@@ -18,8 +18,7 @@ class Content extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -51,10 +50,11 @@ class Content extends AlaaJsonResource
             'tags' => $this->when(isset($this->tags), function () {
                 return $this->getTag();
             }),
-            'file' => $this->when($this->hasFile(), function () use ($authUser, $canSee, $userHasAnyRole) {
+            'file' => $this->when($this->hasFile(), function () use ($canSee, $userHasAnyRole) {
                 if ($userHasAnyRole) {
                     return $this->getContentExplicitFile();
                 }
+
                 return $canSee ? $this->getContentExplicitFile() : null;
             }),
             'duration' => $this->when(isset($this->duration), $this->getDuration()),
@@ -85,7 +85,7 @@ class Content extends AlaaJsonResource
             'can_see' => $canSeeCode,
             'recommended_products' => null,
             'timepoints' => $this->getTimePoints(),
-//            'recommended_products' => $this->when($this->recommended_products->isNotEmpty(), $this->getRecommendedProducts()),
+            //            'recommended_products' => $this->when($this->recommended_products->isNotEmpty(), $this->getRecommendedProducts()),
             'source' => $this->when($this->sources->isNotEmpty(), function () {
                 return $this->sources->isNotEmpty() ? Source::collection($this->sources) : null;
             }),
@@ -97,16 +97,18 @@ class Content extends AlaaJsonResource
             }),
             'vast' => new VastResource($this->vast),
             'is_favored' => $this->is_favored,
-            'hls' => $this->when($this->hls, function () use ($authUser, $canSee, $userHasAnyRole) {
+            'hls' => $this->when($this->hls, function () use ($canSee, $userHasAnyRole) {
                 if ($userHasAnyRole) {
                     return $this->hls;
                 }
+
                 return $canSee ? $this->hls : null;
             }),
-            'stream' => $this->when($this->stream, function () use ($authUser, $canSee, $userHasAnyRole) {
+            'stream' => $this->when($this->stream, function () use ($canSee, $userHasAnyRole) {
                 if ($userHasAnyRole) {
                     return $this->streamForApp;
                 }
+
                 return $canSee ? $this->streamForApp : null;
             }),
             'can_user_use_timepoint' => $this->can_user_use_timepoint,
@@ -114,10 +116,9 @@ class Content extends AlaaJsonResource
         ];
     }
 
-
     private function getType()
     {
-//        return New Contenttype($this->contenttype);
+        //        return New Contenttype($this->contenttype);
         return $this->contenttype_id;
     }
 
@@ -131,6 +132,7 @@ class Content extends AlaaJsonResource
         } else {
             $body = $this->description;
         }
+
         return $body;
     }
 
@@ -163,6 +165,7 @@ class Content extends AlaaJsonResource
         if (!isset($relatedProduct)) {
             return null;
         }
+
         return new ProductInBlockWithoutPagination($relatedProduct);
     }
 

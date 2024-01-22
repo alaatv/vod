@@ -27,7 +27,7 @@ class RedirectToPaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'order' => ['nullable', new CheckInstalmentOrderProduct()]
+            'order' => ['nullable', new CheckInstalmentOrderProduct()],
         ];
     }
 
@@ -35,7 +35,7 @@ class RedirectToPaymentRequest extends FormRequest
     {
         if ($this->inInstalment) {
             $this->merge([
-                'order' => auth()->user()?->getOpenOrderOrCreate($this->get('inInstalment', 0))
+                'order' => auth()->user()?->getOpenOrderOrCreate($this->get('inInstalment', 0)),
             ]);
         }
 

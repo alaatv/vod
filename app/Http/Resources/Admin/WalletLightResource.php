@@ -7,7 +7,6 @@ use App\Http\Resources\Wallettype;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 
-
 /**
  * Class WalletLightResource
  *
@@ -18,8 +17,7 @@ class WalletLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

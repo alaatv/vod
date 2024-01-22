@@ -13,13 +13,13 @@ class PamphletFile extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
-        $array = (array) $this->resource;
+        $array = (array)$this->resource;
+
         return [
             'link' => $this->when(Arr::has($array, 'link'), Arr::get($array, 'link')),
             'ext' => $this->when(Arr::has($array, 'ext'), Arr::get($array, 'ext')),

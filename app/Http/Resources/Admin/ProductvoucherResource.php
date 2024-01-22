@@ -5,13 +5,12 @@ namespace App\Http\Resources\Admin;
 use App\Http\Resources\AlaaJsonResource;
 use Illuminate\Http\Request;
 
-
 class ProductvoucherResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

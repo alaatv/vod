@@ -34,8 +34,8 @@ class InsertTransactionRequest extends FormRequest
             'transactiongateway_id' => 'nullable|integer|min:1|exists:transactiongateways,id',
             'transactionstatus_id' => 'required|integer|min:1|exists:transactionstatuses,id',
             'description' => 'nullable|string|min:2',
-//            'deadline_at' => 'sometimes|date_format:Y-m-d H:i:s',
-//            'completed_at' => 'sometimes|date_format:Y-m-d H:i:s',
+            //            'deadline_at' => 'sometimes|date_format:Y-m-d H:i:s',
+            //            'completed_at' => 'sometimes|date_format:Y-m-d H:i:s',
         ];
     }
 

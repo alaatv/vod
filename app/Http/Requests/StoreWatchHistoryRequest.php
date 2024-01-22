@@ -21,9 +21,9 @@ class StoreWatchHistoryRequest extends FormRequest
                 'min:1',
                 Rule::unique('watch_histories')
                     ->where('watchable_id', $this->watchable_id)
-                    ->where('user_id', $this->user()->id)
+                    ->where('user_id', $this->user()->id),
             ],
-            'watchable_type' => 'required|string|min:1|in:'.implode(',',
+            'watchable_type' => 'required|string|min:1|in:' . implode(',',
                     array_keys(config('constants.MORPH_MAP_MODELS'))),
             'seconds_watched' => 'int|min:1',
             'studyevent_id' => 'nullable|integer|exists:studyevents,id',
@@ -34,7 +34,7 @@ class StoreWatchHistoryRequest extends FormRequest
     public function messages()
     {
         return [
-            'watchable_id.unique' => ':attribute قبلا مشاهده شده است.'
+            'watchable_id.unique' => ':attribute قبلا مشاهده شده است.',
         ];
     }
 }

@@ -2,18 +2,16 @@
 
 namespace App\Http\Resources\Admin;
 
-
 use App\Http\Resources\AlaaJsonResource;
 use App\Models\Ostan;
 use Illuminate\Http\Request;
-
 
 class OstanResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -25,7 +23,7 @@ class OstanResource extends AlaaJsonResource
         return [
             'id' => $this->id,
             'title' => $this->name,
-//            'amar_code' => $this->when(isset($this->amar_code), $this->amar_code),
+            //            'amar_code' => $this->when(isset($this->amar_code), $this->amar_code),
         ];
     }
 }

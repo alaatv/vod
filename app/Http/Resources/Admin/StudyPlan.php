@@ -2,17 +2,15 @@
 
 namespace App\Http\Resources\Admin;
 
-
 use App\Http\Resources\AlaaJsonResource;
 use App\Http\Resources\Content;
 use App\Http\Resources\Plan;
 use App\Http\Resources\StudyEventResource;
 use Illuminate\Http\Request;
 
-
 /**
  * Class StudyPlanResource
- * @package App\Http\Resources
+ *
  * @mixin \App\Studyplan
  */
 class StudyPlan extends AlaaJsonResource
@@ -20,7 +18,7 @@ class StudyPlan extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -54,4 +52,3 @@ class StudyPlan extends AlaaJsonResource
         ];
     }
 }
-

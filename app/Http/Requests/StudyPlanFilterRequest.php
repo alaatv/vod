@@ -27,7 +27,7 @@ class StudyPlanFilterRequest extends FormRequest
             'study_event' => ['integer', 'exists:studyplans,id'],
             'since_date' => 'date',
             'till_date' => 'date',
-            'product_id' => ['integer', 'exists:products,id']
+            'product_id' => ['integer', 'exists:products,id'],
         ];
     }
 }

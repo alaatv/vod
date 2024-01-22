@@ -24,7 +24,6 @@ class ContentOfSet extends AlaaJsonResource
      * Transform the resource into an array.
      *
      *
-     * @param $request
      *
      * @return array
      */
@@ -37,6 +36,7 @@ class ContentOfSet extends AlaaJsonResource
         $this->loadMissing('contenttype', 'section', 'user', 'set');
         $redirectUrl = $this->redirect_url;
         $authUser = $request->user('api') ?? null;
+
         return [
             'id' => $this->id,
             'redirect_url' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'url')),
@@ -50,6 +50,7 @@ class ContentOfSet extends AlaaJsonResource
                     return $this->getContentExplicitFile();
                 }
                 $canSee = $this->getCanSeeContent($authUser);
+
                 return ($canSee == 0 || $canSee == 2) ? null : $this->getContentExplicitFile();
             }),
             'duration' => $this->when(isset($this->duration), $this->duration),

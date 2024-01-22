@@ -11,9 +11,10 @@ class InvoiceItem extends AlaaJsonResource
 
     public function toArray($request)
     {
-        $array = (array) $this->resource;
-//        return $array;
+        $array = (array)$this->resource;
+        //        return $array;
         $grand = Arr::get($array, 'grand');
+
         return [
             'grand' => $grand != null ? [
                 'id' => $grand->id,

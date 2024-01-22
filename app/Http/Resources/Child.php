@@ -23,8 +23,7 @@ class Child extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -48,7 +47,7 @@ class Child extends AlaaJsonResource
             'attributes' => new Attribute($this),
             'children' => $this->when($this->children->isNotEmpty(), $this->getChildren()),
             'checked' => $this->when(isset($this->pivot->isDefault), function () {
-                return isset($this->pivot->isDefault) ? (bool) $this->pivot->isDefault : false;
+                return isset($this->pivot->isDefault) ? (bool)$this->pivot->isDefault : false;
             }),
             'redirect_code' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'code')),
             'is_default' => $this->pivot->isDefault,

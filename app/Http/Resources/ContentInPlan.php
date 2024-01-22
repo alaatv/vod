@@ -6,7 +6,6 @@ use App\Models\ContentOfPlanType;
 use App\Traits\Content\Resource;
 use Illuminate\Http\Request;
 
-
 /**
  * Class Content
  *
@@ -24,8 +23,7 @@ class ContentInPlan extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -51,6 +49,7 @@ class ContentInPlan extends AlaaJsonResource
             'url' => new Url($this),
             'file' => $this->when($this->hasFile(), function () use ($authUser) {
                 $canSee = $this->getCanSeeContent($authUser);
+
                 return ($canSee == 0 || $canSee == 2) ? null : $this->getContentFile();
             }),
             'photo' => $this->when(isset($this->thumbnail), $this->thumbnail),

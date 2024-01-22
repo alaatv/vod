@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\ProductType;
 use Illuminate\Http\Request;
 
-
 /**
  * Class ProductTypeResource
  *
@@ -17,15 +16,15 @@ class ContentTypeResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
         // TODO: I don't know why the following code doesn't work!!!
-//        if (!($this->resource instanceof ContentType)) {
-//            return [];
-//        }
+        //        if (!($this->resource instanceof ContentType)) {
+        //            return [];
+        //        }
 
         return [
             'id' => $this->id,
@@ -42,4 +41,3 @@ class ContentTypeResource extends AlaaJsonResource
         ];
     }
 }
-

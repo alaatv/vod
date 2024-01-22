@@ -28,7 +28,7 @@ class CreateExamProductRelation extends FormRequest
                 'string',
                 'min:3',
                 'max:25',
-//                Rule::unique('3a_exams')->ignore($this->title, 'title')
+                //                Rule::unique('3a_exams')->ignore($this->title, 'title')
             ],
             'title' => ['string', 'min:3'],
         ];
@@ -46,7 +46,7 @@ class CreateExamProductRelation extends FormRequest
     {
         return [
             'id' => 'شناسه آزمون',
-            'title' => 'عنوان آزمون'
+            'title' => 'عنوان آزمون',
         ];
     }
 

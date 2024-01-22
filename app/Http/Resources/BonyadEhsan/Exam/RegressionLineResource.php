@@ -12,14 +12,14 @@ class RegressionLineResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array|Arrayable|JsonSerializable
      */
     public function toArray($request)
     {
         return [
             'title' => $this->title,
-            'value' => (float) $this->regression_point
+            'value' => (float)$this->regression_point,
         ];
     }
 }

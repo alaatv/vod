@@ -15,7 +15,6 @@ class InsertTicketMessageRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * @param  Request  $request
      *
      * @return bool
      */
@@ -24,9 +23,9 @@ class InsertTicketMessageRequest extends FormRequest
         $input = $this->input();
 
         $this->user = $request->user();
-//        if(!optional($this->user)->isAbleTo(config('constants.INSERT_TICKET_ACCESS'))){
+        //        if(!optional($this->user)->isAbleTo(config('constants.INSERT_TICKET_ACCESS'))){
         $input['user_id'] = $this->user->id;
-//        }
+        //        }
 
         $this->replace($input);
 
@@ -45,6 +44,7 @@ class InsertTicketMessageRequest extends FormRequest
         } else {
             $ticketRule = new Own($this->user->id, Ticket::class, 'user_id');
         }
+
         return [
             'ticket_id' => ['required', $ticketRule],
             'photo' => ['required_without_all:body,voice,file', 'image', 'mimes:jpeg,jpg', 'max:5120'],

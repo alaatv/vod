@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\Employeeschedule;
 use Illuminate\Http\Request;
 
-
 /**
  * Class AttributeResource
  *
@@ -17,8 +16,7 @@ class EmployeeScheduleResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     * @return array
+     * @param Request $request
      */
     public function toArray($request): array
     {
@@ -41,4 +39,3 @@ class EmployeeScheduleResource extends AlaaJsonResource
         ];
     }
 }
-

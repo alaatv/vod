@@ -29,7 +29,7 @@ class ContentBulkEditTextRequest extends FormRequest
             'column' => ['required', 'string'],
             'operation' => ['required', 'string', 'in:concatStart,concatEnd,replace,delete'],
             'text' => ['required', 'string'],
-            'replacing_text' => ['nullable', 'required_if:operation,replace', 'string']
+            'replacing_text' => ['nullable', 'required_if:operation,replace', 'string'],
         ];
     }
 }

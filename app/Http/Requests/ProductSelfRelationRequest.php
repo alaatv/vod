@@ -33,13 +33,13 @@ class ProductSelfRelationRequest extends FormRequest
                     config('constants.PRODUCT_INTERRELATION_GIFT'),
                     config('constants.PRODUCT_INTERRELATION_UPGRADE'),
                     config('constants.PRODUCT_INTERRELATION_ITEM'),
-                ])
+                ]),
             ],
             'related_product_ids' => ['required', 'array'],
             'related_product_ids.*' => ['required', Rule::exists(Product::getTableName(), 'id')],
             'choiceable' => 'boolean',
             'required_when' => [
-                'nullable', $this->input('required_when') != 'null' ? Rule::exists(Product::getTableName(), 'id') : ''
+                'nullable', $this->input('required_when') != 'null' ? Rule::exists(Product::getTableName(), 'id') : '',
             ],
         ];
     }

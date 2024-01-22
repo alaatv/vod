@@ -28,7 +28,7 @@ class ProductContentCommentsRequest extends FormRequest
             'contentset_title' => 'string',
             'created_at_since' => 'string',
             'created_at_till' => 'string',
-            'limit' => 'int'
+            'limit' => 'int',
         ];
     }
 }

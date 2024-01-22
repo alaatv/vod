@@ -14,7 +14,7 @@ class InsertContentsetRequest extends FormRequest
     public function rules()
     {
         return [
-            'author_id' => 'nullable|exists:users,id'
+            'author_id' => 'nullable|exists:users,id',
         ];
     }
 }

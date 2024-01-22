@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Admin;
 
-
 use App\Http\Resources\AlaaJsonResource;
 use App\Http\Resources\Gender;
 use App\Http\Resources\Grade;
@@ -15,12 +14,13 @@ class ProfileMetaDataResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
         $resource = $this->resource;
+
         return [
             'provinces' => OstanResource::collection(Arr::get($resource, 'provinces')),
             'cities' => ShahrResource::collection(Arr::get($resource, 'cities')),

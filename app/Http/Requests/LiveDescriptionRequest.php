@@ -7,12 +7,10 @@ use Illuminate\Validation\Rule;
 
 class LiveDescriptionRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;
     }
-
 
     public function rules()
     {
@@ -23,11 +21,12 @@ class LiveDescriptionRequest extends FormRequest
             'entity_id' => 'required|numeric',
             'entity_type' => 'required|string',
             'file' => 'image|max:2000|mimes:jpeg,jpg,png',
-            'owner' => ['required', Rule::in(config('constants.ACCEPT_OWNER_FOR_VALIDATION'))]
+            'owner' => ['required', Rule::in(config('constants.ACCEPT_OWNER_FOR_VALIDATION'))],
         ];
         if (in_array($this->method(), ['PUT', 'PATCH'])) {
             unset($rules['owner']);
         }
+
         return $rules;
     }
 }

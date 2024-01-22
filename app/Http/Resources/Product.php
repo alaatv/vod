@@ -18,8 +18,7 @@ class Product extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -47,14 +46,14 @@ class Product extends AlaaJsonResource
             'sample_photos' => $this->when($this->hasSamplePhoto(), $this->getSamplePhoto()), //It is not a relationship
             'sets' => $this->when($this->sets->isNotEmpty(), $this->getSet()),
             'blocks' => $this->when(optional($this)->blocks->isNotEmpty(), function () {
-//                return optional($this)->blocks->isNotEmpty() ? SampleVideoBlock::collection(optional($this)->blocks()->paginate(10)) : null;
+                //                return optional($this)->blocks->isNotEmpty() ? SampleVideoBlock::collection(optional($this)->blocks()->paginate(10)) : null;
                 return null;
             }),
             'attributes' => new Attribute($this),
             'children' => $this->when($this->children->isNotEmpty(), $this->getChildren()),
             'page_view' => $this->when(isset($this->page_view), $this->page_view),
             'checked' => true,
-//            'is_favored'     => $this->is_favored ,
+            //            'is_favored'     => $this->is_favored ,
             'redirect_code' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'code')),
             'catalog' => $this->catalog,
             'is_favored_2' => $this->is_favored,
@@ -64,6 +63,7 @@ class Product extends AlaaJsonResource
                 if (isset($this->last_watch_content)) {
                     return new ContentInSetWithoutPagination($this->last_watch_content);
                 }
+
                 return null;
             }),
             'contents_progress' => $this->contents_progress,

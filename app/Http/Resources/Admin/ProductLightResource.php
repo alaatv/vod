@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-
 /**
  * Class ProductResource
  *
@@ -17,8 +16,7 @@ class ProductLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

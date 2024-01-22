@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Block;
 
-
 /**
  * Class Block
  *

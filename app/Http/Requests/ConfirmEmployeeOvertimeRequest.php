@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class UpdateContentSetRequest
- * @package App\Http\Requests
  */
 class ConfirmEmployeeOvertimeRequest extends FormRequest
 {

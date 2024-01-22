@@ -25,8 +25,7 @@ class OrderResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -83,10 +82,10 @@ class OrderResource extends AlaaJsonResource
                 return optional($this->updated_at)->toDateTimeString();
             }),
 
-//            'inserter' => $this->when(isset($this->insertor_id), function () {
-//                // TODO: I don't know which resource to use for the inserter.
-//                return new UserLightResource($this->inserter);
-//            }),
+            //            'inserter' => $this->when(isset($this->insertor_id), function () {
+            //                // TODO: I don't know which resource to use for the inserter.
+            //                return new UserLightResource($this->inserter);
+            //            }),
             'coupon_discount' => $this->couponDiscount,
             'coupon_discount_amount' => $this->couponDiscountAmount,
             'cost' => $this->when(isset($this->cost), $this->cost),

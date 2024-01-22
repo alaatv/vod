@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\Coupon;
 use Illuminate\Http\Request;
 
-
 /**
  * Class CouponResource
  *
@@ -17,8 +16,7 @@ class CouponLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

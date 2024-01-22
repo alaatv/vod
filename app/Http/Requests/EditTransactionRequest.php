@@ -20,13 +20,13 @@ class EditTransactionRequest extends FormRequest
         $transactionId = $transaction->id;
         $rules = [
             'cost' => 'required|integer',
-            'referenceNumber' => 'unique:transactions,referenceNumber,'.$transactionId.',id,deleted_at,NULL|nullable',
-            'traceNumber' => 'unique:transactions,traceNumber,'.$transactionId.',id,deleted_at,NULL|numeric|nullable',
-            'transactionID' => 'unique:transactions,transactionID,'.$transactionId.',id,deleted_at,NULL|nullable',
-            'authority' => 'unique:transactions,authority,'.$transactionId.',id,deleted_at,NULL|nullable',
+            'referenceNumber' => 'unique:transactions,referenceNumber,' . $transactionId . ',id,deleted_at,NULL|nullable',
+            'traceNumber' => 'unique:transactions,traceNumber,' . $transactionId . ',id,deleted_at,NULL|numeric|nullable',
+            'transactionID' => 'unique:transactions,transactionID,' . $transactionId . ',id,deleted_at,NULL|nullable',
+            'authority' => 'unique:transactions,authority,' . $transactionId . ',id,deleted_at,NULL|nullable',
             'paycheckNumber' => [
-//                'unique:transactions,paycheckNumber,' . $transaction->id . ',id,deleted_at,NULL',
-                'nullable'
+                //                'unique:transactions,paycheckNumber,' . $transaction->id . ',id,deleted_at,NULL',
+                'nullable',
             ],
         ];
 

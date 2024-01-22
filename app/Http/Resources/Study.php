@@ -12,12 +12,13 @@ class Study extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
     {
         $resource = $this->resource;
+
         return [
             'days' => StudyplanResource::collection(Arr::get($resource, 'days')),
             'events' => PlanResource::collection(Arr::get($resource, 'events')),

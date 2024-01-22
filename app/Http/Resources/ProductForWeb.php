@@ -18,8 +18,7 @@ class ProductForWeb extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -53,7 +52,7 @@ class ProductForWeb extends AlaaJsonResource
             'children' => $this->when($this->children->isNotEmpty(), $this->getChildren()),
             'page_view' => $this->when(isset($this->page_view), $this->page_view),
             'checked' => true,
-//            'is_favored'     => $this->is_favored ,
+            //            'is_favored'     => $this->is_favored ,
             'redirect_code' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'code')),
             'catalog' => $this->catalog,
         ];

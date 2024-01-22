@@ -23,8 +23,7 @@ class ProductResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -55,8 +54,7 @@ class ProductResource extends AlaaJsonResource
             'attributes' => new AttributeNonAdminResource($this),
             'children' => $this->when($this->children->isNotEmpty(), $this->getChildren()),
             'checked' => true,
-//            'is_favored'     => $this->is_favored ,
-
+            //            'is_favored'     => $this->is_favored ,
 
             'id' => $this->id,
             'category' => $this->when(isset($this->category), $this->category),

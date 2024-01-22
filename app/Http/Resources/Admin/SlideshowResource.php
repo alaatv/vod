@@ -7,14 +7,12 @@ use App\Http\Resources\Block;
 use App\Models\Slideshow;
 use Illuminate\Http\Request;
 
-
 class SlideshowResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     * @return array
+     * @param Request $request
      */
     public function toArray($request): array
     {

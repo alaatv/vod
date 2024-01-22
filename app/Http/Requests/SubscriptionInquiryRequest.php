@@ -26,6 +26,7 @@ class SubscriptionInquiryRequest extends FormRequest
     public function rules()
     {
         $attributes = AttributeRepo::getAttributesByType(config('constants.ATTRIBUTE_TYPE_SUBSCRIPTION'))->pluck('name');
+
         return [
             'access' => ['required', Rule::in($attributes)],
             'increment' => ['nullable', 'numeric'],

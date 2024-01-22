@@ -2,13 +2,11 @@
 
 namespace App\Http\Resources;
 
-
 class Permission extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param   $request
      * @return array
      */
     public function toArray($request)
@@ -22,6 +20,4 @@ class Permission extends AlaaJsonResource
             'updated_at' => optional($this->updated_at)->toDateTimeString(),
         ];
     }
-
-
 }

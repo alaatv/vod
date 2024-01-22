@@ -30,7 +30,7 @@ class InsertEventResultRequest extends FormRequest
             'region_id' => 'required|exists:kunkur_regions,id',
             'major_id' => 'required|exists:majors,id|integer',
             'participationCode' => 'nullable|numeric',
-//            'participationCode' => 'unique:eventresults,'.Hash::make($this->request->get('participationCode')),
+            //            'participationCode' => 'unique:eventresults,'.Hash::make($this->request->get('participationCode')),
             'event_id' => 'required|exists:events,id',
             'reportFile' => 'required|mimes:jpeg,jpg,png,pdf',
             'enableReportPublish' => 'sometimes|boolean',

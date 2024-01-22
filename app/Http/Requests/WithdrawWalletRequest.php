@@ -25,7 +25,7 @@ class WithdrawWalletRequest extends FormRequest
     public function rules()
     {
         return [
-            'wallet_type_id' => ['required', Rule::in([config('constants.WALLET_TYPE_MAIN')])]
+            'wallet_type_id' => ['required', Rule::in([config('constants.WALLET_TYPE_MAIN')])],
         ];
     }
 }

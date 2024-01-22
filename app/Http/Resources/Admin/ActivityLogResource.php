@@ -8,14 +8,12 @@ use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-
 class ActivityLogResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     * @return array
+     * @param Request $request
      */
     public function toArray($request): array
     {
@@ -24,6 +22,7 @@ class ActivityLogResource extends AlaaJsonResource
         }
 
         $user = User::find($this->causer_id);
+
         return [
             'id' => $this->id,
             'log_name' => $this->when(isset($this->log_name), $this->log_name),
@@ -31,11 +30,13 @@ class ActivityLogResource extends AlaaJsonResource
             'subject_type' => $this->when(isset($this->subject_type), $this->subject_type),
             'subject_model_name' => $this->when(isset($this->subject_type), function () {
                 $subjectType = str_replace('App\\\\', '', $this->subject_type);
+
                 return str_replace('App\\', '', $subjectType);
             }),
             'subject_id' => $this->when(isset($this->subject_id), $this->subject_id),
             'subject_edit_link' => $this->when(isset($this->subject_type) && isset($this->subject_id), function () {
                 $subject = $this->subject_type::find($this->subject_id);
+
                 return $subject->edit_link ?? null;
             }),
             'causer_type' => $this->when(isset($this->causer_type), $this->causer_type),

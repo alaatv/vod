@@ -12,6 +12,7 @@ class InsertUserUploadRequest extends FormRequest
         if (Auth::user()->completion() == 100) {
             return true;
         }
+
         return false;
     }
 

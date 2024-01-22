@@ -27,7 +27,7 @@ class CreateVoucherByCompany extends FormRequest
             'products' => ['required', 'array'],
             'expirationdatetime' => ['required', 'date'],
             'package_name' => ['required', 'string'],
-            'coupon_id' => ['required', 'exists:coupons,id']
+            'coupon_id' => ['required', 'exists:coupons,id'],
         ];
     }
 

@@ -24,7 +24,7 @@ class CreateFreeOrderFor3aRequest extends FormRequest
     public function rules()
     {
         return [
-            'exam_id' => ['required', 'string']
+            'exam_id' => ['required', 'string'],
         ];
     }
 }

@@ -7,7 +7,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-
 /**
  * Class UserLightResource
  *
@@ -18,8 +17,7 @@ class UserLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -29,6 +27,7 @@ class UserLightResource extends AlaaJsonResource
         }
 
         $action[ActionResource::EDIT] = action('Web\UserController@edit', ['user' => $this->id]);
+
         return [
             'first_name' => $this->when(isset($this->firstName), $this->firstName),
             'last_name' => $this->when(isset($this->lastName), $this->lastName),

@@ -5,13 +5,12 @@ namespace App\Http\Resources;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
-
 class TagResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

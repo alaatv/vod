@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class \App\TicketMessage
  *
@@ -12,13 +11,13 @@ use Illuminate\Http\Request;
  * */
 class TicketMessage extends AlaaJsonResource
 {
-    /** @var \App\User $authUser */
+    /** @var \App\User */
     private $authUser;
 
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)

@@ -6,7 +6,6 @@ use App\Http\Resources\AlaaJsonResource;
 use App\Models\Attribute;
 use Illuminate\Http\Request;
 
-
 /**
  * Class AttributeLightResource
  *
@@ -17,7 +16,7 @@ class AttributeLightResource extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -32,4 +31,3 @@ class AttributeLightResource extends AlaaJsonResource
         ];
     }
 }
-

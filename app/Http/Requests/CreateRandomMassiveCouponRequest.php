@@ -27,11 +27,11 @@ class CreateRandomMassiveCouponRequest extends FormRequest
         $input = $this->request->all();
 
         if (!is_null($input['validSinceDate'])) {
-            $input['validSince'] = $input['validSinceDate'].' '.($input['validSinceTime'] ?? '00:00:00');
+            $input['validSince'] = $input['validSinceDate'] . ' ' . ($input['validSinceTime'] ?? '00:00:00');
         }
 
         if (!is_null($input['validUntilDate'])) {
-            $input['validUntil'] = $input['validUntilDate'].' '.($input['validUntilTime'] ?? '00:00:00');
+            $input['validUntil'] = $input['validUntilDate'] . ' ' . ($input['validUntilTime'] ?? '00:00:00');
         }
 
         $this->replace($input);

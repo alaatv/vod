@@ -7,14 +7,12 @@ use App\Http\Resources\ContentStatusResource;
 use App\Models\Content;
 use Illuminate\Http\Request;
 
-
 class ContentResource extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     * @return array
+     * @param Request $request
      */
     public function toArray($request): array
     {

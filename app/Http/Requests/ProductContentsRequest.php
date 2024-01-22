@@ -29,7 +29,7 @@ class ProductContentsRequest extends FormRequest
             'type.*' => ['nullable', Rule::in([1])],
             'search' => 'string',
             'contentset_title' => 'string',
-            'limit' => 'int'
+            'limit' => 'int',
         ];
     }
 }

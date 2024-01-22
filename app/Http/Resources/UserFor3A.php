@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use App\Http\Resources\Admin\OstanResource;
 use Illuminate\Http\Request;
 
-
 /**
  * Class User
  *
@@ -16,8 +15,7 @@ class UserFor3A extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
-     *
+     * @param Request $request
      * @return array
      */
     public function toArray($request)
@@ -32,7 +30,6 @@ class UserFor3A extends AlaaJsonResource
         $roles = isset($roles) ? $roles->pluck('name')->toArray() : null;
         $permissions = $this->getPermissionsThroughRoles();
         $permissions = isset($permissions) ? $permissions->pluck('name')->toArray() : null;
-
 
         $hasAdminPermission = (isset($roles)) && (in_array(config('constants.ROLE_ADMIN'),
                     $roles) || in_array(config('constants.ROLE_3A_MANAGER'), $roles));
@@ -54,7 +51,7 @@ class UserFor3A extends AlaaJsonResource
                 return new Grade($this->grade);
             }),
             'gender' => $this->when(isset($this->gender), function () {
-                return new  Gender($this->gender);
+                return new Gender($this->gender);
             }),
             'has_admin_permission' => $hasAdminPermission,
             'mobile_verified_at' => $this->when(isset($this->mobile_verified_at), $this->mobile_verified_at),
@@ -62,13 +59,14 @@ class UserFor3A extends AlaaJsonResource
             'roles' => $roles,
             'permissions' => $permissions,
             'has_educational_permission' => $hasEducationalPermission,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 
     private function getOstan()
     {
         $ostan = optional($this->shahr)->ostan;
+
         return isset($ostan) ? new OstanResource($ostan) : null;
     }
 }
