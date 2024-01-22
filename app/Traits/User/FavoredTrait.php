@@ -9,7 +9,9 @@
 namespace App\Traits\User;
 
 use App\Collection\ContentCollection;
+use App\Models\Content;
 use App\Models\Contentset;
+use App\Models\Product;
 use App\Models\Timepoint;
 use Illuminate\Support\Facades\Cache;
 
