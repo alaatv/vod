@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sohrab
- * Date: 2019-02-15
- * Time: 16:14
- */
 
 namespace App\Traits\User;
 
@@ -12,11 +6,13 @@ use App\Models\Bankaccount;
 use App\Models\Order;
 use App\Models\Ordermanagercomment;
 use App\Models\Orderproduct;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Repositories\OrderRepo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Cache;
 
 trait PaymentTrait
 {
@@ -40,10 +36,11 @@ trait PaymentTrait
 
     public function getNumberOfProductsInBasketAttribute()
     {
-        if (!is_null($this->numberOfProducts_cache)) {
+        if (! is_null($this->numberOfProducts_cache)) {
             return $this->numberOfProducts_cache;
         }
         $this->numberOfProducts_cache = $this->getOpenOrderOrCreate()->numberOfProducts;
+
         return $this->numberOfProducts_cache;
     }
 
@@ -63,7 +60,6 @@ trait PaymentTrait
             ->take(1)
             ->get()
             ->first();
-
 
     }
 
@@ -100,7 +96,7 @@ trait PaymentTrait
         $key = 'user:closedOrders:page-'.$pageNumber.':'.$user->cacheKey();
 
         return Cache::tags([
-            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders'
+            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders',
         ])->remember($key, config('constants.CACHE_10'), function () use ($user, $pageNumber, $seller) {
             $orders = $user->closedOrders()
                 ->where('seller', $seller)
@@ -109,14 +105,13 @@ trait PaymentTrait
 
             $path = parse_url(route('web.user.orders'), PHP_URL_PATH);
             $orders->withPath($path);
+
             return $orders;
         });
     }
 
     /**
      * Get user's orders that he is allowed to see
-     *
-     * @return HasMany
      */
     public function closedOrders(): HasMany
     {
@@ -135,7 +130,7 @@ trait PaymentTrait
         $key = 'user:closedOrders:'.$user->cacheKey();
 
         return Cache::tags([
-            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders'
+            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders',
         ])->remember($key, config('constants.CACHE_10'), function () use ($user) {
             return $user->closedOrders()
                 ->orderBy('completed_at', 'desc')
@@ -150,7 +145,7 @@ trait PaymentTrait
         $key = 'user:getClosedOrdersForAPIV2:page-'.$pageNumber.'-'.$seller.':'.$user->cacheKey();
 
         return Cache::tags([
-            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders'
+            'user', 'order', 'closedOrder', 'user_'.$user->id, 'user_'.$user->id.'_closedOrders',
         ])->remember($key, config('constants.CACHE_10'), function () use ($user, $pageNumber, $seller) {
             return $user->closedOrders()
                 ->whereDoesntHave('orderproducts', function ($q) {
@@ -166,6 +161,7 @@ trait PaymentTrait
     {
         $user = $this;
         $key = 'user:getTransactionsForAPIV2:page-'.$pageNumber.':'.$user->cacheKey();
+
         return Cache::tags(['user', 'transaction', 'user_'.$user->id, 'user_'.$user->id.'_transactions'])
             ->remember($key, config('constants.CACHE_60'), function () use ($user, $pageNumber) {
                 return $user->getShowableTransactions()
@@ -176,8 +172,6 @@ trait PaymentTrait
 
     /**
      * Gets user's transactions that he is allowed to see
-     *
-     * @return HasManyThrough
      */
     public function getShowableTransactions(): HasManyThrough
     {
@@ -207,6 +201,7 @@ trait PaymentTrait
     {
         $user = $this;
         $key = 'user:getInstallmentsForAPIV2:page-'.$pageNumber.':'.$user->cacheKey();
+
         return Cache::tags(['user', 'installment', 'user_'.$user->id, 'user_'.$user->id.'_installments'])
             ->remember($key, config('constants.CACHE_60'), function () use ($user, $pageNumber) {
                 return $user->getInstalments()
@@ -217,8 +212,6 @@ trait PaymentTrait
 
     /**
      * Gets user's instalments
-     *
-     * @return HasManyThrough
      */
     public function getInstalments(): HasManyThrough
     {

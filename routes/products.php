@@ -234,6 +234,9 @@ Route::prefix('v2')->group(function () {
             Route::get('{c}/products', [ContentController::class, 'products'])->name('api.v2.content.products');
             Route::put('updateDuration',
                 [ContentController::class, 'updateDuration'])->name('api.v2.content.updateDuration');
+            Route::get('{c}/favored', [FavorableController::class, 'getUsersThatFavoredThisFavorable'])->name('api.v2.get.user.favorite.content');
+            Route::post('{c}/favored', [FavorableController::class, 'markFavorableFavorite'])->name('api.v2.mark.favorite.content');
+            Route::post('{c}/unfavored', [FavorableController::class, 'markUnFavorableFavorite'])->name('api.v2.mark.unfavorite.content');
         });
     });
     Route::prefix('contents')->group(function () {

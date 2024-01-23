@@ -76,10 +76,10 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UserController extends Controller
 {
-    use RequestCommon;
-    use UserCommon;
     use Helper;
     use MetaCommon;
+    use RequestCommon;
+    use UserCommon;
 
     /**
      * UserController constructor.
@@ -99,11 +99,9 @@ class UserController extends Controller
     /**
      * API Version 2
      *
-     * @param  EditUserRequest  $request
-     * @param  User|null  $user
      * @return Application|ResponseFactory|\Illuminate\Foundation\Application|JsonResponse|Response
      */
-    public function updateV2(EditUserRequest $request, User $user = null)
+    public function updateV2(EditUserRequest $request, ?User $user = null)
     {
         //ToDo : Should be removed after dropping city column
         if ($request->has('city')) {
@@ -154,8 +152,10 @@ class UserController extends Controller
 
         if ($user->update()) {
             Cache::tags('user_'.$user->id)->flush();
+
             return (new UserResource($user))->response();
         }
+
         return response()->json([
             'message' => 'Database error on updating user',
         ], ResponseAlias::HTTP_SERVICE_UNAVAILABLE);
@@ -164,8 +164,6 @@ class UserController extends Controller
     /**
      * API Version 2
      *
-     * @param  Request  $request
-     * @param  User  $user
      *
      * @return ResponseFactory|JsonResponse|Response
      */
@@ -191,8 +189,6 @@ class UserController extends Controller
      * API Version 2
      *
      * @param  Request  $request
-     * @param  User  $user
-     *
      * @return OrderResource|ResourceCollection|ResponseFactory|Response
      */
     public function userOrdersV2(UserOrdersRequest $request, User $user)
@@ -200,7 +196,7 @@ class UserController extends Controller
         /** @var User $user */
         $authenticatedUser = $request->user('api');
 
-        if ($authenticatedUser->id != $user->id && !$authenticatedUser->isAbleTo(config('constants.LIST_USER_ORDERS'))) {
+        if ($authenticatedUser->id != $user->id && ! $authenticatedUser->isAbleTo(config('constants.LIST_USER_ORDERS'))) {
             return response([
                 'error' => [
                     'code' => Response::HTTP_FORBIDDEN,
@@ -229,9 +225,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  User  $user
-     *
      * @return Application|ResponseFactory|ResourceCollection|Response
      */
     public function userTransactionsV2(Request $request, User $user)
@@ -275,6 +268,7 @@ class UserController extends Controller
     public function getAuth2Profile(Request $request)
     {
         $user = $request->user();
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->fullName,
@@ -297,7 +291,7 @@ class UserController extends Controller
             User::where('mobile', $request->get('mobile'))->where('nationalCode',
                 $request->get('nationalCode'))->first();
 
-        if (!isset($user)) {
+        if (! isset($user)) {
             return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -319,6 +313,7 @@ class UserController extends Controller
                 'grades' => $allGrade,
                 'genders' => $allGender,
             ];
+
             return $data;
         });
 
@@ -365,12 +360,14 @@ class UserController extends Controller
         $nationalCardPath = $user->getRawOriginal('kartemeli');
         if ($nationalCardPath) {
             $url = Uploader::url(config('disks.KARTE_MELI_IMAGE_MINIO'), $nationalCardPath, false);
+
             return response()->json([
                 'data' => [
                     'url' => $url,
                 ],
             ]);
         }
+
         return response()->json([
             'data' => [
                 'url' => null,
@@ -397,6 +394,7 @@ class UserController extends Controller
     public function examSave(UserExamSaveRequest $request)
     {
         auth()->user()->exams()->attach($request->input('exam_id'));
+
         return response()->json([
             'message' => 'exam successfully saved for user.',
         ]);
@@ -411,7 +409,7 @@ class UserController extends Controller
         $products = ProductRepository::getProductsById($request->get('products'));
 
         return response()->json([
-            'data' => $products->get()->map(fn($product) => [
+            'data' => $products->get()->map(fn ($product) => [
                 'id' => $product->getKey(),
                 'is_purchased' => $product->isPurchased,
             ])->toArray(),
@@ -420,7 +418,7 @@ class UserController extends Controller
 
     public function isPermittedToPurchase(Product $product, OrderService $orderService): JsonResponse
     {
-        if (!$product->isActive()) {
+        if (! $product->isActive()) {
             return myAbort(ResponseAlias::HTTP_FORBIDDEN,
                 'این گزینه در حال حاضر غیرفعال می باشد');
         }
@@ -445,12 +443,14 @@ class UserController extends Controller
         };
         if ($result) {
             $order = $orderService->createOpenOrderWithBasicOrderProduct(auth()->id(), $product->id);
+
             return response()->json([
                 'data' => [
                     'order_id' => $order->id,
                 ],
             ]);
         }
+
         return myAbort(ResponseAlias::HTTP_FORBIDDEN,
             'شما مجاز به انتخاب این گزینه نیستید!');
     }
@@ -465,14 +465,16 @@ class UserController extends Controller
                 return myAbort(Response::HTTP_FORBIDDEN, 'دسترسی ندارید');
             }
         }
+
         return new EntekhabReshteResource($authUser->entekhabReshte);
     }
 
     public function userProductFiles(Request $request)
     {
-        if (!$request->user()) {
+        if (! $request->user()) {
             return response()->json(['message' => 'دسترسی ندارید'], 401);
         }
+
         return response()->json(['user' => $request->user()], 200);
     }
 
@@ -516,7 +518,7 @@ class UserController extends Controller
             'imgMobileHeight' => '241',
             'imgDesktopSrc' => 'https://nodes.alaatv.com/upload/sabte_rotbe_1400_desk.jpg',
             'imgDesktopWidth' => '1183',
-            'imgDesktopHeight' => '220'
+            'imgDesktopHeight' => '220',
         ];
 
         $regions = Region::all();
@@ -534,7 +536,7 @@ class UserController extends Controller
             'year' => $year,
             'ad' => $ad,
             'regions' => $regions,
-            'majors' => $majors
+            'majors' => $majors,
         ]);
     }
 
@@ -601,10 +603,11 @@ class UserController extends Controller
         $headers =
             [
                 'نام و نام خانوادگی', 'تاریخ ثبت سفارش', 'شماره موبایل', 'عنوان محصولات خریداری شده',
-                'استفاده از حکمت کارت ؟'
+                'استفاده از حکمت کارت ؟',
             ];
         Excel::store(new DefaultClassExport(collect($collect), $headers), 'excel/'.$fileName, $disk);
         $file = Uploader::url($disk, $fileName);
+
         return response()->json(['marketing_report_file' => $file], ResponseAlias::HTTP_OK);
     }
 
@@ -679,7 +682,7 @@ class UserController extends Controller
             $order = $paidOrder->first();
         }
 
-        if (!isset($order)) {
+        if (! isset($order)) {
             return response()->json(['message' => 'Order not found'], ResponseAlias::HTTP_FORBIDDEN);
         }
 
@@ -809,7 +812,7 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], ResponseAlias::HTTP_FORBIDDEN);
         }
 
-        if (!isset($requestData['order'])) {
+        if (! isset($requestData['order'])) {
             return response()->json(['message' => 'Order not specified'], ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -840,9 +843,6 @@ class UserController extends Controller
         }
         $userController->update($editUserRequest, $user);
 
-        /**
-         *
-         */
         /**
          * Parent's basic info
          **/
@@ -878,7 +878,7 @@ class UserController extends Controller
             } else {
                 $parentContact = $parentContacts->first();
             }
-            if (!isset($parentContact)) {
+            if (! isset($parentContact)) {
                 continue;
             }
             $parentContact = Contact::where('id', $parentContact->id)
@@ -976,7 +976,7 @@ class UserController extends Controller
             'transactions' => $transactions,
             'instalments' => $instalments,
             'orderCoupons' => $orderCoupons,
-            'credit' => $credit
+            'credit' => $credit,
         ]);
     }
 
@@ -990,7 +990,7 @@ class UserController extends Controller
             $updateResult = true;
         }
 
-        if (!$updateResult) {
+        if (! $updateResult) {
             return response()->json([
                 'error' => [
                     'message' => 'خطا در اصلاح اطلاعات کاربر',
@@ -1006,7 +1006,7 @@ class UserController extends Controller
                 return response()->json([
                     'error' => [
                         'message' => 'شما قبلا هدیه کیف پول را دریافت کرده اید',
-                    ]
+                    ],
                 ]);
             }
         }
@@ -1017,13 +1017,13 @@ class UserController extends Controller
                 config('constants.WALLET_TYPE_GIFT'));
             if ($depositResult['result']) {
                 return response()->json([
-                    'message' => '14 هزار تومان اعتبار هدیه به کیف پول شما افزوده شد'
+                    'message' => '14 هزار تومان اعتبار هدیه به کیف پول شما افزوده شد',
                 ]);
             } else {
                 return response()->json([
                     'error' => [
                         'message' => 'خطایی در اعدای هدیه کیف پول رخ داد. لطفا دوباره اقدام کنید',
-                    ]
+                    ],
                 ]);
             }
         }
@@ -1057,7 +1057,7 @@ class UserController extends Controller
         if (isset($couponOrder)) {
             return response()->json([
                 'message' => 'Coupon order found',
-                'data' => $couponOrder
+                'data' => $couponOrder,
             ]);
         }
         $couponOrder = OrderRepo::createBasicCompletedOrder($user->id, config('constants.PAYMENT_STATUS_UNPAID'),
@@ -1068,7 +1068,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Coupon order created successfully',
-            'data' => $couponOrder
+            'data' => $couponOrder,
         ]);
     }
 
@@ -1080,7 +1080,7 @@ class UserController extends Controller
 
         $user = $this->getUser($userId);
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], 400);
         }
 
