@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 /**
  * Class User
  *
- * @mixin \App\User
+ * @mixin \App\Models\User
  * */
 class Author extends AlaaJsonResource
 {
-    public function __construct(\App\User $model)
+    public function __construct(\App\Models\User $model)
     {
         parent::__construct($model);
     }
@@ -19,12 +19,12 @@ class Author extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\User)) {
+        if (! ($this->resource instanceof \App\Models\User)) {
             return [];
         }
 

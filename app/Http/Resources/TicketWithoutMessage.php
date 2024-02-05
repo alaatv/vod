@@ -19,7 +19,7 @@ class TicketWithoutMessage extends AlaaJsonResource
     use ResourceCommon;
     use TicketCommon;
 
-    /** @var \App\User */
+    /** @var \App\Models\User */
     private $authUser;
 
     public function __construct(Ticket $model)

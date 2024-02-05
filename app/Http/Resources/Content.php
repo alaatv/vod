@@ -18,12 +18,12 @@ class Content extends AlaaJsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\Content)) {
+        if (! ($this->resource instanceof \App\Models\Content)) {
             return [];
         }
         $this->loadMissing('contenttype', 'section', 'user', 'set');
@@ -36,8 +36,8 @@ class Content extends AlaaJsonResource
             $authUser = $request->user();
         }
         $canSeeCode = $this->getCanSeeContent($authUser);
-        $canSee = !($canSeeCode == 0 || $canSeeCode == 2);
-        $userHasAnyRole = $authUser?->roles()->get()->isNotEmpty();
+        $canSee = ! ($canSeeCode == 0 || $canSeeCode == 2);
+        $userHasAnyRole = $authUser?->roles->isNotEmpty();
 
         return [
             'id' => $this->id,
@@ -69,10 +69,10 @@ class Content extends AlaaJsonResource
                 return optional($this->updated_at)->toDateTimeString();
             }),
             'url' => $this->getUrl($this),
-            'previous_url' => $this->when(!is_null($this->getPreviousContentForAPIV2()), function () {
+            'previous_url' => $this->when(! is_null($this->getPreviousContentForAPIV2()), function () {
                 return $this->getUrl($this->getPreviousContentForAPIV2());
             }),
-            'next_url' => $this->when(!is_null($this->getNextContentForAPIV2()), function () {
+            'next_url' => $this->when(! is_null($this->getNextContentForAPIV2()), function () {
                 return $this->getUrl($this->getNextContentForAPIV2());
             }),
             'author' => $this->when(isset($this->author_id), function () {
@@ -157,12 +157,12 @@ class Content extends AlaaJsonResource
 
     private function getRelatedProducts()
     {
-        if (!$this->isFree) {
+        if (! $this->isFree) {
             $relatedProduct = optional($this->activeProducts())->first();
         } else {
             $relatedProduct = optional($this->related_products)->first();
         }
-        if (!isset($relatedProduct)) {
+        if (! isset($relatedProduct)) {
             return null;
         }
 

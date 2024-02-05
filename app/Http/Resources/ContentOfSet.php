@@ -29,7 +29,7 @@ class ContentOfSet extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\Content)) {
+        if (! ($this->resource instanceof \App\Models\Content)) {
             return [];
         }
 
@@ -46,7 +46,7 @@ class ContentOfSet extends AlaaJsonResource
             }),
             'title' => $this->when(isset($this->name), $this->name),
             'file' => $this->when($this->hasFile(), function () use ($authUser) {
-                if ($authUser?->roles()->get()->isNotEmpty()) {
+                if ($authUser?->roles->isNotEmpty()) {
                     return $this->getContentExplicitFile();
                 }
                 $canSee = $this->getCanSeeContent($authUser);
@@ -62,12 +62,12 @@ class ContentOfSet extends AlaaJsonResource
             }),
             'url' => new Url($this),
             'redirect_code' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'code')),
-            'comments' => $this->when(!is_null($authUser), function () use ($authUser) {
-                return !is_null($authUser) ? CommentLightResource::collection($this->comments()->where('author_id',
+            'comments' => $this->when(! is_null($authUser), function () use ($authUser) {
+                return ! is_null($authUser) ? CommentLightResource::collection($this->comments()->where('author_id',
                     $authUser->id)->get()) : [];
             }),
             'short_title' => $this->abrishamProductShortTitle(),
-            'has_watched' => !is_null($authUser) && $authUser->hasWatched($this->id),
+            'has_watched' => ! is_null($authUser) && $authUser->hasWatched($this->id),
             'content_type' => $this->when(isset($this->contenttype_id), function () {
                 return new ContentTypeResource($this->contenttype);
             }),

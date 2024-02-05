@@ -1440,7 +1440,7 @@ class Order extends BaseModel implements GiveGift
 
     //    public function inserter(): BelongsTo
     //    {
-    //        return $this->belongsTo(\App\User::class, 'insertor_id');
+    //        return $this->belongsTo(\App\Models\User::class, 'insertor_id');
     //    }
 
     public function getJalaliCreatedAtAttribute()

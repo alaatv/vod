@@ -19,18 +19,18 @@ class ContentWithFile extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\Content)) {
+        if (! ($this->resource instanceof \App\Models\Content)) {
             return [];
         }
 
         $this->loadMissing('contenttype', 'section', 'user', 'set');
         $redirectUrl = $this->redirectUrl;
         $authUser = $request->user();
+
         return [
             'id' => $this->id,
             'redirect_url' => $this->when(isset($redirectUrl), Arr::get($redirectUrl, 'url')),
@@ -44,12 +44,14 @@ class ContentWithFile extends AlaaJsonResource
             }),
             'file' => $this->when($this->hasFile(), function () use ($authUser) {
                 if ($this->contenttype_id == config('constants.PRODUCT_FILE_TYPE_PAMPHLET')) {
-                    if ($authUser?->roles()->get()->isNotEmpty()) {
+                    if ($authUser?->roles->isNotEmpty()) {
                         return $this->getContentExplicitFile();
                     }
                     $canSee = $this->getCanSeeContent($authUser);
+
                     return ($canSee == 0 || $canSee == 2) ? null : $this->getContentExplicitFile();
                 }
+
                 return null;
             }),
             'duration' => $this->when(isset($this->duration), $this->getDuration()),
@@ -65,14 +67,13 @@ class ContentWithFile extends AlaaJsonResource
             }),
             'url' => $this->getUrl($this),
             'short_description' => $this->short_description,
-            'published' => !($this->enable == 0 || $this->validSince > now()),
+            'published' => ! ($this->enable == 0 || $this->validSince > now()),
         ];
     }
 
-
     private function getType()
     {
-//        return New Contenttype($this->contenttype);
+        //        return New Contenttype($this->contenttype);
         return $this->contenttype_id;
     }
 
@@ -86,6 +87,7 @@ class ContentWithFile extends AlaaJsonResource
         } else {
             $body = $this->description;
         }
+
         return $body;
     }
 
@@ -110,14 +112,15 @@ class ContentWithFile extends AlaaJsonResource
 
     private function getRelatedProducts()
     {
-        if (!$this->isFree) {
+        if (! $this->isFree) {
             $relatedProduct = optional($this->activeProducts())->first();
         } else {
             $relatedProduct = optional($this->related_products)->first();
         }
-        if (!isset($relatedProduct)) {
+        if (! isset($relatedProduct)) {
             return null;
         }
+
         return new ProductInBlockWithoutPagination($relatedProduct);
     }
 

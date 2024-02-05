@@ -7,17 +7,17 @@ use Illuminate\Http\Request;
 /**
  * Class \App\TicketMessage
  *
- * @mixin \App\TicketMessage
+ * @mixin \App\Models\TicketMessage
  * */
 class TicketMessage extends AlaaJsonResource
 {
-    /** @var \App\User */
+    /** @var \App\Models\User */
     private $authUser;
 
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)

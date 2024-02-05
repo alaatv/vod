@@ -8,7 +8,6 @@ use App\Traits\Ticket\Resource;
 use App\Traits\TicketCommon;
 use Illuminate\Http\Request;
 
-
 /**
  * Class \App\Ticket
  *
@@ -20,7 +19,7 @@ class TicketWithMessage extends AlaaJsonResource
     use ResourceCommon;
     use TicketCommon;
 
-    /** @var \App\User $authUser */
+    /** @var \App\Models\User */
     private $authUser;
 
     public function __construct(Ticket $model)
@@ -66,7 +65,7 @@ class TicketWithMessage extends AlaaJsonResource
     private function getMessages()
     {
         $messages = $this->messages_orderby_time;
-        if (!optional($this->authUser)->isAbleTo(config('constants.SHOW_TICKET_ACCESS'))) {
+        if (! optional($this->authUser)->isAbleTo(config('constants.SHOW_TICKET_ACCESS'))) {
             $messages = $messages->where('is_private', 0);
         }
 

@@ -2,14 +2,16 @@
 
 namespace App\Traits\User;
 
+use Illuminate\Support\Collection;
+
 trait AuthTrait
 {
-    public function getRolesAttribute(): array
+    public function getRolesAttribute(): Collection
     {
         //TODO:// fix can roles
-        return [
-            'admin'
-        ];
+        return collect([
+            'admin',
+        ]);
     }
 
     public function isAbleTo(string $can): bool
@@ -18,20 +20,22 @@ trait AuthTrait
         return true;
 
         $permissions = $this->permissions();
+
         return in_array($can, $permissions);
     }
 
-    public function permissions(): array
+    public function permissions(): Collection
     {
         //TODO:// fix can roles
-        return [
-            'admin'
-        ];
+        return collect([
+            'admin',
+        ]);
     }
 
     public function hasRole($role): bool
     {
         $roles = $this->roles;
+
         return in_array($role, $roles);
     }
 }

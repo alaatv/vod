@@ -4,12 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
- * Class \App\User
+ * Class \App\Models\User
  *
- * @mixin \App\User
- *
+ * @mixin \App\Models\User
  */
 class HekmatVoucherUser extends AlaaJsonResource
 {
@@ -21,7 +19,7 @@ class HekmatVoucherUser extends AlaaJsonResource
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\User)) {
+        if (! ($this->resource instanceof \App\Models\User)) {
             return [];
         }
 

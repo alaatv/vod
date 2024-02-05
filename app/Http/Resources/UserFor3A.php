@@ -8,19 +8,19 @@ use Illuminate\Http\Request;
 /**
  * Class User
  *
- * @mixin \App\User
+ * @mixin \App\Models\User
  * */
 class UserFor3A extends AlaaJsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\User)) {
+        if (! ($this->resource instanceof \App\Models\User)) {
             return [];
         }
 
@@ -32,9 +32,9 @@ class UserFor3A extends AlaaJsonResource
         $permissions = isset($permissions) ? $permissions->pluck('name')->toArray() : null;
 
         $hasAdminPermission = (isset($roles)) && (in_array(config('constants.ROLE_ADMIN'),
-                    $roles) || in_array(config('constants.ROLE_3A_MANAGER'), $roles));
+            $roles) || in_array(config('constants.ROLE_3A_MANAGER'), $roles));
         $hasEducationalPermission = (isset($roles)) && in_array(config('constants.ROLE_3A_EDUCATIONAL_EMPLOYEE'),
-                $roles);
+            $roles);
 
         return [
             'id' => $this->id,

@@ -14,17 +14,17 @@ class UserForBonyadEhsan extends JsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array|Arrayable|JsonSerializable
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\User)) {
+        if (! ($this->resource instanceof \App\Models\User)) {
             return [];
         }
 
         $this->loadMissing('major', 'grade', 'gender');
         $permissions = $this->getPermissionsThroughRoles()->pluck('name')->toArray();
+
         return [
             'id' => $this->id,
             'first_name' => $this->firstName,
@@ -45,17 +45,18 @@ class UserForBonyadEhsan extends JsonResource
             'city' => new ShahrLiteResource($this->shahr),
             'major' => new Major($this->major),
             'grade' => new Grade($this->grade),
-            'gender' => new  Gender($this->gender),
+            'gender' => new Gender($this->gender),
             'mobile_verified_at' => $this->when(isset($this->mobile_verified_at), $this->mobile_verified_at),
             'school' => $this->school,
             'permissions' => $permissions,
-            'roles' => $this->getRoles()
+            'roles' => $this->getRoles(),
         ];
     }
 
     private function getOstan()
     {
         $ostan = optional($this->shahr)->ostan;
+
         return isset($ostan) ? new OstanResource($ostan) : null;
     }
 }

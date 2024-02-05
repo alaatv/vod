@@ -1699,7 +1699,7 @@ class Content extends BaseModel implements FavorableInterface, SeoInterface, Tag
 
     public function getCanSeeContent(?User $user): int
     {
-        $roles = $user?->roles()->whereIn('name', [
+        $roles = $user?->roles->whereIn('name', [
             config('constants.ROLE_ADMIN'),
             config('constants.ROLE_PRODUCT_MANAGEMENT'),
             config('constants.ROLE_AD_MANAGER'),
@@ -1708,7 +1708,7 @@ class Content extends BaseModel implements FavorableInterface, SeoInterface, Tag
             config('constants.ROLE_PUBLIC_RELATION_MANAGER'),
             config('constants.ROLE_BONYAD_EHSAN_MANAGER'),
 
-        ])->get();
+        ]);
         if (isset($roles) && $roles->isNotEmpty()) {
             return 1;
         }

@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use App\Models\TicketActionLog;
 use Illuminate\Http\Request;
 
-
 /**
  * Class \App\TicketActionLog
  *
@@ -14,7 +13,7 @@ use Illuminate\Http\Request;
 class TicketLogInTicket extends AlaaJsonResource
 {
     /**
-     * @var User $user
+     * @var User
      */
     private $user;
 
@@ -41,7 +40,7 @@ class TicketLogInTicket extends AlaaJsonResource
         ];
     }
 
-    private function getLogger(): ?\App\User
+    private function getLogger(): ?\App\Models\User
     {
         if (is_null($this->user_id)) {
             return null;

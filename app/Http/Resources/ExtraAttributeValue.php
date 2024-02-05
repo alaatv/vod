@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-
 /**
  * Class User
  *
@@ -15,7 +14,7 @@ class ExtraAttributeValue extends AlaaJsonResource
     /**
      * Class User
      *
-     * @mixin \App\User
+     * @mixin \App\Models\User
      * */
     public function __construct(\App\Models\Attributevalue $model)
     {
@@ -26,12 +25,11 @@ class ExtraAttributeValue extends AlaaJsonResource
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     *
      * @return array
      */
     public function toArray($request)
     {
-        if (!($this->resource instanceof \App\Models\Attributevalue)) {
+        if (! ($this->resource instanceof \App\Models\Attributevalue)) {
             return [];
         }
 

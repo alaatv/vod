@@ -55,12 +55,9 @@ class ContentController extends Controller
         ]);
     }
 
-
     /**
      * API Version 2
      *
-     * @param  Request  $request
-     * @param  Content  $content
      * @param $content1
      * @return ContentResource|JsonResponse|RedirectResponse|Redirector
      */
@@ -69,97 +66,89 @@ class ContentController extends Controller
         if ($content->id == 0) {
             return response()->json($this->getContentZero());
         }
-
         if (isset($content->redirectUrl)) {
             $redirectUrl = $content->redirectUrl;
+
             return redirect(convertRedirectUrlToApiVersion($redirectUrl['url'], '2'),
                 $redirectUrl['code'], $request->headers->all());
         }
 
-        if (!$content->isActive()) {
+        if (! $content->isActive()) {
             return response()->json([], ResponseAlias::HTTP_LOCKED);
         }
 
-        return (new ContentResource($content));
+        return new ContentResource($content);
     }
 
     private function getContentZero()
     {
         return [
-            'data' =>
-                [
-                    'id' => 0,
-                    'redirect_url' => null,
-                    'type' => 8,
-                    'title' => 'test',
-                    'body' => 'for test',
-                    'tags' => null,
-                    'file' =>
-                        [
-                            'video' =>
-                                [
-                                    0 =>
-                                        [
-                                            'link' => 'https://alaatv.com/hls/input.m3u8',
-                                            'ext' => 'm3u8',
-                                            'size' => null,
-                                            'caption' => 'auto-hls',
-                                            'res' => 'auto-hls',
-                                        ],
-//                                    1 =>
-//                                        [
-//                                            'link' => 'https://nodes.alaatv.com/media/791/hq/791002pdnh.mp4',
-//                                            'ext' => 'mp4',
-//                                            'size' => NULL,
-//                                            'caption' => '480p',
-//                                            'res' => '480p',
-//                                        ],
-//                                    2 =>
-//                                        [
-//                                            'link' => 'https://nodes.alaatv.com/media/791/240p/791002pdnh.mp4',
-//                                            'ext' => 'mp4',
-//                                            'size' => NULL,
-//                                            'caption' => '240p',
-//                                            'res' => '240p',
-//                                        ],
-                                ],
-                            'pamphlet' =>
-                                [
-                                    0 =>
-                                        [
-                                            'link' => 'https://paid.alaatv.com/public/c/pamphlet/Hesaban_Khordad.pdf',
-                                            'ext' => 'pdf',
-                                            'size' => null,
-                                            'caption' => 'pdf',
-                                        ],
-                                ],
+            'data' => [
+                'id' => 0,
+                'redirect_url' => null,
+                'type' => 8,
+                'title' => 'test',
+                'body' => 'for test',
+                'tags' => null,
+                'file' => [
+                    'video' => [
+                        0 => [
+                            'link' => 'https://alaatv.com/hls/input.m3u8',
+                            'ext' => 'm3u8',
+                            'size' => null,
+                            'caption' => 'auto-hls',
+                            'res' => 'auto-hls',
                         ],
-                    'duration' => null,
-                    'photo' => 'https://nodes.alaatv.com/media/thumbnails/791/791002pdnh.jpg',
-                    'is_free' => 1,
-                    'order' => 2,
-                    'page_view' => null,
-                    'created_at' => '2020-04-14 07:39:51',
-                    'updated_at' => '2020-06-01 12:59:58',
-                    'url' =>
-                        [
-                            'web' => 'https://alaatv.com/c/0',
-                            'api' => 'https://alaatv.com/api/v2/c/0',
+                        //                                    1 =>
+                        //                                        [
+                        //                                            'link' => 'https://nodes.alaatv.com/media/791/hq/791002pdnh.mp4',
+                        //                                            'ext' => 'mp4',
+                        //                                            'size' => NULL,
+                        //                                            'caption' => '480p',
+                        //                                            'res' => '480p',
+                        //                                        ],
+                        //                                    2 =>
+                        //                                        [
+                        //                                            'link' => 'https://nodes.alaatv.com/media/791/240p/791002pdnh.mp4',
+                        //                                            'ext' => 'mp4',
+                        //                                            'size' => NULL,
+                        //                                            'caption' => '240p',
+                        //                                            'res' => '240p',
+                        //                                        ],
+                    ],
+                    'pamphlet' => [
+                        0 => [
+                            'link' => 'https://paid.alaatv.com/public/c/pamphlet/Hesaban_Khordad.pdf',
+                            'ext' => 'pdf',
+                            'size' => null,
+                            'caption' => 'pdf',
                         ],
-                    'previous_url' => null,
-                    'next_url' => null,
-                    'author' =>
-                        [
-                            'id' => 37226,
-                            'first_name' => 'mehdi',
-                            'last_name' => 'amini rad',
-                            'photo' => 'https://nodes.alaatv.com/upload/images/profile/amini_mehdi_20191211091357.jpg?w=100&h=100',
-                        ],
-                    'set' => null,
-                    'related_product' => null,
-                    'can_see' => 1,
-                    'source' => null,
+                    ],
                 ],
+                'duration' => null,
+                'photo' => 'https://nodes.alaatv.com/media/thumbnails/791/791002pdnh.jpg',
+                'is_free' => 1,
+                'order' => 2,
+                'page_view' => null,
+                'created_at' => '2020-04-14 07:39:51',
+                'updated_at' => '2020-06-01 12:59:58',
+                'url' => [
+                    'web' => 'https://alaatv.com/c/0',
+                    'api' => 'https://alaatv.com/api/v2/c/0',
+                ],
+                'previous_url' => null,
+                'next_url' => null,
+                'author' => [
+                    'id' => 37226,
+                    'first_name' => 'mehdi',
+                    'last_name' => 'amini rad',
+                    'photo' => 'https://nodes.alaatv.com/upload/images/profile/amini_mehdi_20191211091357.jpg?w=100&h=100',
+                ],
+                'set' => null,
+                'related_product' => null,
+                'can_see' => 1,
+                'source' => null,
+            ],
         ];
     }
 
@@ -167,6 +156,7 @@ class ContentController extends Controller
     {
         $originalContentProducts = $content->set->products;
         $sampleContentsProducts = $content->related_products;
+
         return ProductIndex::collection($originalContentProducts->merge($sampleContentsProducts));
 
     }
@@ -176,8 +166,9 @@ class ContentController extends Controller
         $contents = Content::whereIn('id', $request->input('content_ids'));
         $contents->update($request->only('display', 'enable', 'validSince'));
         Cache::tags(['product', 'set'.'_sets', 'userAsset'])->flush();
+
         return response()->json([
-            'message' => 'content(s) updated successfully'
+            'message' => 'content(s) updated successfully',
         ]);
     }
 
@@ -188,8 +179,9 @@ class ContentController extends Controller
             ->setColumn($request->input('column'))
             ->setOperation($request->input('operation'))
             ->apply($request->input('text'), $request->input('replacing_text'));
+
         return response()->json([
-            'message' => 'content(s) updated successfully'
+            'message' => 'content(s) updated successfully',
         ]);
     }
 
@@ -197,8 +189,9 @@ class ContentController extends Controller
     {
         $contents = Content::whereIn('id', $request->input('content_ids'));
         $contents->update($request->only('display', 'enable'));
+
         return response()->json([
-            'message' => 'content(s) updated successfully'
+            'message' => 'content(s) updated successfully',
         ]);
     }
 
@@ -234,8 +227,9 @@ class ContentController extends Controller
                 $content->save();
             }
         }
+
         return response()->json([
-            'message' => 'content(s) updated successfully'
+            'message' => 'content(s) updated successfully',
         ]);
     }
 
@@ -243,7 +237,7 @@ class ContentController extends Controller
     {
         Validator::make($request->all(), [
             'content' => ['required'],
-            'user_id' => ['required']
+            'user_id' => ['required'],
         ])->validate();
 
         $contentsArray = json_decode($request->get('content'));
@@ -252,6 +246,7 @@ class ContentController extends Controller
 
         if (is_null($contentsArray)) {
             Log::channel('contentDurationApi')->info('Invalid contents json');
+
             return response()->json(['message' => 'ok']);
         }
 
@@ -263,6 +258,7 @@ class ContentController extends Controller
 
             if ($contents->isEmpty()) {
                 Log::channel('contentDurationApi')->info('Empty contents collection');
+
                 continue;
             }
 
@@ -270,17 +266,17 @@ class ContentController extends Controller
                 $content->duration = $content->getContentDuration();
 
                 $files = $this->setContentFileSize($content);
-                if (isset($files) && !empty($files)) {
+                if (isset($files) && ! empty($files)) {
                     $content->file = collect($files);
                 }
 
-                if (!isset($files)) {
+                if (! isset($files)) {
                     Log::channel('contentDurationApi')->info('No files made for content: '.$content->id);
                 }
 
                 $content->updateWithoutTimestamp();
 
-                if (!$content->updateWithoutTimestamp()) {
+                if (! $content->updateWithoutTimestamp()) {
                     Log::channel('contentDurationApi')->info('Database error on updating content: '.$content->id);
                 }
             }
@@ -389,6 +385,7 @@ class ContentController extends Controller
         }
 
         Cache::tags(['content_'.$destinationContent->id, 'content_'.$destinationContent->id.'_timepoints'])->flush();
+
         return response()->json(['success' => 'کپی زمانکوب ها با موفقیت انجام شد']);
     }
 
@@ -403,7 +400,7 @@ class ContentController extends Controller
             $contentsetId = $newContetnsetId;
         }
 
-        if (!isset($newFileFullName)) {
+        if (! isset($newFileFullName)) {
             $newFileFullName = basename(optional(optional($content->file_for_admin[$content->contenttype->name])->first())->fileName);
         }
 
@@ -427,7 +424,7 @@ class ContentController extends Controller
             }
         }
 
-        if (!empty($files)) {
+        if (! empty($files)) {
             $content->file = $this->makeFilesCollection($files);
         }
 
@@ -456,7 +453,7 @@ class ContentController extends Controller
         return response()->json([
             'rootContentTypes' => $rootContentTypes,
             'contentsets' => $contentsets,
-            'authors' => $authors
+            'authors' => $authors,
         ], 200);
     }
 
@@ -482,17 +479,17 @@ class ContentController extends Controller
 
         return response()->json([
             'contenttypes' => $contenttypes,
-            'lastContent' => $lastContent
+            'lastContent' => $lastContent,
         ], 200);
     }
 
     public function transferToDana(Request $request, Content $content)
     {
-        if (!$content->isActive()) {
+        if (! $content->isActive()) {
             return response()->json(['error' => 'نمی توانید کانتنت غیرفعال را منتقل کنید'], 400);
         }
 
-        if (!is_null($content->redirectUrl)) {
+        if (! is_null($content->redirectUrl)) {
             return response()->json(['error' => 'نمی توانید کانتنت ریدایرکت شده را منتقل کنید'], 400);
         }
 
@@ -500,13 +497,14 @@ class ContentController extends Controller
         $foriatIds = array_merge(Product::ALL_FORIYAT_110_PRODUCTS, [Product::ARASH_TETA_SHIMI, Product::TETA_ADABIAT]);
         $productIntersect = $setProductIds->intersect($foriatIds)->all();
 
-        if (!empty($productIntersect)) {
+        if (! empty($productIntersect)) {
             return $this->transferToDanaTypeOne($content);
         } else {
-            if (!DanaProductTransfer::whereIn('product_id', $setProductIds->toArray())->where('insert_type',
+            if (! DanaProductTransfer::whereIn('product_id', $setProductIds->toArray())->where('insert_type',
                 2)->exists()) {
                 return response()->json(['error' => 'برای ست این محتوا دوره ای ایجاد نشده است'], 404);
             }
+
             return $this->transferToDanaTypeTwo($content);
         }
     }
