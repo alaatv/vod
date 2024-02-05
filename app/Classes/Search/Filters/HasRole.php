@@ -8,7 +8,9 @@
 
 namespace App\Classes\Search\Filters;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class HasRole extends FilterAbstract
 {
@@ -16,10 +18,25 @@ class HasRole extends FilterAbstract
 
     protected $relation = 'roles';
 
+    /**
+     * @param  array  $value
+     */
     public function apply(Builder $builder, $value, FilterCallback $callback): Builder
     {
-        return $builder->whereHas($this->relation, function ($q) use ($value) {
-            $q->whereIn($this->attribute, $value);
-        });
+        if (! isset($value) || ! is_array($value)) {
+            return $builder;
+        }
+        $resultArray = $this->retrieveUsers($value);
+
+        $callback->success($builder, $resultArray);
+
+        return $builder->whereIn('id', $resultArray);
+    }
+
+    private function retrieveUsers(array $value): Collection
+    {
+        $roles = array_filter($value);
+
+        return User::getUserWithRoles($roles) ?? collect();
     }
 }

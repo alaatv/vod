@@ -8,7 +8,9 @@
 
 namespace App\Classes\Search\Filters;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class HasPermissionThroughRole extends FilterAbstract
 {
@@ -18,12 +20,26 @@ class HasPermissionThroughRole extends FilterAbstract
 
     protected $permissionRewlation = 'permissions';
 
+    /**
+     * @param  array  $value
+     */
     public function apply(Builder $builder, $value, FilterCallback $callback): Builder
     {
-        return $builder->whereHas($this->roleRelation, function ($q) use ($value) {
-            $q->whereHas($this->permissionRewlation, function ($q2) use ($value) {
-                $q2->where($this->attribute, $value);
-            });
-        });
+        if (! is_array($value)) {
+            return $builder;
+        }
+
+        $resultArray = $this->retrieveUsers($value);
+
+        $callback->success($builder, $resultArray);
+
+        return $builder->whereIn('id', $resultArray);
+    }
+
+    private function retrieveUsers(array $value): Collection
+    {
+        $permissions = array_filter($value);
+
+        return User::getUserWithPermissions($permissions) ?? collect();
     }
 }

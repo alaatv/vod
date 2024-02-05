@@ -14,6 +14,24 @@ trait AuthTrait
         ]);
     }
 
+    public static function getUserWithPermissions(array $permissions): ?Collection
+    {
+        //TODO::// connect to auth service
+        return null;
+    }
+
+    public static function getUserWithRoles(array $roles): ?Collection
+    {
+        //TODO::// connect to auth service
+        return null;
+    }
+
+    public static function getUserWithRolesAndPermissions(array $roles, array $permissions): ?Collection
+    {
+        //TODO::// connect to auth service
+        return null;
+    }
+
     public function isAbleTo(string $can): bool
     {
         //TODO:// fix can permission
