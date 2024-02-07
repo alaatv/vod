@@ -14,17 +14,19 @@ class NotificationController extends Controller
     public function __construct()
     {
         $this->middleware('permission:'.config('constants.BONYAD_EHSAN_NOTIFICATION_READ'),
-            ['only' => ['read', 'readAll'],]);
+            ['only' => ['read', 'readAll']]);
     }
 
     public function index(NotificationIndexRequest $request)
     {
+
         $formParams = [
             'owner_id' => 1,
             'read' => $request->read,
             'user_id' => auth('api')->user()->id,
         ];
-        return $this->send('GET', '/api/v1/service/notification', $formParams);
+
+        return $this->send('GET', '/api/v2/service/notification', $formParams);
     }
 
     private function send($method, $url, $form_params)
@@ -35,7 +37,7 @@ class NotificationController extends Controller
             $body = [
                 'headers' => [
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer '.$token
+                    'Authorization' => 'Bearer '.$token,
                 ],
             ];
             if ($method == 'GET') {
@@ -53,11 +55,14 @@ class NotificationController extends Controller
                 );
             } catch (Exception $exception) {
                 $errors = json_decode($exception->getResponse()->getBody()->getContents());
+
                 return ['errors' => $errors->message, 'status_code' => $exception->getCode()];
             }
             $data = json_decode($response->getBody(), true);
+
             return $data;
         }
+
         return $token ?? response()->json([
             'messege' => 'مشکلی در اتصال پیش آمده',
         ]);
@@ -68,15 +73,18 @@ class NotificationController extends Controller
         $formParams = [
             'user_id' => auth('api')->user()->id,
         ];
+
         return $this->send('POST', '/api/v1/service/notification/'.$id.'/read', $formParams);
     }
 
     public function readAll(Request $request)
     {
+
         $formParams = [
             'user_id' => auth('api')->user()->id,
-            'owner_id' => 1
+            'owner_id' => 1,
         ];
-        return $this->send('POST', '/api/v1/service/notification/readAll', $formParams);
+
+        return $this->send('POST', '/api/v2/service/notification/readAll', $formParams);
     }
 }
