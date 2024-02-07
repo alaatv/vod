@@ -45,6 +45,12 @@ trait AuthTrait
     public function permissions(): Collection
     {
         //TODO:// fix can roles
+        return $this->permissions;
+    }
+
+    public function getPermissionsAttribute(): Collection
+    {
+        //TODO:// fix can roles
         return collect([
             'admin',
         ]);
@@ -52,8 +58,15 @@ trait AuthTrait
 
     public function hasRole($role): bool
     {
-        $roles = $this->roles;
+        $roles = $this->roles->toArray();
 
         return in_array($role, $roles);
+    }
+
+    public function hasPermission($permission): bool
+    {
+        $permissions = $this->permissions->toArray();
+
+        return in_array($permission, $permissions);
     }
 }

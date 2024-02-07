@@ -126,22 +126,6 @@ class Ticket extends BaseModel implements Taggable
         }
         return $department->ticket_form;
     }
-
-    public function getLastTicketResponderAttribute()
-    {
-        $lastTicketMessage = $this->messages()
-            ->whereHas('user', function ($q) {
-                $q->whereHas('roles', function ($q1) {
-                    $q1->whereHas('permissions', function ($q2) {
-                        $q2->where('name', config('constants.ANSWER_TICKET'));
-                    });
-                });
-            })
-            ->orderByDesc('created_at')
-            ->first();
-        return $lastTicketMessage ? $lastTicketMessage->user : null;
-    }
-
     public function getLogsOrderbyTimeAttribute()
     {
         return $this->logs->sortByDesc('created_at');

@@ -14,19 +14,17 @@ use App\Models\Content;
 use App\Models\File;
 use Closure;
 use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\FileNotFoundException;
 use stdClass;
 
 /**
  * Class LinkGenerator
- *
- * @package App\Classes
  */
 class LinkGenerator
 {
-    protected const DOWNLOAD_CONTROLLER_NAME = "Web\\HomeController@newDownload";
+    protected const DOWNLOAD_CONTROLLER_NAME = 'Api\\HomeController@phpPing';
 
     protected $uuid;
 
@@ -40,8 +38,6 @@ class LinkGenerator
 
     /**
      * LinkGenerator constructor.
-     *
-     * @param $file
      */
     public function __construct(stdClass $file)
     {
@@ -54,7 +50,6 @@ class LinkGenerator
 
     /**
      * @param  mixed  $fileName
-     *
      * @return LinkGenerator
      */
     public function setFileName($fileName)
@@ -82,7 +77,6 @@ class LinkGenerator
 
     /**
      * @param  mixed  $uuid
-     *
      * @return LinkGenerator
      */
     public function setUuid($uuid)
@@ -94,22 +88,18 @@ class LinkGenerator
 
     /**
      * @param  mixed  $disk
-     *
      * @return LinkGenerator
      */
     public function setDisk($disk)
     {
         $this->disk = $disk;
+
         return $this;
     }
 
     /**
      * LinkGenerator constructor.
      *
-     * @param $uuid
-     * @param $disk
-     * @param $url
-     * @param $fileName
      *
      * @return LinkGenerator
      */
@@ -136,15 +126,13 @@ class LinkGenerator
     }
 
     /**
-     * @param $uuid
-     *
      * @return null | string
      */
     private static function findDiskNameFromUUID($uuid)
     {
         $file = File::where('uuid', $uuid)
             ->get();
-        if (!($file->isNotEmpty() && $file->count() == 1)) {
+        if (! ($file->isNotEmpty() && $file->count() == 1)) {
 
             return null;
         }
@@ -153,16 +141,13 @@ class LinkGenerator
             return $file->disks->first()->name;
         }
 
-
         return null;
     }
 
     /**
-     * @param  Content  $content
-     * @param  Closure  $closure
      * @param  bool  $encryptedLink
-     *
      * @return array|null|string
+     *
      * @throws Exception
      */
     public function getLinks(Content $content, Closure $closure, $encryptedLink = false)
@@ -171,7 +156,7 @@ class LinkGenerator
             return $this->url;
         }
 
-        if (!isset($this->disk, $this->fileName)) {
+        if (! isset($this->disk, $this->fileName)) {
             throw new Exception("DiskName and FileName should be set \n File uuid=".$this->uuid);
         }
 
@@ -179,7 +164,7 @@ class LinkGenerator
 
         $url = Uploader::url($this->disk, $fileName, false);
 
-        if (!$encryptedLink) {
+        if (! $encryptedLink) {
             return $url;
         }
 
@@ -193,8 +178,8 @@ class LinkGenerator
 
     /**
      * @param  int  $isFree
-     *
      * @return array|null|string
+     *
      * @throws Exception
      */
     public function getLinksForApp(Content $content, Closure $closure, $encryptedLink = false)
@@ -203,7 +188,7 @@ class LinkGenerator
             return $this->url;
         }
 
-        if (!isset($this->disk, $this->fileName)) {
+        if (! isset($this->disk, $this->fileName)) {
             throw new Exception("DiskName and FileName should be set \n File uuid=".$this->uuid);
         }
 
@@ -211,7 +196,7 @@ class LinkGenerator
 
         $url = Uploader::url($this->disk, $fileName, false);
 
-        if (!$encryptedLink) {
+        if (! $encryptedLink) {
             return $url;
         }
 
@@ -263,6 +248,7 @@ class LinkGenerator
     {
         if ($contenttypeId == config('constants.CONTENT_TYPE_VIDEO')) {
             $qualitySubFolder = $this->quality ? $this->quality.'/' : '';
+
             return $contentSetId.'/'.$qualitySubFolder.$this->fileName;
         }
 
@@ -273,6 +259,4 @@ class LinkGenerator
     {
         return str_ireplace('/paid/', '', $this->fileName);
     }
-
-
 }
