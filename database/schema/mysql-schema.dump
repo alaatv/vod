@@ -373,7 +373,7 @@ CREATE TABLE `bankaccounts` (
   `accountNumber` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'شاره حساب',
   `cardNumber` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'شماره کارت اعتباری حساب',
   `preShabaNumber` varchar(191) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `shabaNumber` text COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `shabaNumber` varchar(191) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
