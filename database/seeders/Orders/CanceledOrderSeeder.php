@@ -29,7 +29,6 @@ class CanceledOrderSeeder extends Seeder
                         'costwithoutcoupon' => 100000,
                         'isInInstalment' => 0,
                         'customerDescription' => null,
-                        'product_id' => Product::first()?->id,
                     ])
                     ->has(
                         Orderproduct::factory()
