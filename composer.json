@@ -34,7 +34,9 @@
         "symfony/http-client": "*",
         "symfony/postmark-mailer": "*",
         "watson/sitemap": "*",
-        "webpatser/laravel-uuid": "^4.0"
+        "webpatser/laravel-uuid": "^4.0",
+        "ext-redis": "*",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "*",
