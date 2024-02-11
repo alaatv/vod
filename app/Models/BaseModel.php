@@ -30,6 +30,7 @@ abstract class BaseModel extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'completed_at' => 'datetime'
     ];
 
     protected $cachedMethods = [

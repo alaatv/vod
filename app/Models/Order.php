@@ -82,8 +82,6 @@ class Order extends BaseModel implements GiveGift
     | Properties methods
     |--------------------------------------------------------------------------
     */
-    public Carbon|false $completed_at;
-
     protected $table = 'orders';
 
     protected $cascadeDeletes = [

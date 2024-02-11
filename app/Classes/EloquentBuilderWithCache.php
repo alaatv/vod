@@ -13,12 +13,17 @@ class EloquentBuilderWithCache extends Builder
         $modelCacheTagArray = get_class($this->model)::getBindingCacheTagArray($id);
 
         return Cache::tags($modelCacheTagArray)->remember($modelCacheKey, config('constants.CACHE_5'),
-            function () use ($id, $columns) {
+            callback: function () use ($id, $columns) {
                 $object = parent::findOrFail($id, $columns);
-                $object?->attacheCachedMethodResult();
-
-                return $object;
+                return $this->attacheCachedMethodResult($object);
             });
+    }
+    private function attacheCachedMethodResult ( $object )
+    {
+        if( isset($object ) and method_exists($object, 'attacheCachedMethodResult') ) {
+            $object?->attacheCachedMethodResult();
+        }
+        return $object;
     }
 
     public function find($id, $columns = ['*'])
@@ -29,9 +34,7 @@ class EloquentBuilderWithCache extends Builder
         return Cache::tags($modelCacheTagArray)->remember($modelCacheKey, config('constants.CACHE_10'),
             function () use ($id, $columns) {
                 $object = parent::find($id, $columns);
-                $object?->attacheCachedMethodResult();
-
-                return $object;
+                return $this->attacheCachedMethodResult($object);
             });
     }
 
@@ -45,7 +48,7 @@ class EloquentBuilderWithCache extends Builder
                 $objects = parent::findMany($ids, $columns);
 
                 return $objects?->map(function ($object) {
-                    return $object->attacheCachedMethodResult();
+                    return $this->attacheCachedMethodResult($object);
                 });
             });
     }

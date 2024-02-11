@@ -29,13 +29,16 @@ class CanceledOrderSeeder extends Seeder
                         'costwithoutcoupon' => 100000,
                         'isInInstalment' => 0,
                         'customerDescription' => null,
+
                     ])
                     ->has(
                         Orderproduct::factory()
                             ->count(4)
                             ->state([
+                                'product_id' => Product::first()?->id,
                                 'cost' => 25000,
                                 'tmp_final_cost' => 25000,
+
                             ])
                     )
             )
